@@ -5,9 +5,12 @@ use App\Http\Controllers\testcontroller;
 use Illuminate\Support\Facades\Route;
 
  Route::get('/', function () {
-
       return view('welcome');
  });
+
+ Route::get('/{pathMatch}', function(){
+     return view('welcome');
+ })->where('pathMatch',".*");
 //Route::get('/',[testcontroller::class, 'welcome']);
 // Route::get('/api',[testcontroller::class,'show']);
 // Route::get('/sheet/create',[NodeController::class,'create']);
