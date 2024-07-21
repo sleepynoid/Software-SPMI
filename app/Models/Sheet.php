@@ -12,5 +12,6 @@ class Sheet extends Model {
         'jurusan',
         'periode',
         'note',
+        'tipe_sheet'
     ];
 }
