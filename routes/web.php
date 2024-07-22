@@ -2,15 +2,18 @@
 
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\testcontroller;
+use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
 
  Route::get('/', function () {
       return view('welcome');
  });
 
- Route::get('/{pathMatch}', function(){
-     return view('welcome');
- })->where('pathMatch',".*");
+// Route::get('/{pathMatch}', function(){
+//     return view('welcome');
+// })->where('pathMatch',".*");
+
+// Route::get('/api/sheet',[JsonController::class, 'index']);
 //Route::get('/',[testcontroller::class, 'welcome']);
 // Route::get('/api',[testcontroller::class,'show']);
 // Route::get('/sheet/create',[NodeController::class,'create']);
