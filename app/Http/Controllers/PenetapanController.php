@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sheet;
 use App\Models\Standar;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,7 @@ class PenetapanController extends Controller {
      */
     public function index() {
         //
-        return Standar::all();
+        return Sheet::all();
         // $listStandar[] = Standar::all();
         // return response()->json([
         //     ,
