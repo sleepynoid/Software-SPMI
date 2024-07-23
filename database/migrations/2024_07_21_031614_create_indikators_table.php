@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('indikators', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_standar');
+            $table->unsignedBigInteger('id_standar');
             $table->string('note');
             $table->timestamps();
+
+            $table->foreign('id_standar')->references('id')->on('standars')->onDelete('cascade');
         });
     }
 

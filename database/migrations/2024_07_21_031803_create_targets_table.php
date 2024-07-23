@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_indikator');
+            $table->unsignedBigInteger('id_indikator');
             $table->float('value');
             $table->timestamps();
+
+            $table->foreign('id_indikator')->references('id')->on('indikators')->onDelete('cascade');
         });
     }
 
