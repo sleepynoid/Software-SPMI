@@ -13,4 +13,8 @@ class Standar extends Model
         'note',
         'tipe',
     ];
+
+    public function indikator() {
+        return $this->hasMany(Indikator::class,'id_standar');
+    }
 }

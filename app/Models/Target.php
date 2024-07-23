@@ -13,4 +13,8 @@ class Target extends Model
         'id_indikator',
         'value',
     ];
+
+    public function indikator() {
+        return $this->belongsTo(Indikator::class);
+    }
 }
