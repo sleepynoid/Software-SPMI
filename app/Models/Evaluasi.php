@@ -12,5 +12,5 @@ class Evaluasi extends Model
     protected $fillable = [
         'id_evaluasi',
         'id_sheet',
-    ]
+    ];
 }
