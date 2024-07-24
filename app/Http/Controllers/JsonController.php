@@ -8,55 +8,70 @@ use Illuminate\Http\Request;
 class JsonController extends Controller
 {
     public function index(){
-        $sheets = Sheet::all();
-
-
-        return response()->json($sheets);
-    }
-
-    public function getStandard(){
-        $standard = [
-            ['idS' => '1', 'note' => 'Lulus 3.5 abad'],
-            ['idS' => '2', 'note' => 'item2'],
-            ['idS' => '3', 'note' => 'item3']
+        $data = [
+            [
+                'standar' => 'Standar 1',
+                'indicators' => [
+                    ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1'],
+                    ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2']
+                ]
+            ],
+            [
+                'standar' => 'Standar 2',
+                'indicators' => [
+                    ['indicator' => 'Indicator 2.1', 'target' => 'Target 2.1'],
+                    ['indicator' => 'Indicator 2.2', 'target' => 'Target 2.2'],
+                    ['indicator' => 'Indicator 2.3', 'target' => 'Target 2.3']
+                ]
+            ]
         ];
 
 
-        return response()->json($standard);
+        return response()->json($data);
     }
 
-    public function getIndicator(){
-        $indicator = [
-            ['idI' => '1', 'idS'=> 1,'note' => 'Lulus 3.5 abad'],
-            ['idI' => '2', 'idS'=> 1,'note' => 'item2'],
-            ['idI' => '3', 'idS'=> 1,'note' => 'item3'],
-            ['idI' => '4', 'idS'=> 2,'note' => 'item4'],
-            ['idI' => '5', 'idS'=> 2,'note' => 'item5'],
-            ['idI' => '6', 'idS'=> 2,'note' => 'item6'],
-            ['idI' => '7', 'idS'=> 3,'note' => 'item7'],
-            ['idI' => '8', 'idS'=> 3,'note' => 'item8'],
-            ['idI' => '9', 'idS'=> 3,'note' => 'item9'],
+    public function GetSheet(){
+        $datas = [
+            [
+                'standar' => 'Standar 1',
+                'indicators' => [
+                    ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1', 'komen' => 'komentarr'],
+                    ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2', 'komen' => 'komentar 1.2']
+                ]
+            ],
+            [
+                'standar' => 'Standar 1',
+                'indicators' => [
+                    ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1', 'komen' => 'komentarr 2.1'],
+                    ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2', 'komen' => 'komentarr']
+                ]
+            ],
+            [
+                'standar' => 'Standar 2',
+                'indicators' => [
+                    ['indicator' => 'Indicator 2.1', 'target' => 'Target 2.1', 'komen' => 'komentarr'],
+                    ['indicator' => 'Indicator 2.2', 'target' => 'Target 2.2', 'komen' => 'komentarr'],
+                    ['indicator' => 'Indicator 2.3', 'target' => 'Target 2.3', 'komen' => 'komentarr'],
+                    ['indicator' => 'Indicator 2.4', 'target' => 'Target 2.4', 'komen' => 'komentarr']
+                ]
+            ]
         ];
 
-
-        return response()->json($indicator);
-    }
-
-    public function getTarget(){
-        $target = [
-            ['idT' => '1', 'idI'=> 1,'note' => 'Lulus 3.5 abad'],
-            ['idT' => '2', 'idI'=> 1,'note' => 'item2'],
-            ['idT' => '3', 'idI'=> 1,'note' => 'item3'],
-            ['idT' => '4', 'idI'=> 2,'note' => 'item4'],
-            ['idT' => '5', 'idI'=> 2,'note' => 'item5'],
-            ['idT' => '6', 'idI'=> 2,'note' => 'item6'],
-            ['idT' => '7', 'idI'=> 3,'note' => 'item7'],
-            ['idT' => '8', 'idI'=> 3,'note' => 'item8'],
-            ['idT' => '9', 'idI'=> 3,'note' => 'item9'],
+        $data = [
+            'standar' => 'Standar 3',
+            'indicators' => [
+                ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1', 'komen' => 'komentarr'],
+                ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2', 'komen' => 'komentarr']
+            ]
         ];
 
+        $newIndicator = ['indicator' => 'Indicator 1.3', 'target' => 'Target 1.3', 'komen'=>'Ireland'];
+        array_push($data['indicators'], $newIndicator);
 
-        return response()->json($target);
+        array_push($datas, $data);
+
+
+        return view('welcome', ['name' => $datas]);
     }
 
 
