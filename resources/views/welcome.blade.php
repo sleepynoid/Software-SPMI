@@ -8,6 +8,14 @@
     @vite(['resources/css/app.css'])
 </head>
 <body>
-<div id="app"></div>
+<div id="app" class="app"></div>
+
+<style>
+    body{
+        width: 100vw;
+        overflow-x: hidden;
+        padding: 3rem;
+    }
+</style>
 </body>
 </html>
