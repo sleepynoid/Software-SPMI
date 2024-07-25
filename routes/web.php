@@ -5,7 +5,7 @@ use App\Http\Controllers\testcontroller;
 use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::get('/', [JsonController::class, 'GetSheet']);
 
 Route::get('/{any}', function () {
     return view('welcome');
