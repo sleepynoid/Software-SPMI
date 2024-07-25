@@ -9,6 +9,7 @@ use App\Models\Target;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,9 +27,21 @@ class DatabaseSeeder extends Seeder
         //     'password' => bcrypt('pass'),
         // ]);
 
+        DB::table('standars')->insert([
+            'id_standar' => 1,
+        ]);
+
+        DB::table('penetapans')->insert([
+            'id_sheet' => 2,
+        ]);
+
+        DB::table('penetapans')->insert([
+            'id_sheet' => 2,
+        ]);
+
         // Sheet::factory(100)->create();
-        Standar::factory()->count(10)->create();
-        Indikator::factory()->count(10)->create();
-        Target::factory()->count(10)->create();
+//        Standar::factory()->count(10)->create();
+//        Indikator::factory()->count(10)->create();
+//        Target::factory()->count(10)->create();
     }
 }
