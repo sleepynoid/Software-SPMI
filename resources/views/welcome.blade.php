@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laravel with Vue</title>
+    <title>SPMI</title>
     @vite(['resources/js/app.js'])
     @vite(['resources/css/app.css'])
 </head>
 <body>
-<div id="app" class="app"></div>
+<div id="app" class="app">
+
+
+</div>
 
 <table border="1">
     <thead>
     <tr>
-        <th rowspan="2">Standar</th>
-        <th colspan="2">Penetapan</th>
-        <th rowspan="2">Pelaksanaan</th>
+        <th colspan="3">Penetapan</th>
+        <th rowspan="2" colspan="2">Pelaksanaan</th>
     </tr>
     <tr>
+        <th>Standard</th>
         <th>Indicator</th>
         <th>Target</th>
     </tr>
