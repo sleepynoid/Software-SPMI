@@ -1,23 +1,10 @@
-# Use an official Node runtime as a parent image
-FROM php:8
+FROM php:8.3-cli
 
-# Set the working directory
-WORKDIR /usr/src/app
+COPY --from=composer:lts /usr/bin/composer /usr/bin/composer
 
-# Copy the package.json and package-lock.json
-COPY package*.json ./
+WORKDIR /var/www/html/
 
-# Install dependencies
-RUN npm install
+EXPOSE 8000
 
-# Copy the rest of the application
-COPY . .
-
-# Build the Nuxt.js application
-RUN npm run build
-
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Start the Nuxt.js application
-CMD [ "npm", "start" ]
+CMD [ "php", "artisan", "serve", "--host=0.0.0.0", "--port=8000" ]
+# CMD ["php", "artisan", "serve", "--host=$APP_HOST", "--port=$APP_PORT"]
