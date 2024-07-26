@@ -56,7 +56,14 @@ class JsonController extends Controller
 
             foreach ($indikator as $i){
                 if ($i->id_standar == $s->id){
-                    $newIndicator = ['indicator' => $i->note, 'target' => 'Target 1.3', 'komen'=>'Ireland'];
+                    $tar = null;
+                    foreach ($target as $t){
+                        if ($t->id == $i->id){
+                            $tar = $t;
+                        }
+                    }
+
+                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value, 'komen'=>'Ireland'];
                     array_push($data['indicators'], $newIndicator);
                 }
             }
