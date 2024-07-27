@@ -1,7 +1,7 @@
 <script setup>
-import XlsxRead from 'xlsx';
-import XlsxTable from "xlsx";
-import XlsxSheets from "xlsx";
+import XlsxRead from './XlsxRead.vue';
+import XlsxTable from "./XlsxTable.vue";
+import XlsxSheets from "./XlsxSheets.vue";
 // import XlsxJson from "./components/XlsxJson.vue";
 // import XlsxWorkbook from "./components/XlsxWorkbook.vue";
 // import XlsxSheet from "./components/XlsxSheet.vue";
@@ -35,11 +35,13 @@ const addSheet = () => {
                     <span v-if="loading">Loading...</span>
                     <xlsx-sheets>
                         <template #default="{ sheets }">
-                            <select v-model="selectedSheet">
-                                <option v-for="sheet in sheets" :key="sheet" :value="sheet">
-                                    {{ sheet }}
-                                </option>
-                            </select>
+                            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item" v-for="sheet in sheets" :key="sheet">
+                                        <a class="nav-link" :class="{ 'active': selectedSheet === sheet }" href="#" @click="selectedSheet = sheet" :style="{ backgroundColor: selectedSheet === sheet ? '#343a40' : '' }">{{ sheet }}</a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </template>
                     </xlsx-sheets>
                     <xlsx-table :sheet="selectedSheet" />
