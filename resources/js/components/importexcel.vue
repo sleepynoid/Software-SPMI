@@ -4,7 +4,7 @@
         <table>
             <thead>
                 <tr v-for="(header, index) in headers" :key="index">
-                    <th :colspan="header.colspan" :rowspan="header.rowspan">
+                    <th :colspan="header.colspan" :rowspan="header.rowspan" class="text-center">
                         {{ header.value }}
                     </th>
                 </tr>
@@ -98,7 +98,7 @@ export default {
         },
         exportToExcel() {
             const worksheet = XLSX.utils.aoa_to_sheet(this.rows.map(row => row.map(cell => cell.value)));
-            
+
             // Menambahkan merges ke worksheet berdasarkan data header dan row
             const merges = [];
             this.headers.forEach((header, index) => {
@@ -129,16 +129,24 @@ export default {
 </script>
 
 <style scoped>
+body {
+    width: 100vw;
+    overflow-x: hidden;
+    padding: 3rem;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
+table,
 th,
 td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
+    border: 1px solid black;
+    text-align: center;
+    padding: 5px;
+    width: 5rem;
 }
 </style>
