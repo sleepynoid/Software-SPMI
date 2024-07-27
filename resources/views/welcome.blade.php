@@ -10,7 +10,6 @@
 <body>
 <div id="app" class="app">
 
-
 </div>
 
 <table border="1">
@@ -35,14 +34,16 @@
             <td rowspan="{{ $rowspan }}">{{ $standar['standar'] }}</td>
             <td>{{ $standar['indicators'][0]['indicator'] }}</td>
             <td>{{ $standar['indicators'][0]['target'] }}</td>
-            <td>{{ $standar['indicators'][0]['komen'] }}</td>
+            <td><textarea name="" id="" cols="30" rows="3"></textarea></td>
 {{--            <td>Komentar</td>--}}
         </tr>
         @for($i = 1; $i < $rowspan; $i++)
             <tr>
                 <td>{{ $standar['indicators'][$i]['indicator'] }}</td>
                 <td>{{ $standar['indicators'][$i]['target'] }}</td>
-                <td>{{ $standar['indicators'][$i]['komen'] }}</td>
+                <td><textarea name="asu{{$i}}" id="" cols="30" rows="3"></textarea></td>
+{{--                <td><button>add</button></td>--}}
+{{--                <td>{{ $standar['indicators'][$i]['komen'] }}</td>--}}
 {{--                <td>Komentar</td>--}}
             </tr>
         @endfor
@@ -63,6 +64,11 @@
         text-align: center;
         padding: 5px;
         width: 2rem;
+    }
+
+    button{
+        border-style: none;
+        width: 4rem;
     }
 </style>
 </body>
