@@ -41,7 +41,7 @@ class JsonController extends Controller
 
     public function GetSheet(){
         $penetapan = Penetapan::find(1);
-        $standars = Standar::where('id_penetapan', $penetapan->id)->get();
+        $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'input')->get();
         $indikator = Indikator::all();
         $target = Target::all();
 
@@ -57,7 +57,7 @@ class JsonController extends Controller
             foreach ($indikator as $i){
                 if ($i->id_standar == $s->id){
                     $tar = null;
-                    foreach ($target as $t){
+                        foreach ($target as $t){
                         if ($t->id == $i->id){
                             $tar = $t;
                         }

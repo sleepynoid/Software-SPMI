@@ -27,16 +27,34 @@ class DatabaseSeeder extends Seeder
         //     'password' => bcrypt('pass'),
         // ]);
 
-        DB::table('standars')->insert([
-            'id_standar' => 1,
+        DB::table('targets')->insert([
+            'id_indikator' => 1,
+            'value' => 331
         ]);
 
-        DB::table('penetapans')->insert([
-            'id_sheet' => 2,
+        DB::table('targets')->insert([
+            'id_indikator' => 2,
+            'value' => 332
         ]);
 
-        DB::table('penetapans')->insert([
-            'id_sheet' => 2,
+        DB::table('targets')->insert([
+            'id_indikator' => 3,
+            'value' => 333
+        ]);
+
+        DB::table('targets')->insert([
+            'id_indikator' => 4,
+            'value' => 334
+        ]);
+
+        DB::table('targets')->insert([
+            'id_indikator' => 5,
+            'value' => 335
+        ]);
+
+        DB::table('targets')->insert([
+            'id_indikator' => 6,
+            'value' => 336
         ]);
 
         // Sheet::factory(100)->create();
