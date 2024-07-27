@@ -13,6 +13,7 @@ export default {
   },
   methods: {
     parseSheets(wb) {
+      console.log("Sheet names received:", wb.SheetNames);
       this.innerValue = [...wb.SheetNames];
       this.$emit("parsed", [...wb.SheetNames]);
     }
