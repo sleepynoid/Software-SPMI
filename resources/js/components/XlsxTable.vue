@@ -1,0 +1,39 @@
+<template>
+  <div v-if="table" v-html="table" class="table-responsive" />
+</template>
+
+<script>
+import SheetTo from "../mixins/SheetTo";
+
+export default {
+  mixins: [SheetTo],
+  data() {
+    return {
+      table: null
+    };
+  },
+  mounted() {
+    this._callBack = this.updateTable;
+    this.load();
+  },
+  methods: {
+    async load() {
+      const {
+        utils: { sheet_to_html }
+      } = await import("xlsx");
+      this._sheet_to_html = sheet_to_html;
+      this.loaded = true;
+    },
+    updateTable(workbook) {
+      const ws = workbook.Sheets[this.sheetNameFinder(workbook)];
+      console.log(ws);
+      let html = this._sheet_to_html(ws, this.options);
+      console.log(html);
+
+      html = html.replace('<table>', '<table class="table  table-hover table-striped text-center" style="width:auto;">');
+
+      this.table = html;
+    }
+  }
+};
+</script>
