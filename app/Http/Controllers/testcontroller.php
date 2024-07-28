@@ -14,13 +14,23 @@ class testcontroller extends Controller {
         return view('welcome');
     }
 
-    public function show() {
-
+    public function show(int $id): JsonResponse {
+        $data = Standar::with('indikator.target')->findOrFail($id);
+        if (is_null($data)) {
+            $this->sendError('id not found');
+        }
+        $responData = new StandarResource($data);
+        return $this->sendRespons($responData,'Standar');
+        // return ;
     }
 
     public function index(): JsonResponse {
         $data = Standar::with('indikator.target')->get();
         $responData = StandarResource::collection($data);
         return $this->sendRespons($responData,'Standar');
+    }
+
+    public function getSheet() {
+        
     }
 }
