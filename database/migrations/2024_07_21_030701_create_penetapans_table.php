@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('penetapans', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_sheet');
+            $table->unsignedBigInteger('id_sheet');
             $table->timestamps();
+
+            $table->foreign('id_sheet')->references('id')->on('sheets')->onDelete('cascade');
         });
     }
 
