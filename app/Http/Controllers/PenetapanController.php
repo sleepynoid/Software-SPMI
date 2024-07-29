@@ -57,6 +57,6 @@ class PenetapanController extends Controller
     public function import(Request $request)
     {
         Excel::import(new PenetapanImport, request()->file('file'));
-        return response()->json(['success' => 'Data berhasil diimpor']);
+        return redirect('/')->with('success', 'Data berhasil diimpor');
     }
 }
