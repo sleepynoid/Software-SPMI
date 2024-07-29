@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\NodeController;
+use App\Http\Controllers\PenetapanController;
 use App\Http\Controllers\testcontroller;
 use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
@@ -8,9 +9,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [JsonController::class, 'GetSheet']);
 
 Route::get('/{any}', function () {
-    return view('welcome');
+    return view('upload');
 })->where('any', '.*');
 
+Route::post('/penetapan/import', [PenetapanController::class, 'import'])->name('penetapan.import');
 // Route::get('/{pathMatch}', function(){
 //     return view('welcome');
 // })->where('pathMatch',".*");
