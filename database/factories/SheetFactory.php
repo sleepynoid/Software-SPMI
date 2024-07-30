@@ -18,8 +18,10 @@ class SheetFactory extends Factory
     {
         return [
             //
-            'note' => fake()->realText(200),
-            'user_id' => fake()->randomNumber()
+            'jurusan' => $this->faker->word(),
+            'periode' => $this->faker->date(),
+            'note' => $this->faker->paragraph(),
+            'tipe_sheet' => $this->faker->randomElement(['pendidikan', 'pengabdian', 'penelitian'])
         ];
     }
 }

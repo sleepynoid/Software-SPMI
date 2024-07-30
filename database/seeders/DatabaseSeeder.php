@@ -11,13 +11,11 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class DatabaseSeeder extends Seeder
-{
+class DatabaseSeeder extends Seeder {
     /**
      * Seed the application's database.
      */
-    public function run(): void
-    {
+    public function run(): void {
         // User::factory(10)->create();
 
         // User::factory()->create([
@@ -26,8 +24,11 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         //     'password' => bcrypt('pass'),
         // ]);
-
+        
+        Standar::factory()->count(10)->create();
+        Indikator::factory()->count(10)->create();
         DB::table('targets')->insert([
+            'id' => 1,
             'id_indikator' => 1,
             'value' => 331
         ]);
@@ -57,9 +58,12 @@ class DatabaseSeeder extends Seeder
             'value' => 336
         ]);
 
-        // Sheet::factory(100)->create();
-//        Standar::factory()->count(10)->create();
-//        Indikator::factory()->count(10)->create();
-//        Target::factory()->count(10)->create();
+        Sheet::factory()->count(10)->create();
+        DB::table('penetapans')->insert([
+            'id' => 1,
+            'id_sheet' => 1
+        ]);
+
+        Target::factory()->count(10)->create();
     }
 }

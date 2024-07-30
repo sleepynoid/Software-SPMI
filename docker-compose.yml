@@ -19,11 +19,26 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            - '/var/www/node_modules'
         networks:
             - sail
         mem_limit: 1000M
         depends_on:
             - mysql
+
+    # nodejs:
+    #     build: 
+    #         context: ./vendor/nodejs/1.0
+    #         dockerfile: Dockerfile
+    #     # image: node:20-alpine
+    #     container_name: nodejs-custom
+    #     ports:
+    #         - "3000:3000"
+    #     mem_limit: 500M
+    #     volumes:
+    #         - ./:/app
+    #         - /app/node_modules
+
     mysql:
         image: 'mysql:8.0'
         ports:
