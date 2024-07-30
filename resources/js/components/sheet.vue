@@ -4,7 +4,8 @@ import { ref, onMounted } from 'vue';
 // Definisikan variabel reaktif
 const standarData = ref([]);
 const loading = ref(true);
-const Data = ref([]);
+const data = ref([]);
+const output = ref([]);
 
 // const fromPhp = ref(window.items);
 
@@ -20,10 +21,35 @@ async function fetchStandar() {
     }
 }
 
+async function fetchProses() {
+    try {
+        let response = await fetch('/api/nyo');
+        data.value = await response.json();
+        // standarData.value = JSON.parse(Data.value);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        loading.value = false;
+    }
+}
 
-console.log(standarData);
+async function fetchOutput() {
+    try {
+        let response = await fetch('/api/bak');
+        output.value = await response.json();
+        // standarData.value = JSON.parse(Data.value);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        loading.value = false;
+    }
+}
+
+console.log(data);
 
 onMounted(fetchStandar)
+onMounted(fetchOutput)
+onMounted(fetchProses)
 
 const user = ref(1);
 </script>
@@ -60,10 +86,47 @@ const user = ref(1);
                   <td>{{ indicator.target }}</td>
                   <td><input type="text"></td>
                   <td>
-                      <div class="col kom">
-                          <input type="text">
-                          <input type="text">
-                      </div>
+                      <input type="text">
+<!--                      <div class="col kom">-->
+<!--                          <input type="text">-->
+<!--                          <input type="text">-->
+<!--                      </div>-->
+                  </td>
+              </tr>
+          </template>
+          <td colspan=6>proses</td>
+          <template v-for="(standar, index) in data">
+              <tr>
+                  <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
+              </tr>
+              <tr v-for="(indicator, index) in standar.indicators">
+                  <td>{{ indicator.indicator }}</td>
+                  <td>{{ indicator.target }}</td>
+                  <td><input type="text"></td>
+                  <td>
+                      <input type="text">
+                      <!--                      <div class="col kom">-->
+                      <!--                          <input type="text">-->
+                      <!--                          <input type="text">-->
+                      <!--                      </div>-->
+                  </td>
+              </tr>
+          </template>
+          <td colspan=6>output</td>
+          <template v-for="(standar, index) in output">
+              <tr>
+                  <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
+              </tr>
+              <tr v-for="(indicator, index) in standar.indicators">
+                  <td>{{ indicator.indicator }}</td>
+                  <td>{{ indicator.target }}</td>
+                  <td><input type="text"></td>
+                  <td>
+                      <input type="text">
+                      <!--                      <div class="col kom">-->
+                      <!--                          <input type="text">-->
+                      <!--                          <input type="text">-->
+                      <!--                      </div>-->
                   </td>
               </tr>
           </template>
