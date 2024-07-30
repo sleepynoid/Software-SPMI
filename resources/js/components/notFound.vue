@@ -5,8 +5,8 @@
 <template>
     <div class="not-found">
         <h1>404</h1>
-        <p>Oops! Halaman yang kamu cari tidak ditemukan.</p>
-        <router-link to="/">Kembali ke Beranda</router-link>
+        <p>Oops! Halaman yang kamu cari tidak ditemukan ea</p>
+        <router-link to="/">Mbalek mbalek 🗿🗿</router-link>
     </div>
 </template>
 

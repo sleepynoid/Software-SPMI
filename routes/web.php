@@ -7,6 +7,7 @@ use App\Http\Controllers\JsonController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [JsonController::class, 'GetSheet']);
+Route::view('/upload','upload');
 
 Route::get('/{any}', function () {
     return view('welcome');
