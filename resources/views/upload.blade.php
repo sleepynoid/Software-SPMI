@@ -10,6 +10,10 @@
 <body>
     <h1>Upload File Dataaa</h1>
     <form action="{{route('penetapan.import')}}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
