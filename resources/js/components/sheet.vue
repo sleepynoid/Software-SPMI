@@ -59,7 +59,12 @@ const user = ref(1);
                   <td>{{ indicator.indicator }}</td>
                   <td>{{ indicator.target }}</td>
                   <td><input type="text"></td>
-                  <td><input type="text"></td>
+                  <td>
+                      <div class="col kom">
+                          <input type="text">
+                          <input type="text">
+                      </div>
+                  </td>
               </tr>
           </template>
           </tbody>
@@ -85,5 +90,15 @@ button{
 .wid{
     width: 10rem;
     word-wrap: break-word;
+}
+
+.kom{
+    height: 2rem;
+    overflow-y: auto;
+    gap: 5rem;
+}
+
+.kom::-webkit-scrollbar{
+    display: none;
 }
 </style>
