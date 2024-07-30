@@ -7,6 +7,8 @@ use App\Models\Standar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
+
 
 class PenetapanController extends Controller
 {
@@ -56,7 +58,21 @@ class PenetapanController extends Controller
 
     public function import(Request $request)
     {
-        Excel::import(new PenetapanImport, request()->file('file'));
-        return redirect('/')->with('success', 'Data berhasil diimpor');
+        try {
+            Excel::import(new PenetapanImport, $request->file('file'));
+            return redirect('/')->with('success', 'Data berhasil diimpor');
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            
+            foreach ($failures as $failure) {
+                foreach ($failure->errors() as $error) {
+                    $request->session()->flash('error', $error);
+                    Log::error($error);
+                }
+            }
+            return back()->withInput();
+        } catch (\Exception $e) {
+            return back()->withErrors('Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+        }
     }
 }
