@@ -17,7 +17,7 @@ async function fetchStandar() {
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
-      loading.value = false;
+        loading.value = false;
     }
 }
 
@@ -132,25 +132,28 @@ const user = ref(1);
           </template>
           </tbody>
       </table>
+
     </div>
 
 </template>
 
 
 <style scoped>
-table, th, td {
+table,
+th,
+td {
     border: 1px solid black;
     text-align: center;
     padding: 5px;
     width: 2rem;
 }
 
-button{
+button {
     width: 5rem;
     height: 1rem;
 }
 
-.wid{
+.wid {
     width: 10rem;
     word-wrap: break-word;
 }
