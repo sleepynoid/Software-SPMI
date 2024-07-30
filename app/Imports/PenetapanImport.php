@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
+use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 
-class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSettings
+class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSettings, WithValidation
 {
     public function collection(Collection $rows)
     {
@@ -24,8 +26,6 @@ class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSett
         $lastStandarNote = null;
 
         foreach ($rows as $row) {
-            
-
             if (empty($row['standar']) && $lastStandarNote !== null) {
                 $row['standar'] = $lastStandarNote;
             } else {
@@ -74,6 +74,26 @@ class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSett
     {
         return [
             'input_encoding' => 'ISO-8859-1'
+        ];
+    }
+
+    public function rules(): array
+    {
+        return [
+            '*.standar' => 'string|max:255',
+            '*.indikator' => 'string|max:255',
+            '*.target' => 'numeric'
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            '*.standar.string' => 'Kolom standar harus berupa teks.',
+            '*.standar.max' => 'Kolom standar tidak boleh lebih dari 255 karakter.',
+            '*.indikator.string' => 'Kolom indikator harus berupa teks.',
+            '*.indikator.max' => 'Kolom indikator tidak boleh lebih dari 255 karakter.',
+            '*.target.numeric' => 'Kolom target harus berupa angka.'
         ];
     }
 }
