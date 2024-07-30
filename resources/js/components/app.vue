@@ -4,7 +4,7 @@ import Import from './import.vue';
 
 <template>
     <div>
-        <Import />
+        <Import/>
     </div>
 </template>
 
