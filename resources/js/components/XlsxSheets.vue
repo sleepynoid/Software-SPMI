@@ -19,14 +19,6 @@ export default {
     }
   },
   render() {
-    // if (this.$scopedSlots.default) {
-    //   return h("div", [
-    //     this.$scopedSlots.default({
-    //       sheets: this.innerValue
-    //     })
-    //   ]);
-    // }
-    // return null;
     if (this.$slots.default) {
       return h("div", [
         this.$slots.default({
