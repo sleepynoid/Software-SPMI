@@ -13,4 +13,7 @@ Route::apiResource('/testing',testcontroller::class);
 Route::post('/login',[AccountController::class,'login']);
 Route::post('/register',[AccountController::class,'register']);
 
+Route::get('/nyobak', [JsonController::class, 'aa']);
+
+
 //Route::get('/sheed', [PenetapanController::class, 'index']);
