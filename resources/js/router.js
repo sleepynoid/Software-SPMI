@@ -13,15 +13,15 @@ const routes =[
         path: '/sheet',
         component: Sheet
     },
-    // {
-    //     path: '/import',
-    //     component: Importexcel
-    // },
+    {
+        path: '/import',
+        component: Importexcel
+    },
 
-    // {
-    //     path: '/:pathMatch(.*)*',
-    //     component: NotFound
-    // }
+    {
+        path: '/:pathMatch(.*)*',
+        component: NotFound
+    }
 ]
 
 const router = createRouter({
