@@ -59,7 +59,11 @@ class PenetapanController extends Controller
     public function import(Request $request)
     {
         try {
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls,csv'
+            ]);
             Excel::import(new PenetapanImport, $request->file('file'));
+            $request->file('file')->store('uploads','public');
             return redirect('/')->with('success', 'Data berhasil diimpor');
         } catch (ValidationException $e) {
             $failures = $e->failures();

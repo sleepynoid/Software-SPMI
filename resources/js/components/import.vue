@@ -38,6 +38,8 @@ const addSheet = () => {
 </script>
 
 <template>
+    <router-link to="/">Home</router-link>
+
     <div class="VueXlsx">
         <section>
             <h3>Import XLSX</h3>

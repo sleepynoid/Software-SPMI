@@ -111,5 +111,77 @@ class JsonController extends Controller
         return response()->json($respond);
     }
 
+    public function ax(){
+        $penetapan = Penetapan::find(7);
+        $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'proses')->get();
+        $indikator = Indikator::all();
+        $target = Target::all();
+
+        $respond = [];
+        foreach ($standars as $s) {
+
+            $data = [
+                'standar' => $s->note,
+                'indicators' => []
+            ];
+
+
+            foreach ($indikator as $i){
+                if ($i->id_standar == $s->id){
+                    $tar = null;
+                    foreach ($target as $t){
+                        if ($t->id_indikator == $i->id){
+                            $tar = $t;
+                        }
+                    }
+
+                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
+                    array_push($data['indicators'], $newIndicator);
+                }
+            }
+
+            array_push($respond, $data);
+        }
+
+
+        return response()->json($respond);
+    }
+
+    public function ay(){
+        $penetapan = Penetapan::find(19);
+        $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'output')->get();
+        $indikator = Indikator::all();
+        $target = Target::all();
+
+        $respond = [];
+        foreach ($standars as $s) {
+
+            $data = [
+                'standar' => $s->note,
+                'indicators' => []
+            ];
+
+
+            foreach ($indikator as $i){
+                if ($i->id_standar == $s->id){
+                    $tar = null;
+                    foreach ($target as $t){
+                        if ($t->id_indikator == $i->id){
+                            $tar = $t;
+                        }
+                    }
+
+                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
+                    array_push($data['indicators'], $newIndicator);
+                }
+            }
+
+            array_push($respond, $data);
+        }
+
+
+        return response()->json($respond);
+    }
+
 
 }
