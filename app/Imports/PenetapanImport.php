@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
-class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSettings, WithValidation
+class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSettings
 {
     public function collection(Collection $rows)
     {
@@ -77,23 +77,23 @@ class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSett
         ];
     }
 
-    public function rules(): array
-    {
-        return [
-            '*.standar' => 'string|max:255',
-            '*.indikator' => 'string|max:255',
-            '*.target' => 'numeric'
-        ];
-    }
-
-    public function customValidationMessages()
-    {
-        return [
-            '*.standar.string' => 'Kolom standar harus berupa teks.',
-            '*.standar.max' => 'Kolom standar tidak boleh lebih dari 255 karakter.',
-            '*.indikator.string' => 'Kolom indikator harus berupa teks.',
-            '*.indikator.max' => 'Kolom indikator tidak boleh lebih dari 255 karakter.',
-            '*.target.numeric' => 'Kolom target harus berupa angka.'
-        ];
-    }
+//    public function rules(): array
+//    {
+//        return [
+//            '*.standar' => 'string|max:255',
+//            '*.indikator' => 'string|max:255',
+//            '*.target' => 'numeric'
+//        ];
+//    }
+//
+//    public function customValidationMessages()
+//    {
+//        return [
+//            '*.standar.string' => 'Kolom standar harus berupa teks.',
+//            '*.standar.max' => 'Kolom standar tidak boleh lebih dari 255 karakter.',
+//            '*.indikator.string' => 'Kolom indikator harus berupa teks.',
+//            '*.indikator.max' => 'Kolom indikator tidak boleh lebih dari 255 karakter.',
+//            '*.target.numeric' => 'Kolom target harus berupa angka.'
+//        ];
+//    }
 }

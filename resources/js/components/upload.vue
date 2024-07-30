@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Upload File Data</h1>
-    <input type="file" @change="handleFileUpload" />
+    <h1>Upload File Datax</h1>
+    <input type="file" @change="handleFileUpload" name="file" />
     <button @click="submitFile">Upload</button>
   </div>
 </template>
