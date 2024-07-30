@@ -40,7 +40,7 @@ class JsonController extends Controller
     }
 
     public function GetSheet(){
-        $penetapan = Penetapan::find(1);
+        $penetapan = Penetapan::find(7);
         $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'input')->get();
         $indikator = Indikator::all();
         $target = Target::all();
@@ -58,12 +58,12 @@ class JsonController extends Controller
                 if ($i->id_standar == $s->id){
                     $tar = null;
                         foreach ($target as $t){
-                        if ($t->id == $i->id){
+                        if ($t->id_indikator == $i->id){
                             $tar = $t;
                         }
                     }
 
-                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value, 'komen'=>'Ireland'];
+                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
                     array_push($data['indicators'], $newIndicator);
                 }
             }
@@ -75,48 +75,40 @@ class JsonController extends Controller
         return view('welcome', ['name' => $response]);
     }
 
-    public function aaa(){
-        $datas = [
-            [
-                'standar' => 'Standar 1',
-                'indicators' => [
-                    ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1', 'komen' => 'komentarr'],
-                    ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2', 'komen' => 'komentar 1.2']
-                ]
-            ],
-            [
-                'standar' => 'Standar 1',
-                'indicators' => [
-                    ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1', 'komen' => 'komentarr 2.1'],
-                    ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2', 'komen' => 'komentarr']
-                ]
-            ],
-            [
-                'standar' => 'Standar 2',
-                'indicators' => [
-                    ['indicator' => 'Indicator 2.1', 'target' => 'Target 2.1', 'komen' => 'komentarr'],
-                    ['indicator' => 'Indicator 2.2', 'target' => 'Target 2.2', 'komen' => 'komentarr'],
-                    ['indicator' => 'Indicator 2.3', 'target' => 'Target 2.3', 'komen' => 'komentarr'],
-                    ['indicator' => 'Indicator 2.4', 'target' => 'Target 2.4', 'komen' => 'komentarr']
-                ]
-            ]
-        ];
+    public function aa(){
+        $penetapan = Penetapan::find(7);
+        $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'input')->get();
+        $indikator = Indikator::all();
+        $target = Target::all();
 
-        $data = [
-            'standar' => 'Standar 3',
-            'indicators' => [
-                ['indicator' => 'Indicator 1.1', 'target' => 'Target 1.1', 'komen' => 'komentarr'],
-                ['indicator' => 'Indicator 1.2', 'target' => 'Target 1.2', 'komen' => 'komentarr']
-            ]
-        ];
+        $respond = [];
+        foreach ($standars as $s) {
 
-        $newIndicator = ['indicator' => 'Indicator 1.3', 'target' => 'Target 1.3', 'komen'=>'Ireland'];
-        array_push($data['indicators'], $newIndicator);
-
-        array_push($datas, $data);
+            $data = [
+                'standar' => $s->note,
+                'indicators' => []
+            ];
 
 
-        return view('welcome', ['name' => $datas]);
+            foreach ($indikator as $i){
+                if ($i->id_standar == $s->id){
+                    $tar = null;
+                    foreach ($target as $t){
+                        if ($t->id_indikator == $i->id){
+                            $tar = $t;
+                        }
+                    }
+
+                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
+                    array_push($data['indicators'], $newIndicator);
+                }
+            }
+
+            array_push($respond, $data);
+        }
+
+
+        return response()->json($respond);
     }
 
 
