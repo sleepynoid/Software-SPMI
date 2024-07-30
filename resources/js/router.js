@@ -17,10 +17,11 @@ const routes =[
         path: '/import',
         component: Importexcel
     },
-    // {
-    //     path: '/:pathMatch(.*)*',
-    //     component: NotFound
-    // }
+
+    {
+        path: '/:pathMatch(.*)*',
+        component: NotFound
+    }
 ]
 
 const router = createRouter({

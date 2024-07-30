@@ -4,7 +4,8 @@ import Import from './import.vue';
 
 <template>
     <div>
-        <Import/>
+        <router-view></router-view>
+<!--        <Import />-->
     </div>
 </template>
 
