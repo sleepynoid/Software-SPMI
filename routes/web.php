@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [JsonController::class, 'GetSheet']);
 
 Route::get('/{any}', function () {
-    return view('upload');
+    return view('welcome');
 })->where('any', '.*');
 
 Route::post('/penetapan/import', [PenetapanController::class, 'import'])->name('penetapan.import');
