@@ -26,7 +26,6 @@ export default {
     },
     updateTable(workbook) {
       const ws = workbook.Sheets[this.sheetNameFinder(workbook)];
-      console.log(ws.A1.h);
       let html = this._sheet_to_html(ws, this.options);
 
       html = html.replace('<table>', '<table class="table  table-hover table-striped text-center" style="width:auto;">');
