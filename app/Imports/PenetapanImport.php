@@ -11,20 +11,33 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
-class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSettings
+class PenetapanImport implements WithMultipleSheets
+{
+    public function sheets(): array
+    {
+        return [
+            'Informatika' => new FirstSheetImport(),
+            'Elektro' => new SecondSheetImport(),
+        ];
+    }
+}
+
+
+class FirstSheetImport implements ToCollection, SkipsEmptyRows, WithHeadingRow, WithCustomCsvSettings
 {
     public function collection(Collection $rows)
     {
-        Log::info('isi data pertama: '. $rows[0]);
         $penetapan = Penetapan::create(['id_sheet' => 1]);
-
         $currentType = 'input';
         $currentStandar = null;
         $lastStandarNote = null;
 
+        Log::info('Row data Informatika:', $rows->toArray());
         foreach ($rows as $row) {
             if (empty($row['standar']) && $lastStandarNote !== null) {
                 $row['standar'] = $lastStandarNote;
@@ -77,24 +90,109 @@ class PenetapanImport implements ToCollection, WithHeadingRow, WithCustomCsvSett
         ];
     }
 
-//    public function rules(): array
-//    {
-//        return [
-//            '*.standar' => 'string|max:255',
-//            '*.indikator' => 'string|max:255',
-//            '*.target' => 'numeric'
-//        ];
-//    }
-//
-//    public function customValidationMessages()
-//    {
-//        return [
-//            '*.standar.string' => 'Kolom standar harus berupa teks.',
-//            '*.standar.max' => 'Kolom standar tidak boleh lebih dari 255 karakter.',
-//            '*.indikator.string' => 'Kolom indikator harus berupa teks.',
-//            '*.indikator.max' => 'Kolom indikator tidak boleh lebih dari 255 karakter.',
-//            '*.target.numeric' => 'Kolom target harus berupa angka.'
-//        ];
-//    }
+    // public function rules(): array
+    // {
+    //     return [
+    //         '*.standar' => 'string|max:255',
+    //         '*.indikator' => 'string|max:255',
+    //         '*.target' => 'numeric'
+    //     ];
+    // }
+
+    // public function customValidationMessages()
+    // {
+    //     return [
+    //         'standar.string' => 'Kolom standar harus berupa teks.',
+    //         'standar.max' => 'Kolom standar tidak boleh lebih dari 255 karakter.',
+    //         'indikator.string' => 'Kolom indikator harus berupa teks.',
+    //         'indikator.max' => 'Kolom indikator tidak boleh lebih dari 255 karakter.',
+    //         'target.numeric' => 'Kolom target harus berupa angka.'
+    //     ];
+    // }
+}
+
+class SecondSheetImport implements toCollection, SkipsEmptyRows, WithHeadingRow, WithCustomCsvSettings
+{
+
+    public function collection(Collection $rows)
+    {
+        $penetapan = Penetapan::create(['id_sheet' => 2]);
+
+        $currentType = 'input';
+        $currentStandar = null;
+        $lastStandarNote = null;
+
+        Log::info('Row Data Elektro: ', $rows->toArray());
+        foreach ($rows as $row) {
+            if (empty($row['standar']) && $lastStandarNote !== null) {
+                $row['standar'] = $lastStandarNote;
+            } else {
+                $lastStandarNote = $row['standar'];
+            }
+
+            if (in_array(strtolower($row['standar']), ['input', 'proses', 'output'])) {
+                $currentType = strtolower($row['standar']);
+                continue;
+            }
+
+            if (!$currentStandar || $currentStandar->note != $row['standar']) {
+                $currentStandar = Standar::firstOrCreate([
+                    'id_penetapan' => $penetapan->id,
+                    'note' => $row['standar'],
+                    'tipe' => $currentType
+                ]);
+            }
+
+            if (!empty($row['indikator'])) {
+                $indikator = Indikator::firstOrCreate([
+                    'id_standar' => $currentStandar->id,
+                    'note' => $row['indikator']
+                ]);
+
+                if (!empty($row['target'])) {
+                    Target::create([
+                        'id_indikator' => $indikator->id,
+                        'value' => $row['target']
+                    ]);
+                } else {
+                    Log::warning("Kolom 'target' kosong untuk indikator: " . $row['indikator']);
+                }
+            } else {
+                Log::warning("Kolom 'indikator' kosong untuk standar: " . $row['standar']);
+            }
+        }
+    }
+
+    public function headingRow(): int
+    {
+        return 2;
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => 'ISO-8859-1'
+        ];
+    }
+
+    // public function rules(): array
+    // {
+    //     return [
+    //         '*.standar' => 'string|max:255',
+    //         '*.indikator' => 'string|max:255',
+    //         '*.target' => 'numeric'
+    //     ];
+    // }
+
+    // public function customValidationMessages()
+    // {
+    //     return [
+    //         'standar.string' => 'Kolom standar harus berupa teks.',
+    //         'standar.max' => 'Kolom standar tidak boleh lebih dari 255 karakter.',
+    //         'indikator.string' => 'Kolom indikator harus berupa teks.',
+    //         'indikator.max' => 'Kolom indikator tidak boleh lebih dari 255 karakter.',
+    //         'target.numeric' => 'Kolom target harus berupa angka.'
+    //     ];
+    // }
 }
 

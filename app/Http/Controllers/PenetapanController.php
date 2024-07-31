@@ -63,18 +63,20 @@ class PenetapanController extends Controller
                 'file' => 'required|mimes:xlsx,xls,csv'
             ]);
             Excel::import(new PenetapanImport, $request->file('file'));
-            $request->file('file')->store('uploads','public');
+            $request->file('file')->store('uploads', 'public');
             return redirect('/')->with('success', 'Data berhasil diimpor');
         } catch (ValidationException $e) {
             $failures = $e->failures();
-            
+            $errorMessages = [];
+
             foreach ($failures as $failure) {
                 foreach ($failure->errors() as $error) {
+                    $errorMessages[] = $error;
                     $request->session()->flash('error', $error);
                     Log::error($error);
                 }
             }
-            return back()->withInput();
+            return back()->withErrors(['errors' => $errorMessages]);
         } catch (\Exception $e) {
             return back()->withErrors('Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
         }
