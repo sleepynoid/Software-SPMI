@@ -11,4 +11,8 @@ class Pelaksanaan extends Model
     protected $fillable = [
         'id_sheet'
     ];
+
+    public function standar() {
+        return $this->hasMany(Standar::class,'id_indikator');
+    }
 }

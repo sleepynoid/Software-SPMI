@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('bukti_pelaksanaans', function (Blueprint $table) {
             $table->id();
+            $table->string('judul_link');
+            $table->string('link');
+            $table->unsignedBigInteger('id_pelaksanaan');
             $table->timestamps();
+
+            $table->foreign('id_pelaksanaan')->references('id')->on('pelaksanaans')->onDelete('cascade');
         });
     }
 
