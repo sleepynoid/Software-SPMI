@@ -6,6 +6,7 @@ const standarData = ref([]);
 const loading = ref(true);
 const data = ref([]);
 const output = ref([]);
+const youtubeLink = ref('https://www.youtube.com/');
 
 // const fromPhp = ref(window.items);
 
@@ -86,7 +87,8 @@ const user = ref(1);
                   <td>{{ indicator.target }}</td>
                   <td><input type="text"></td>
                   <td>
-                      <input type="text">
+<!--                  <input type="text">-->
+                  <a :href="youtubeLink" target="_blank" class="youtube-button">Go to YouTube</a>
 <!--                      <div class="col kom">-->
 <!--                          <input type="text">-->
 <!--                          <input type="text">-->
@@ -153,18 +155,18 @@ button {
     height: 1rem;
 }
 
-.wid {
-    width: 10rem;
-    word-wrap: break-word;
+.youtube-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ff0000;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
-
-.kom{
-    height: 2rem;
-    overflow-y: auto;
-    gap: 5rem;
-}
-
-.kom::-webkit-scrollbar{
-    display: none;
+.youtube-button:hover {
+    background-color: #cc0000;
 }
 </style>
