@@ -16,6 +16,6 @@ class BuktiPelaksanaan extends Model
     ];
 
     public function pelaksanaan() {
-        return $this->belongsTo(Pelaksanaan::class,'id_bukti_pelaksanaan');
+        return $this->belongsTo(Pelaksanaan::class);
     }
 }
