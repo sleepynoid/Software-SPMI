@@ -22,6 +22,9 @@ console.log('sheets', sheets);
 const collection = ref([]);
 const onChange = (event) => {
     file.value = event.target.files ? event.target.files[0] : null;
+    // if (file.value) {
+    //     await sendFileToAPI(file.value);
+    // }
 };
 
 // const inputIndex = computed(() => {
@@ -30,6 +33,21 @@ const onChange = (event) => {
 //         return entries.findIndex(([key, value]) => value === 'INPUT');
 //     });
 // });
+
+const sendFileToAPI = async () => {
+    const formData = new FormData();
+    formData.append('file', file.value);
+    try {
+        const response = await axios.post('api/penetapan/import', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        console.log('File terkirim:', response.data);
+    } catch (error) {
+        console.error('Error mengirim file:', error);
+    }
+};
 
 const addSheet = () => {
     sheets.value.push({ name: sheetName.value, data: [...collection.value] });
@@ -44,6 +62,7 @@ const addSheet = () => {
         <section>
             <h3>Import XLSX</h3>
             <input type="file" @change="onChange" />
+            <button @click="sendFileToAPI">Upload File</button>
             <xlsx-read :file="file">
                 <template #default="{ loading }">
                     <span v-if="loading">Loading...</span>
