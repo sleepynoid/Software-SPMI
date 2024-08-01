@@ -53,6 +53,8 @@ RUN apt-get update \
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.3
 
+RUN npm install -g @vitejs/plugin-vue@^5.0.5 axios@^1.7.2 laravel-vite-plugin@^1.0 vite@^5.0
+
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 

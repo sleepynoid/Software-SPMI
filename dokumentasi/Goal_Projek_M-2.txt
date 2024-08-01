@@ -1,0 +1,15 @@
+## goal
+# front end
+1. buat adjuntment evaluasi saja
+2. tambah button link komentar, di pop up window otw figma
+3. link bukti pelaksanaan(nyambung dengan model pelaksanaan), design kira2 sama dengan link komentar
+
+# backend
+1. buat middleware buat check token
+2. buat table link meta data bukti pelaksanaan, bukti pelaksanaan m -> 1 pelaksaan
+
+# proses excel
+1. ganti proses excel seperti dahulu
+2. buat inputan jurusan, periode, tipe sheet, dari input user yang nanti di pass ke backend
+3. nanti file disimpan berdasarkan nama yang diinputkan di no 2
+
