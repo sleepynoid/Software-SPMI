@@ -10,12 +10,15 @@ class BuktiPelaksanaan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'judul_link',
-        'link',
+        'komentar',
+        'id_indikator',
         'id_pelaksanaan',
     ];
 
     public function pelaksanaan() {
-        return $this->belongsTo(Pelaksanaan::class,'id_bukti_pelaksanaan');
+        return $this->belongsTo(Pelaksanaan::class);
+    }
+    public function link() {
+        return $this->hasMany(link::class,'id_bukti_pelaksanaan');
     }
 }

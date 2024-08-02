@@ -12,7 +12,7 @@ class Pelaksanaan extends Model
         'id_sheet'
     ];
 
-    public function standar() {
-        return $this->hasMany(Standar::class,'id_indikator');
+    public function BuktiPelaksanaan() {
+        $this->hasMany(BuktiPelaksanaan::class,'id_pelaksanaan');
     }
 }
