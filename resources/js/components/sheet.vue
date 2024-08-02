@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import Modal from "@/components/modal.vue";
 
 // Definisikan variabel reaktif
 const standarData = ref([]);
 const loading = ref(true);
 const data = ref([]);
 const output = ref([]);
-const youtubeLink = ref('https://www.youtube.com/');
 
 // const fromPhp = ref(window.items);
 
@@ -48,6 +48,18 @@ async function fetchOutput() {
 
 console.log(data);
 
+const popupTriggers = ref(false)
+const selectedIndicator = ref(null)
+const asu = ref("jamban")
+const togglePopup = () => {
+    popupTriggers.value = !popupTriggers.value
+}
+
+const openPopup = (indicator) =>{
+    selectedIndicator.value = indicator;
+    togglePopup();
+}
+
 onMounted(fetchStandar)
 onMounted(fetchOutput)
 onMounted(fetchProses)
@@ -57,7 +69,11 @@ const user = ref(1);
 
 
 <template>
-    <router-link to="/">Home</router-link>
+    <router-link class="pop" to="/">Home</router-link>
+
+    <button class="pop">Save</button>
+    <br>
+    <br>
 
     <div v-if="loading">Loading...</div>
     <div v-else>
@@ -85,17 +101,15 @@ const user = ref(1);
               <tr v-for="(indicator, index) in standar.indicators">
                   <td>{{ indicator.indicator }}</td>
                   <td>{{ indicator.target }}</td>
-                  <td><input type="text"></td>
+                  <td><input type="text" ></td>
                   <td>
-<!--                  <input type="text">-->
-                  <a :href="youtubeLink" target="_blank" class="youtube-button">Go to YouTube</a>
-<!--                      <div class="col kom">-->
-<!--                          <input type="text">-->
-<!--                          <input type="text">-->
-<!--                      </div>-->
+                      <button class="pop" @click="openPopup(indicator.indicator)">Link</button>
                   </td>
               </tr>
           </template>
+
+
+
           <td colspan=6>proses</td>
           <template v-for="(standar, index) in data">
               <tr>
@@ -135,6 +149,11 @@ const user = ref(1);
           </tbody>
       </table>
 
+        <Modal v-if="popupTriggers"
+               :idS="selectedIndicator"
+               :togglePopup="togglePopup">
+        </Modal>
+
     </div>
 
 </template>
@@ -155,18 +174,8 @@ button {
     height: 1rem;
 }
 
-.youtube-button {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #ff0000;
-    color: white;
-    text-decoration: none;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.youtube-button:hover {
-    background-color: #cc0000;
+.pop{
+    padding: 3px;
+    height: 2rem;
 }
 </style>
