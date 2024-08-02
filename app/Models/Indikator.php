@@ -15,7 +15,7 @@ class Indikator extends Model
     ];
 
     public function standar() {
-        return $this->belongsTo(Standar::class,'id_indikator');
+        return $this->belongsTo(Standar::class);
     }
     public function target() {
         return $this->hasMany(Target::class,'id_indikator');

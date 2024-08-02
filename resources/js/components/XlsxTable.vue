@@ -30,7 +30,7 @@ export default {
 
             html = html.replace(
                 "<table>",
-                '<table class="table  table-hover table-striped text-center" style="width:auto;">'
+                '<table class="table  table-hover table-striped text-center" style="width:100%;">'
             );
 
             const parser = new DOMParser();
