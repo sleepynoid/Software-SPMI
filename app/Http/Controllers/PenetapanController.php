@@ -60,11 +60,24 @@ class PenetapanController extends Controller
     {
         try {
             $request->validate([
-                'file' => 'required|mimes:xlsx,xls,csv'
+                'file' => 'required|mimes:xlsx,xls,csv',
+                'jurusan' => 'required',
+                'tipe' => 'required',
+                'periode' => 'required',
+                'note' => 'nullable'
             ]);
-            Excel::import(new PenetapanImport, $request->file('file'));
-            $request->file('file')->store('uploads', 'public');
-            return redirect('/')->with('success', 'Data berhasil diimpor');
+
+            $sheet = [
+                'jurusan' => $request->jurusan,
+                'tipe_sheet' => $request->tipe,
+                'periode' => $request->periode,
+                'note' => $request->note
+            ];
+
+            $fileName = $request->jurusan . '_' . $request->tipe . '_' . $request->periode . '.xlsx';
+            Excel::import(new PenetapanImport($sheet), $request->file('file'));
+            $request->file('file')->storeAs('uploads', $fileName, 'public');
+            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor', 'redirect' => '/sheet']);
         } catch (ValidationException $e) {
             $failures = $e->failures();
             $errorMessages = [];
@@ -76,9 +89,10 @@ class PenetapanController extends Controller
                     Log::error($error);
                 }
             }
-            return back()->withErrors(['errors' => $errorMessages]);
+            return response()->json(['success' => false, 'message' => 'Data gagal diimpor', 'errors' => $errorMessages]);
         } catch (\Exception $e) {
-            return back()->withErrors('Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+            Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
         }
     }
 }

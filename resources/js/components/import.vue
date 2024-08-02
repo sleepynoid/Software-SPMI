@@ -1,115 +1,246 @@
 <script setup>
-import XlsxRead from './XlsxRead.vue';
+import XlsxRead from "./XlsxRead.vue";
 import XlsxTable from "./XlsxTable.vue";
 import XlsxSheets from "./XlsxSheets.vue";
-import XlsxJson from "./XlsxJson.vue";
-// import XlsxWorkbook from "./components/XlsxWorkbook.vue";
-// import XlsxSheet from "./components/XlsxSheet.vue";
-// import XlsxDownload from "./components/XlsxDownload.vue";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
-import { ref } from 'vue';
-
-
-const userRole = ref('admin');
-const comment = ref('');
-const proofLink = ref('');
-
+const router = useRouter();
 const file = ref(null);
 const selectedSheet = ref(null);
-const sheets = ref([]);
-const sheetName = ref(sheets.value[0]);
-console.log('sheets', sheets);
-const collection = ref([]);
-const onChange = (event) => {
+const department = ref("");
+const type = ref("");
+const period = ref("");
+const note = ref("");
+
+const handleFileChange = (event) => {
     file.value = event.target.files ? event.target.files[0] : null;
-    // if (file.value) {
-    //     await sendFileToAPI(file.value);
-    // }
 };
 
-// const inputIndex = computed(() => {
-//     const rows = collection.value.map(row => Object.entries(row));
-//     return rows.map(entries => {
-//         return entries.findIndex(([key, value]) => value === 'INPUT');
-//     });
-// });
-
-const sendFileToAPI = async () => {
+const submitData = async () => {
     const formData = new FormData();
-    formData.append('file', file.value);
+    formData.append("file", file.value);
+    formData.append("jurusan", department.value);
+    formData.append("tipe", type.value);
+    formData.append("periode", period.value);
+    formData.append("note", note.value);
+
     try {
-        const response = await axios.post('api/penetapan/import', formData, {
+        const response = await axios.post("api/penetapan/import", formData, {
             headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+                "Content-Type": "multipart/form-data",
+            },
         });
-        console.log('File terkirim:', response.data);
+        if (response.data.success) {
+            alert(response.data.message);
+            router.push(response.data.redirect);
+        } else {
+            alert("Error: " + response.data.message);
+        }
     } catch (error) {
-        console.error('Error mengirim file:', error);
+        console.error("Error mengirim file:", error);
     }
 };
+// const period = ref('');
 
-const addSheet = () => {
-    sheets.value.push({ name: sheetName.value, data: [...collection.value] });
-    sheetName.value = null;
-};
+function generateYearRange() {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+        years.push(year);
+    }
+    return years;
+}
 </script>
 
 <template>
-    <router-link to="/">Home</router-link>
-
-    <div class="VueXlsx">
-        <section>
-            <h3>Import XLSX</h3>
-            <input type="file" @change="onChange" />
-            <button @click="sendFileToAPI">Upload File</button>
+    <div class="container">
+        <div class="upload-section">
+            <router-link to="/">Home</router-link>
+            <h2>Tambah/ Unggah Berkas</h2>
+            <form @submit.prevent="submitData">
+                <div class="form-group">
+                    <label for="file-upload"
+                        >Pilih berkas <span class="required">*</span></label
+                    >
+                    <input
+                        class="form-control"
+                        type="file"
+                        id="file-upload"
+                        @change="handleFileChange"
+                        required
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="department"
+                        >Jurusan <span class="required">*</span></label
+                    >
+                    <select id="department" v-model="department" required>
+                        <option value="">Pilih Jurusan</option>
+                        <option value="informatika">Teknik Informatika</option>
+                        <option value="sistem informasi">
+                            Sistem Informasi
+                        </option>
+                        <option value="elektro">Teknik Elektro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type"
+                        >Tipe <span class="required">*</span></label
+                    >
+                    <select id="type" v-model="type" required>
+                        <option value="">Pilih Tipe</option>
+                        <option value="pendidikan">Pendidikan</option>
+                        <option value="penelitian">Penelitian</option>
+                        <option value="pengabdian">Pengabdian</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="period">Periode <span class="required">*</span></label>
+                    <input type="date" id="period" v-model="period" required />
+                    <!-- <select id="period" v-model="period" required>
+                        <option value="">Pilih Periode</option>
+                        <option
+                            v-for="year in generateYearRange()"
+                            :value="`${year}/${year + 1}`"
+                        >
+                            {{ `${year}/${year + 1}` }}
+                        </option>
+                    </select> -->
+                </div>
+                <div class="form-group">
+                    <label for="note">Catatan</label>
+                    <textarea
+                        id="note"
+                        v-model="note"
+                        rows="4"
+                        placeholder="Masukkan catatan jika ada"
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Kirim</button>
+            </form>
+        </div>
+        <div class="preview-section">
+            <h3>Pratinjau Berkas</h3>
             <xlsx-read :file="file">
                 <template #default="{ loading }">
-                    <span v-if="loading">Loading...</span>
+                    <span v-if="loading">Memuat...</span>
                     <xlsx-sheets>
                         <template #default="{ sheets }">
-                            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                            <nav class="navbar">
                                 <ul class="navbar-nav">
-                                    <li class="nav-item" v-for="sheet in sheets" :key="sheet">
-                                        <a class="nav-link" :class="{ 'active': selectedSheet === sheet }" href="#"
+                                    <li
+                                        class="nav-item"
+                                        v-for="sheet in sheets"
+                                        :key="sheet"
+                                    >
+                                        <a
+                                            class="nav-link"
+                                            :class="{
+                                                active: selectedSheet === sheet,
+                                            }"
+                                            href="#"
                                             @click="selectedSheet = sheet"
-                                            :style="{ backgroundColor: selectedSheet === sheet ? '#343a40' : '' }">{{
-                                                sheet }}</a>
+                                            :style="{
+                                                backgroundColor:
+                                                    selectedSheet === sheet
+                                                        ? '#94b6ff'
+                                                        : '',
+                                            }"
+                                            >{{ sheet }}</a
+                                        >
                                     </li>
                                 </ul>
                             </nav>
                         </template>
                     </xlsx-sheets>
-                    <xlsx-table :sheet="selectedSheet" />
-                    <!-- <xlsx-json :sheet="selectedSheet">
-                        <template #default="{ collection }">
-                            <h3>Komentar dan Bukti Pelaksanaan</h3>
-                            <section v-for="(row, index) in collection" :key="row" v-if="userRole === 'admin'">
-                                <pre>{{ index }}</pre>
-                                <div v-for="(value, key) in row" :key="key" v-if="index > 0">
-                                    <pre>{{ index }}</pre>
-                                    <h2 v-if="['INPUT', 'PROCESS', 'OUTPUT'].includes(value)">{{ value }}</h2>
-                                    <div v-if="!['INPUT', 'PROCESS', 'OUTPUT'].includes(value) && value">
-                                        <div>
-                                            <label>Komentar:</label>
-                                            <textarea class="form-control" aria-label="With textarea" type="text"
-                                                v-model="comment" placeholder="Masukkan komentar"></textarea>
-                                        </div>
-                                        <div>
-                                            <label>Link Bukti Pelaksanaan:</label>
-                                            <input type="url" v-model="proofLink" placeholder="Masukkan URL">
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
-                            <pre>{{ JSON.parse(collection, null, 2) }}</pre>
-                            <pre>{{J}}</pre>
-                        </template>
-                    </xlsx-json> -->
+                    <div class="xlsx-table">
+                        <xlsx-table :sheet="selectedSheet" />
+                    </div>
                 </template>
             </xlsx-read>
-        </section>
-
-
+        </div>
     </div>
 </template>
+
+<style>
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+}
+.upload-section,
+.preview-section {
+    height: fit-content;
+    width: 48%;
+    margin: 0;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="file"],
+input[type="text"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.required {
+    color: red;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: white;
+}
+
+.preview-section {
+    overflow: hidden;
+    max-height: 600px;
+}
+
+.xlsx-table {
+    overflow-x: auto;
+    max-height: 450px;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #94b6ff;
+    border-radius: 50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #94b6ff;
+}
+</style>
