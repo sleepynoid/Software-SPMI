@@ -180,6 +180,9 @@ function generateYearRange() {
     border-radius: 8px;
 }
 
+
+    </div>
+</template>
 .form-group {
     margin-bottom: 20px;
 }
