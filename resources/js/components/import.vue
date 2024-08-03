@@ -77,11 +77,9 @@ function generateYearRange() {
                     >
                     <select id="department" v-model="department" required>
                         <option value="">Pilih Jurusan</option>
-                        <option value="informatika">Teknik Informatika</option>
-                        <option value="sistem informasi">
-                            Sistem Informasi
-                        </option>
-                        <option value="elektro">Teknik Elektro</option>
+                        <option value="Teknik Informatika">Teknik Informatika</option>
+                        <option value="Sistem Informasi">Sistem Informasi</option>
+                        <option value="Teknik Elektro">Teknik Elektro</option>
                     </select>
                 </div>
                 <div class="form-group">

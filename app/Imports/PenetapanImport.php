@@ -2,6 +2,10 @@
 
 namespace App\Imports;
 
+use App\Models\BuktiPelaksanaan;
+use App\Models\Evaluasi;
+use App\Models\link;
+use App\Models\Pelaksanaan;
 use App\Models\Penetapan;
 use App\Models\Sheet;
 use App\Models\Standar;
@@ -33,6 +37,8 @@ class PenetapanImport implements ToCollection, SkipsEmptyRows, WithHeadingRow, W
         Log::info($sheet->id);
         
         $penetapan = Penetapan::create(['id_sheet' => $sheet->id]);
+        $pelaksanaan = Pelaksanaan::create(['id_sheet' => $sheet->id]);
+        $evaluasi = Evaluasi::create(['id_sheet' => $sheet->id]);
         $currentType = 'input';
         $currentStandar = null;
         $lastStandarNote = null;
@@ -61,6 +67,18 @@ class PenetapanImport implements ToCollection, SkipsEmptyRows, WithHeadingRow, W
                 $indikator = Indikator::firstOrCreate([
                     'id_standar' => $currentStandar->id,
                     'note' => $row['indikator']
+                ]);
+
+                $buktiPelaksanaan = BuktiPelaksanaan::create([
+                    'komentar' => '',
+                    'id_indikator' => $indikator->id,
+                    'id_pelaksanaan' => $pelaksanaan->id
+                ]);
+
+                link::create([
+                    'judul_link' => '',
+                    'link' => '',
+                    'id_bukti_pelaksanaan' => $buktiPelaksanaan->id
                 ]);
 
                 if (!empty($row['target'])) {
