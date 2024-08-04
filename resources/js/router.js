@@ -11,7 +11,8 @@ const routes =[
         component: Home
     },
     {
-        path: '/sheet',
+        path: '/sheet/:idSheet',
+        name: 'Sheet',
         component: Sheet
     },
     {

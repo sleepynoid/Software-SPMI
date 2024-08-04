@@ -2,7 +2,7 @@
 </script>
 
 <template>
-   <router-link to="/sheet">Sheet</router-link>
+   <router-link :to="{ name: 'Sheet', params: {idSheet: 27}}">Sheet</router-link>
 
   <router-link to="/import">Import</router-link>
 

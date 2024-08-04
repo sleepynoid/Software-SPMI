@@ -14,9 +14,9 @@ Route::post('/login',[AccountController::class,'login']);
 Route::post('/register',[AccountController::class,'register']);
 Route::post('/penetapan/import',[PenetapanController::class,'import']);
 
-Route::get('/nyobak', [JsonController::class, 'aa']);
-Route::get('/nyo', [JsonController::class, 'ax']);
-Route::get('/bak', [JsonController::class, 'ay']);
+Route::get('/input', [JsonController::class, 'aa']);
+Route::get('/proses', [JsonController::class, 'ax']);
+Route::get('/output', [JsonController::class, 'ay']);
 
 
 //Route::get('/sheed', [PenetapanController::class, 'index']);
