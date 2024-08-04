@@ -1,56 +1,21 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, watchEffect} from 'vue';
 import Modal from "@/components/modal.vue";
 
-// Definisikan variabel reaktif
 const standarData = ref([]);
 const loading = ref(true);
-const data = ref([]);
-const output = ref([]);
+const tipe = ['input', 'proses', 'output'];
+const current = ref(tipe[0]);
 
-// const fromPhp = ref(window.items);
 
-async function fetchStandar() {
-    try {
-        let response = await fetch('/api/nyobak');
-        standarData.value = await response.json();
-        // standarData.value = JSON.parse(Data.value);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    } finally {
-        loading.value = false;
-    }
-}
-
-async function fetchProses() {
-    try {
-        let response = await fetch('/api/nyo');
-        data.value = await response.json();
-        // standarData.value = JSON.parse(Data.value);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    } finally {
-        loading.value = false;
-    }
-}
-
-async function fetchOutput() {
-    try {
-        let response = await fetch('/api/bak');
-        output.value = await response.json();
-        // standarData.value = JSON.parse(Data.value);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    } finally {
-        loading.value = false;
-    }
-}
-
-console.log(data);
+watchEffect(async ()=> {
+    let response = await fetch(`/api/${current.value}`);
+    standarData.value = await response.json();
+    loading.value = false;
+})
 
 const popupTriggers = ref(false)
 const selectedIndicator = ref(null)
-const asu = ref("jamban")
 const togglePopup = () => {
     popupTriggers.value = !popupTriggers.value
 }
@@ -60,11 +25,6 @@ const openPopup = (indicator) =>{
     togglePopup();
 }
 
-onMounted(fetchStandar)
-onMounted(fetchOutput)
-onMounted(fetchProses)
-
-const user = ref(1);
 </script>
 
 
@@ -74,7 +34,13 @@ const user = ref(1);
     <button class="pop">Save</button>
     <br>
     <br>
-
+    <template v-for="t in tipe">
+        <input type="radio"
+        :id="t"
+        :value="t"
+        v-model="current">
+        <label :for="t">{{t}}</label>
+    </template>
     <div v-if="loading">Loading...</div>
     <div v-else>
       <table border="1">
@@ -108,44 +74,6 @@ const user = ref(1);
               </tr>
           </template>
 
-
-
-          <td colspan=6>proses</td>
-          <template v-for="(standar, index) in data">
-              <tr>
-                  <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
-              </tr>
-              <tr v-for="(indicator, index) in standar.indicators">
-                  <td>{{ indicator.indicator }}</td>
-                  <td>{{ indicator.target }}</td>
-                  <td><input type="text"></td>
-                  <td>
-                      <input type="text">
-                      <!--                      <div class="col kom">-->
-                      <!--                          <input type="text">-->
-                      <!--                          <input type="text">-->
-                      <!--                      </div>-->
-                  </td>
-              </tr>
-          </template>
-          <td colspan=6>output</td>
-          <template v-for="(standar, index) in output">
-              <tr>
-                  <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
-              </tr>
-              <tr v-for="(indicator, index) in standar.indicators">
-                  <td>{{ indicator.indicator }}</td>
-                  <td>{{ indicator.target }}</td>
-                  <td><input type="text"></td>
-                  <td>
-                      <input type="text">
-                      <!--                      <div class="col kom">-->
-                      <!--                          <input type="text">-->
-                      <!--                          <input type="text">-->
-                      <!--                      </div>-->
-                  </td>
-              </tr>
-          </template>
           </tbody>
       </table>
 

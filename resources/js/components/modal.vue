@@ -3,15 +3,53 @@ const props = defineProps({
     togglePopup: Function,
     idS: String
 });
+
+import {ref} from "vue";
+
+const link = ref('')
+const judulLink = ref('')
+const links = ref([])
+let id = 0
+
+function addLink(){
+    links.value.push({id: id++, judul: judulLink.value, link: link.value})
+    judulLink.value = '';
+    link.value = '';
+}
+
+function removeTodo(link) {
+    links.value = links.value.filter((t) => t !== link)
+}
+
+const openLink = (link) => {
+    window.open(link, "_blank")
+}
 </script>
 
 <template>
     <div class="popup">
         <div class="popup-inner">
             <slot/>
+            <h2>Link Bukti Pelaksanaan</h2>
             <h2>{{idS}}</h2>
-            <input type="text" name="" id="">
+<!--            <input type="text" name="" id="">-->
 
+            <ul>
+                <li v-for="link in links" :key="link.id">
+                    <div class="link">
+                        <p>Judul: {{link.judul}}</p>
+                        <button @click="openLink(link.link)">link</button>
+                    <button @click="removeTodo(link)">X</button>
+                    </div>
+                    <!--      <p>Link: {{link.link}}</p>-->
+                </li>
+            </ul>
+
+            <input v-model="judulLink" required placeholder="judul link">
+            <input v-model="link" required placeholder="judul link">
+
+            <button @click="addLink">add</button>
+            <br>
             <br>
             <button class="popup-close" @click="props.togglePopup">CLose</button>
         </div>
@@ -38,5 +76,10 @@ const props = defineProps({
     margin-bottom: 20rem;
     background: #FFF;
     padding: 32px;
+}
+
+.link{
+    display: flex;
+    gap: 1rem;
 }
 </style>
