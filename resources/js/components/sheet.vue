@@ -1,14 +1,22 @@
 <script setup>
 import {ref, onMounted, watchEffect} from 'vue';
 import Modal from "@/components/modal.vue";
+import {useRoute} from "vue-router";
+import { infinity } from 'ldrs'
+
+infinity.register()
 
 const standarData = ref([]);
 const loading = ref(true);
 const tipe = ['input', 'proses', 'output'];
 const current = ref(tipe[0]);
 
+const route = useRoute();
+const idSheet = ref(route.params.idSheet);
+console.log(idSheet);
 
 watchEffect(async ()=> {
+    loading.value = true;
     let response = await fetch(`/api/${current.value}`);
     standarData.value = await response.json();
     loading.value = false;
@@ -30,6 +38,7 @@ const openPopup = (indicator) =>{
 
 <template>
     <router-link class="pop" to="/">Home</router-link>
+    <h1>{{idSheet}}</h1>
 
     <button class="pop">Save</button>
     <br>
@@ -41,7 +50,16 @@ const openPopup = (indicator) =>{
         v-model="current">
         <label :for="t">{{t}}</label>
     </template>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading">
+        <l-infinity
+            size="55"
+            stroke="4"
+            stroke-length="0.15"
+            bg-opacity="0.1"
+            speed="1.3"
+            color="black"
+        ></l-infinity>
+    </div>
     <div v-else>
       <table border="1">
           <thead>
