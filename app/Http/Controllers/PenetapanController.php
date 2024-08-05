@@ -59,40 +59,58 @@ class PenetapanController extends Controller
     public function import(Request $request)
     {
         try {
-            $request->validate([
-                'file' => 'required|mimes:xlsx,xls,csv',
-                'jurusan' => 'required',
-                'tipe' => 'required',
-                'periode' => 'required',
-                'note' => 'nullable'
-            ]);
+            $this->validateRequest($request);
 
-            $sheet = [
-                'jurusan' => $request->jurusan,
-                'tipe_sheet' => $request->tipe,
-                'periode' => $request->periode,
-                'note' => $request->note
-            ];
+            $sheet = $this->prepareSheetData($request);
+            $fileName = $this->createFileName($request);
 
-            $fileName = $request->jurusan . '_' . $request->tipe . '_' . $request->periode . '.xlsx';
             Excel::import(new PenetapanImport($sheet), $request->file('file'));
             $request->file('file')->storeAs('uploads', $fileName, 'public');
+
             return response()->json(['success' => true, 'message' => 'Data berhasil diimpor', 'redirect' => '/sheet']);
         } catch (ValidationException $e) {
-            $failures = $e->failures();
-            $errorMessages = [];
-
-            foreach ($failures as $failure) {
-                foreach ($failure->errors() as $error) {
-                    $errorMessages[] = $error;
-                    $request->session()->flash('error', $error);
-                    Log::error($error);
-                }
-            }
-            return response()->json(['success' => false, 'message' => 'Data gagal diimpor', 'errors' => $errorMessages]);
+            return $this->handleValidationException($e, $request);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
         }
+    }
+
+    private function validateRequest(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+            'jurusan' => 'required',
+            'tipe' => 'required',
+            'periode' => 'required',
+            'note' => 'nullable'
+        ]);
+    }
+
+    private function prepareSheetData(Request $request)
+    {
+        return [
+            'jurusan' => $request->jurusan,
+            'tipe_sheet' => $request->tipe,
+            'periode' => $request->periode,
+            'note' => $request->note
+        ];
+    }
+
+    private function createFileName(Request $request)
+    {
+        return $request->jurusan . '_' . $request->tipe . '_' . $request->periode . '.xlsx';
+    }
+
+    private function handleValidationException(ValidationException $e, Request $request)
+    {
+        $errorMessages = [];
+        foreach ($e->failures() as $failure) {
+            foreach ($failure->errors() as $error) {
+                $errorMessages[] = $error;
+                $request->session()->flash('error', $error);
+                Log::error($error);
+            }
+        }
+        return response()->json(['success' => false, 'message' => 'Data gagal diimpor', 'errors' => $errorMessages]);
     }
 }
