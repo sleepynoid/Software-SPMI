@@ -18,5 +18,8 @@ Route::get('/input', [JsonController::class, 'aa']);
 Route::get('/proses', [JsonController::class, 'ax']);
 Route::get('/output', [JsonController::class, 'ay']);
 
+Route::get('/getPeriode/{jurusan}', [JsonController::class, 'getPeriode']);
+Route::get('/getSheet/{jurusan}/{periode}', [JsonController::class, 'getSheet']);
+
 
 //Route::get('/sheed', [PenetapanController::class, 'index']);

@@ -14,51 +14,6 @@
     <br>
 </div>
 
-<script>
-    {{--window.items = @json($name);--}}
-</script>
-
-
-{{--<table border="1">--}}
-{{--    <thead>--}}
-{{--    <tr>--}}
-{{--        <th colspan="3">Penetapan</th>--}}
-{{--        <th rowspan="1" colspan="2">Pelaksanaan</th>--}}
-{{--    </tr>--}}
-{{--    <tr>--}}
-{{--        <th>Standard</th>--}}
-{{--        <th>Indicator</th>--}}
-{{--        <th>Target</th>--}}
-{{--        <th>Komentar</th>--}}
-{{--        <th>Link Bukti</th>--}}
-{{--    </tr>--}}
-{{--    </thead>--}}
-{{--<td colspan=6>input</td>--}}
-{{--    <tbody>--}}
-{{--    @foreach($name as $standar)--}}
-{{--        @php--}}
-{{--            $rowspan = count($standar['indicators']);--}}
-{{--        @endphp--}}
-{{--        <tr>--}}
-{{--            <td rowspan="{{ $rowspan }}">{{ $standar['standar'] }}</td>--}}
-{{--            <td>{{ $standar['indicators'][0]['indicator'] }}</td>--}}
-{{--            <td>{{ $standar['indicators'][0]['target'] }}</td>--}}
-{{--            <td><input type="text"></td>--}}
-{{--            <td><input type="text"></td>--}}
-{{--        </tr>--}}
-{{--        @for($i = 1; $i < $rowspan; $i++)--}}
-{{--            <tr>--}}
-{{--                <td>{{ $standar['indicators'][$i]['indicator'] }}</td>--}}
-{{--                <td>{{ $standar['indicators'][$i]['target'] }}</td>--}}
-{{--                <td><input type="text"></td>--}}
-{{--                <td><input type="text"></td>--}}
-{{--            </tr>--}}
-{{--        @endfor--}}
-{{--    @endforeach--}}
-{{--    </tbody>--}}
-{{--</table>--}}
-
-
     <style>
         body {
             width: 100vw;
@@ -77,7 +32,8 @@
 
     button{
         border-style: none;
-        width: 4rem;
+        width: 3rem;
+        height: 2rem;
     }
 
     .app{

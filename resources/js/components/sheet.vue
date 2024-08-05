@@ -1,19 +1,21 @@
 <script setup>
 import {ref, onMounted, watchEffect} from 'vue';
-import Modal from "@/components/modal.vue";
 import {useRoute} from "vue-router";
-import { infinity } from 'ldrs'
+import { dotStream } from 'ldrs'
+import Sheets from "@/components/sheets.vue"
 
-infinity.register()
+dotStream.register()
 
 const standarData = ref([]);
 const loading = ref(true);
 const tipe = ['input', 'proses', 'output'];
 const current = ref(tipe[0]);
 
+const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
+const currentSheet = ref(tipeSheet[0]);
+
 const route = useRoute();
-const idSheet = ref(route.params.idSheet);
-console.log(idSheet);
+const idSheet = ref(route.params.idsheet);
 
 watchEffect(async ()=> {
     loading.value = true;
@@ -22,16 +24,7 @@ watchEffect(async ()=> {
     loading.value = false;
 })
 
-const popupTriggers = ref(false)
-const selectedIndicator = ref(null)
-const togglePopup = () => {
-    popupTriggers.value = !popupTriggers.value
-}
 
-const openPopup = (indicator) =>{
-    selectedIndicator.value = indicator;
-    togglePopup();
-}
 
 </script>
 
@@ -40,7 +33,12 @@ const openPopup = (indicator) =>{
     <router-link class="pop" to="/">Home</router-link>
     <h1>{{idSheet}}</h1>
 
-    <button class="pop">Save</button>
+<!--    <button class="pop">Save</button>-->
+    <p>tipe:</p>
+    <select v-model="currentSheet" class="tipe" required>
+        <option v-for="t in tipeSheet">{{t}}</option>
+    </select>
+<!--    {{currentSheet}}-->
     <br>
     <br>
     <template v-for="t in tipe">
@@ -51,55 +49,14 @@ const openPopup = (indicator) =>{
         <label :for="t">{{t}}</label>
     </template>
     <div v-if="loading">
-        <l-infinity
-            size="55"
-            stroke="4"
-            stroke-length="0.15"
-            bg-opacity="0.1"
-            speed="1.3"
+        <l-dot-stream
+            size="60"
+            speed="2.5"
             color="black"
-        ></l-infinity>
+        ></l-dot-stream>
     </div>
     <div v-else>
-      <table border="1">
-          <thead>
-          <tr>
-              <th colspan="3">Penetapan</th>
-              <th rowspan="1" colspan="2">Pelaksanaan</th>
-
-          </tr>
-          <tr>
-              <th rowspan="">Standar</th>
-              <th>Indicator</th>
-              <th>Target</th>
-              <th>Komentar</th>
-              <th>Link Bukti</th>
-          </tr>
-          </thead>
-          <td colspan=6>input</td>
-          <tbody>
-          <template v-for="(standar, index) in standarData">
-              <tr>
-                  <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
-              </tr>
-              <tr v-for="(indicator, index) in standar.indicators">
-                  <td>{{ indicator.indicator }}</td>
-                  <td>{{ indicator.target }}</td>
-                  <td><input type="text" ></td>
-                  <td>
-                      <button class="pop" @click="openPopup(indicator.indicator)">Link</button>
-                  </td>
-              </tr>
-          </template>
-
-          </tbody>
-      </table>
-
-        <Modal v-if="popupTriggers"
-               :idS="selectedIndicator"
-               :togglePopup="togglePopup">
-        </Modal>
-
+    <Sheets :data="standarData"/>
     </div>
 
 </template>
