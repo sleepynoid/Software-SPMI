@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PelaksanaanController;
 use App\Http\Controllers\testcontroller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JsonController;
@@ -23,6 +24,8 @@ Route::get('/getSheet/{jurusan}/{periode}', [JsonController::class, 'getSheet'])
 
 Route::post('/submit', [JsonController::class, 'submit']);
 
+Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
+Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment']);
 
 
 //Route::get('/sheed', [PenetapanController::class, 'index']);
