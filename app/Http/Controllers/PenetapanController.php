@@ -67,7 +67,7 @@ class PenetapanController extends Controller
             Excel::import(new PenetapanImport($sheet), $request->file('file'));
             $request->file('file')->storeAs('uploads', $fileName, 'public');
 
-            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor', 'redirect' => '/sheet']);
+            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor', 'redirect' => '/']);
         } catch (ValidationException $e) {
             return $this->handleValidationException($e, $request);
         } catch (\Exception $e) {
