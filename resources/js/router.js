@@ -12,7 +12,7 @@ const routes =[
         component: Home
     },
     {
-        path: '/sheet/:idsheet',
+        path: '/sheet/:jurusan/:periode',
         name: 'Sheet',
         component: Sheet
     },

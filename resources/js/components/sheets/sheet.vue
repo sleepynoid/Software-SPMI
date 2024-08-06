@@ -15,11 +15,13 @@ const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
 const currentSheet = ref(tipeSheet[0]);
 
 const route = useRoute();
-const idSheet = ref(route.params.idsheet);
+const periode = ref(route.params.periode);
+const jurusan = ref(route.params.jurusan);
+
 
 watchEffect(async ()=> {
     loading.value = true;
-    let response = await fetch(`/api/${current.value}`);
+    let response = await fetch(`/api/getPenetapan/${jurusan.value}/${periode.value}/${currentSheet.value}/${current.value}`);
     standarData.value = await response.json();
     loading.value = false;
 })
