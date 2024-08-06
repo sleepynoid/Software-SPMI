@@ -1,7 +1,6 @@
 <script setup>
 import Modal from "@/components/sheets/modal.vue";
 import {ref} from "vue";
-import router from "@/router.js";
 const props = defineProps({
   data: Object
 });
@@ -19,7 +18,6 @@ const save = (idIndikator, bukti) => {
 };
 
     const submitData = () => {
-        // Kirim data ke backend menggunakan Axios
         axios.post('/api/submit', formData.value)
             .then(response => {
                 console.log('Data submitted successfully:', response.data);

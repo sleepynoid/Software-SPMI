@@ -5,7 +5,6 @@ dotStream.register()
 
 const message = ref('upload new sheet')
 const jurusan = ref('a')
-const idS = ref('0')
 const periode = ref('0')
 const per = ref([])
 const loading = ref(true);
@@ -23,17 +22,6 @@ watchEffect(async ()=> {
 
     console.log(per)
 })
-
-watchEffect(async ()=> {
-    // loading.value = true;
-    let response = await fetch(`/api/getSheet/${jurusan.value}/${periode.value}`);
-    idS.value = await response.json();
-    // loading.value = false;
-
-    console.log(idS)
-})
-
-
 
 </script>
 
@@ -81,13 +69,13 @@ watchEffect(async ()=> {
             <div v-else class="periode">
                 <h5>Pilih Periode:</h5>
                 <select v-model="periode" class="pilihSheet" required>
-                    <option v-for="p in per">{{ p.periode }}</option>
+                    <option v-for="p in per" :value="p.periode">{{ p.periode }}</option>
                 </select>
 <!--                {{idS}}-->
 
                 <button>
                     <router-link
-                        :to="{ name: 'Sheet', params: {idsheet: idS}}"
+                        :to="{ name: 'Sheet', params: {jurusan: jurusan, periode: periode}}"
                         class="custom-router-link"
                     ><h5>go</h5></router-link>
                 </button>

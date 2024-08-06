@@ -16,17 +16,9 @@ Route::post('/login',[AccountController::class,'login']);
 Route::post('/register',[AccountController::class,'register']);
 Route::post('/penetapan/import',[PenetapanController::class,'import']);
 
-Route::get('/input', [JsonController::class, 'aa']);
-Route::get('/proses', [JsonController::class, 'ax']);
-Route::get('/output', [JsonController::class, 'ay']);
+Route::get('/getPenetapan/{jurusan}/{periode}/{tipePendidikan}/{tipe}', [SheetController::class, 'getPenetapan']);
 
-// Route::get('/getPeriode/{jurusan}', [JsonController::class, 'getPeriode']);
-// Route::get('/getSheet/{jurusan}/{periode}', [JsonController::class, 'getSheet']);
-
-Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
-Route::get('/getSheet/{jurusan}/{periode}', [SheetController::class, 'getSheet']);
-
-Route::post('/submit', [JsonController::class, 'submit']);
+Route::post('/submit', [SheetController::class, 'submit']);
 
 Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
 Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment']);
