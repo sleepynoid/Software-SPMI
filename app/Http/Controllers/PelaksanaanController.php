@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BuktiPelaksanaan;
 use App\Models\Indikator;
+use App\Models\link;
 use App\Models\Pelaksanaan;
 use App\Models\Standar;
 use Illuminate\Http\Request;
@@ -72,7 +73,41 @@ class PelaksanaanController extends Controller {
 
     public function getComment() {
         $data = BuktiPelaksanaan::all();
-        return $this->sendRespons($data,'this is the data');
+        return $this->sendRespons($data,'this is comment data');
+    }
+
+    public function getLink() {
+        $data = link::all();
+        return $this->sendRespons($data,'this is the link data');
+    }
+
+    public function postLink(Request $request) {
+        Log::info('posting link');
+        $link_bukti = $request->json()->all()['data'];
+
+        // check if JSON data is array
+        if (!is_array($link_bukti)) {
+            Log::info('is  not an array');
+            return $this->sendError('data harus array',$link_bukti);
+        }
+
+        // loop to check if id bukti pelaksanaan valid
+        $linkValid = [];
+        foreach ($link_bukti as $link) {
+            $id_bukti_pelaksanaan = $link['id_bukti_pelaksanaan'];
+            // query to check id is match with $id_pelaksanaan return boolean
+            $isExist = link::where('id',$id_bukti_pelaksanaan)->exists();
+            if (!$isExist) {
+                Log::warning($link);
+                return $this->sendError('Id bukti pelaksanaan tidak valid',$link);
+            }
+            $linkValid[] = $link;
+        }
+        foreach ($link_bukti as $link) {
+            Log::info($link);
+            BuktiPelaksanaan::create($link);
+        }
+        return $this->sendRespons($link, 'create link success');
     }
 
     public function storeData(Request $request) {
