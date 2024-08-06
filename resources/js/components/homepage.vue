@@ -125,7 +125,7 @@ watchEffect(async ()=> {
 }
 
 .c2{
-    //display: flex;
+    /* //display: flex; */
     margin-top: 3rem;
     gap: 1rem;
 }

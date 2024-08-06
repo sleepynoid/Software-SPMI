@@ -41,7 +41,7 @@ class JsonController extends Controller
 
 
     public function aa(){
-        $penetapan = Penetapan::find(27);
+        $penetapan = Penetapan::find(2);
         $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'input')->get();
         $indikator = Indikator::all();
         $target = Target::all();
@@ -77,7 +77,7 @@ class JsonController extends Controller
     }
 
     public function ax(){
-        $penetapan = Penetapan::find(27);
+        $penetapan = Penetapan::find(2);
         $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'proses')->get();
         $indikator = Indikator::all();
         $target = Target::all();
@@ -113,7 +113,7 @@ class JsonController extends Controller
     }
 
     public function ay(){
-        $penetapan = Penetapan::find(27);
+        $penetapan = Penetapan::find(2);
         $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', 'output')->get();
         $indikator = Indikator::all();
         $target = Target::all();
@@ -164,7 +164,7 @@ class JsonController extends Controller
     }
 
     public function submit(Request $request){
-        $data = $request->json()->all()
+        $data = $request->json()->all();
 
 //        $da = [];
 //
