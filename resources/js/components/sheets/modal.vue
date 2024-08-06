@@ -1,15 +1,26 @@
 <script setup>
+import {ref, watch} from "vue";
+import {useMagicKeys} from "@vueuse/core";
+const {escape} = useMagicKeys()
+
+
+
 const props = defineProps({
     togglePopup: Function,
     idS: String
 });
 
-import {ref} from "vue";
+watch(escape, (v) =>{
+    if (v){
+        props.togglePopup()
+    }
+})
+
 
 const link = ref('')
 const judulLink = ref('')
 const links = ref([])
-let id = 0
+let id = 0;
 
 function addLink(){
     links.value.push({id: id++, judul: judulLink.value, link: link.value})
@@ -73,7 +84,7 @@ const openLink = (link) => {
 
 .popup-inner{
     position: relative;
-    margin-bottom: 20rem;
+    margin-bottom: 10rem;
     background: #FFF;
     padding: 32px;
 }

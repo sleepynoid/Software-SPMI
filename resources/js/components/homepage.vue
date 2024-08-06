@@ -39,15 +39,21 @@ watchEffect(async ()=> {
 
 <template>
 
+    <div class="bodi">
+
+
     <div class="c1">
-        <h1>Mode Super User</h1>
-        <button>
-              <router-link
-                  to="/import"
-                  class="custom-router-link"
-                  :title="message"
-              ><h4>+</h4></router-link>
-        </button>
+        <router-link to="/login">Login</router-link>
+        <div class="c1-1">
+            <h1>Mode Super User</h1>
+            <button>
+                  <router-link
+                      to="/import"
+                      class="custom-router-link"
+                      :title="message"
+                  ><h4>+</h4></router-link>
+            </button>
+        </div>
     </div>
 
     <div class="c2">
@@ -89,6 +95,7 @@ watchEffect(async ()=> {
         </div>
 
     </div>
+    </div>
 
 
 <!--   <router-link :to="{ name: 'Sheet', params: {idSheet: 27}}">Sheet</router-link>-->
@@ -99,8 +106,19 @@ watchEffect(async ()=> {
 </template>
 
 <style scoped>
+.bodi{
+    width: 100vw;
+    height: 100vh;
+    padding: 3%;
+}
 
 .c1{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.c1-1{
     display: flex;
     gap: 1rem;
     align-items: center;

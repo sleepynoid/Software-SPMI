@@ -18,7 +18,7 @@
         body {
             width: 100vw;
             overflow-x: hidden;
-            padding: 3rem;
+            /*padding: 3rem;*/
         }
 
         table,
@@ -34,10 +34,6 @@
         border-style: none;
         width: 3rem;
         height: 2rem;
-    }
-
-    .app{
-        margin-bottom: 10rem;
     }
 </style>
 </body>
