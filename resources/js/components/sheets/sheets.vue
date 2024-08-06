@@ -1,15 +1,34 @@
 <script setup>
 import Modal from "@/components/sheets/modal.vue";
 import {ref} from "vue";
+import router from "@/router.js";
 const props = defineProps({
   data: Object
 });
 
-const indikators = ref(['']);
+const formData = ref([])
 
-function addLink(index){
-    props.data.standar.indicators[index].bukti.push('')
-}
+const save = (idIndikator, bukti) => {
+    const newData = { id: idIndikator, bukti: bukti };
+    const index = formData.value.findIndex(item => item.id === idIndikator);
+    if (index !== -1) {
+        formData.value.splice(index, 1, newData);
+    } else {
+        formData.value.push(newData);
+    }
+};
+
+    const submitData = () => {
+        // Kirim data ke backend menggunakan Axios
+        axios.post('/api/submit', formData.value)
+            .then(response => {
+                console.log('Data submitted successfully:', response.data);
+            })
+            .catch(error => {
+                console.error('Error submitting data:', error);
+            });
+    }
+
 
 const popupTriggers = ref(false)
 const selectedIndicator = ref(null)
@@ -25,7 +44,8 @@ const openPopup = (indicator) =>{
 
 
 <template>
-  <table border="1">
+      <button @click="submitData"></button>
+  <table>
     <thead>
     <tr>
       <th colspan="3">Penetapan</th>
@@ -49,10 +69,8 @@ const openPopup = (indicator) =>{
       <tr v-for="(indicator, index) in standar.indicators">
         <td>{{ indicator.indicator }}</td>
         <td>{{ indicator.target }}</td>
-        <td><input type="text" v-model="indicator.bukti[index]"></td>
-          <td>
-            <button @click="addLink(index)">save</button>
-          </td>
+        <td><input type="text" v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti)"></td>
+<!--        <td>{{ indicator.bukti }}</td>-->
         <td>
           <button class="pop" @click="openPopup(indicator.indicator)">Link</button>
         </td>
