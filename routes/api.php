@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PelaksanaanController;
+use App\Http\Controllers\SheetController;
 use App\Http\Controllers\testcontroller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JsonController;
@@ -19,8 +20,11 @@ Route::get('/input', [JsonController::class, 'aa']);
 Route::get('/proses', [JsonController::class, 'ax']);
 Route::get('/output', [JsonController::class, 'ay']);
 
-Route::get('/getPeriode/{jurusan}', [JsonController::class, 'getPeriode']);
-Route::get('/getSheet/{jurusan}/{periode}', [JsonController::class, 'getSheet']);
+// Route::get('/getPeriode/{jurusan}', [JsonController::class, 'getPeriode']);
+// Route::get('/getSheet/{jurusan}/{periode}', [JsonController::class, 'getSheet']);
+
+Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
+Route::get('/getSheet/{jurusan}/{periode}', [SheetController::class, 'getSheet']);
 
 Route::post('/submit', [JsonController::class, 'submit']);
 
