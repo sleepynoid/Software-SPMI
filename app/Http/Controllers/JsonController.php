@@ -64,7 +64,7 @@ class JsonController extends Controller
                         }
                     }
 
-                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value, 'bukti' => ['']];
+                    $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => ['']];
                     array_push($data['indicators'], $newIndicator);
                 }
             }
@@ -100,7 +100,7 @@ class JsonController extends Controller
                         }
                     }
 
-                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
+                    $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => ''];
                     array_push($data['indicators'], $newIndicator);
                 }
             }
@@ -136,7 +136,7 @@ class JsonController extends Controller
                         }
                     }
 
-                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
+                    $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => ['']];
                     array_push($data['indicators'], $newIndicator);
                 }
             }
@@ -161,6 +161,20 @@ class JsonController extends Controller
         $sheets = Sheet::where('jurusan', $jurusan)->where('periode', $periode)->where('tipe_sheet', 'pendidikan')->first();
 
         return $sheets->id;
+    }
+
+    public function submit(Request $request){
+        $data = $request->json()->all()
+
+//        $da = [];
+//
+//        foreach ($data as $d){
+//            $newData = ['idIndikator' => $d['idIndikator'], 'bukti' => $d['bukti']];
+//            array_push($da, $newData);
+//        }
+
+
+        return $this->sendRespons($data,'iki datane');
     }
 
 }
