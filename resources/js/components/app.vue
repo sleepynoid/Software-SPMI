@@ -1,5 +1,5 @@
 <script setup>
-import Import from './import.vue';
+import Import from './upload/import.vue';
 </script>
 
 <template>

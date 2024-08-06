@@ -64,7 +64,7 @@ class JsonController extends Controller
                         }
                     }
 
-                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value];
+                    $newIndicator = ['indicator' => $i->note, 'target' => $tar->value, 'bukti' => ['']];
                     array_push($data['indicators'], $newIndicator);
                 }
             }

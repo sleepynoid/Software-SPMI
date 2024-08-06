@@ -1,8 +1,9 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Home from './components/homepage.vue';
-import Sheet from './components/sheet.vue';
-import Upload from './components/upload.vue';
-import Importexcel from './components/import.vue';
+import Sheet from './components/sheets/sheet.vue';
+import Importexcel from './components/upload/import.vue';
+import Login from './components/login/login.vue';
+import Register from './components/login/register.vue';
 import NotFound from './components/notFound.vue';
 
 const routes =[
@@ -19,10 +20,14 @@ const routes =[
         path: '/import',
         component: Importexcel
     },
-    // {
-    //     path: '/upload',
-    //     component: Upload
-    // },
+    {
+        path: '/login',
+        component: Login
+    },
+    {
+        path: '/register',
+        component: Register
+    },
 
     // {
     //     path: '/:pathMatch(.*)*',

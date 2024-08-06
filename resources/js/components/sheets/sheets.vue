@@ -1,9 +1,15 @@
 <script setup>
-import Modal from "@/components/modal.vue";
+import Modal from "@/components/sheets/modal.vue";
 import {ref} from "vue";
 const props = defineProps({
   data: Object
 });
+
+const indikators = ref(['']);
+
+function addLink(index){
+    props.data.standar.indicators[index].bukti.push('')
+}
 
 const popupTriggers = ref(false)
 const selectedIndicator = ref(null)
@@ -36,14 +42,17 @@ const openPopup = (indicator) =>{
     </thead>
     <td colspan=6>input</td>
     <tbody>
-    <template v-for="(standar, index) in data">
+    <template v-for="(standar, index) in data" :key="index">
       <tr>
         <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
       </tr>
       <tr v-for="(indicator, index) in standar.indicators">
         <td>{{ indicator.indicator }}</td>
         <td>{{ indicator.target }}</td>
-        <td><input type="text" ></td>
+        <td><input type="text" v-model="indicator.bukti[index]"></td>
+          <td>
+            <button @click="addLink(index)">save</button>
+          </td>
         <td>
           <button class="pop" @click="openPopup(indicator.indicator)">Link</button>
         </td>

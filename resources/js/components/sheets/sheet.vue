@@ -2,7 +2,7 @@
 import {ref, onMounted, watchEffect} from 'vue';
 import {useRoute} from "vue-router";
 import { dotStream } from 'ldrs'
-import Sheets from "@/components/sheets.vue"
+import Sheets from "@/components/sheets/sheets.vue"
 
 dotStream.register()
 
@@ -30,6 +30,8 @@ watchEffect(async ()=> {
 
 
 <template>
+    <div class="bodi">
+
     <router-link class="pop" to="/">Home</router-link>
     <h1>{{idSheet}}</h1>
 
@@ -46,7 +48,7 @@ watchEffect(async ()=> {
         :id="t"
         :value="t"
         v-model="current">
-        <label :for="t">{{t}}</label>
+        <label :for="t" style="margin-right: 0.5rem;">{{t}}</label>
     </template>
     <div v-if="loading">
         <l-dot-stream
@@ -58,11 +60,18 @@ watchEffect(async ()=> {
     <div v-else>
     <Sheets :data="standarData"/>
     </div>
+    </div>
 
 </template>
 
 
 <style scoped>
+.bodi{
+    width: 100vw;
+    height: 100vh;
+    padding: 3%;
+}
+
 table,
 th,
 td {

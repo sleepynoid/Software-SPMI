@@ -1,7 +1,7 @@
 <script>
 import { h } from 'vue';
-import WorkbookHandler from "../mixins/WorkbookHandler";
-import { globalPolyfill } from "../polyfills";
+import WorkbookHandler from "../../mixins/WorkbookHandler.js";
+import { globalPolyfill } from "../../polyfills.js";
 import { read } from "xlsx";
 
 export default {
