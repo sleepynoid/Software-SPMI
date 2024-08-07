@@ -46,7 +46,7 @@ const submitData = async () => {
 function generateYearRange() {
     const currentYear = new Date().getFullYear();
     const years = [];
-    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+    for (let year = currentYear - 5; year <= currentYear; year++) {
         years.push(year);
     }
     return years;
@@ -77,8 +77,12 @@ function generateYearRange() {
                     >
                     <select id="department" v-model="department" required>
                         <option value="">Pilih Jurusan</option>
-                        <option value="Teknik Informatika">Teknik Informatika</option>
-                        <option value="Sistem Informasi">Sistem Informasi</option>
+                        <option value="Teknik Informatika">
+                            Teknik Informatika
+                        </option>
+                        <option value="Sistem Informasi">
+                            Sistem Informasi
+                        </option>
                         <option value="Teknik Elektro">Teknik Elektro</option>
                     </select>
                 </div>
@@ -94,17 +98,23 @@ function generateYearRange() {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="period">Periode <span class="required">*</span></label>
-                    <input type="date" id="period" v-model="period" required />
-                    <!-- <select id="period" v-model="period" required>
+                    <label for="period"
+                        >Periode <span class="required">*</span></label
+                    >
+                    <select id="period" v-model="period" required>
                         <option value="">Pilih Periode</option>
-                        <option
+                        <template
                             v-for="year in generateYearRange()"
-                            :value="`${year}/${year + 1}`"
+                            :key="year"
                         >
-                            {{ `${year}/${year + 1}` }}
-                        </option>
-                    </select> -->
+                            <option :value="`${year}/${year + 1} Ganjil`">
+                                {{ `${year}/${year + 1} Ganjil` }}
+                            </option>
+                            <option :value="`${year}/${year + 1} Genap`">
+                                {{ `${year}/${year + 1} Genap` }}
+                            </option>
+                        </template>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="note">Catatan</label>
