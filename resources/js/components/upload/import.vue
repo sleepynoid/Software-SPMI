@@ -12,12 +12,14 @@ const department = ref("");
 const type = ref("");
 const period = ref("");
 const note = ref("");
+const loading = ref(false);
 
 const handleFileChange = (event) => {
     file.value = event.target.files ? event.target.files[0] : null;
 };
 
 const submitData = async () => {
+    loading.value = true;
     const formData = new FormData();
     formData.append("file", file.value);
     formData.append("jurusan", department.value);
@@ -39,9 +41,10 @@ const submitData = async () => {
         }
     } catch (error) {
         console.error("Error mengirim file:", error);
+    } finally {
+        loading.value = false;
     }
 };
-// const period = ref('');
 
 function generateYearRange() {
     const currentYear = new Date().getFullYear();
@@ -54,6 +57,9 @@ function generateYearRange() {
 </script>
 
 <template>
+    <div v-if="loading" class="loading-overlay">
+        <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
+    </div>
     <div class="container">
         <div class="upload-section">
             <router-link to="/">Home</router-link>
@@ -117,7 +123,7 @@ function generateYearRange() {
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="note">Catatan</label>
+                    <label for="note">Catatan <span class="required">*</span></label>
                     <textarea
                         id="note"
                         v-model="note"
@@ -172,6 +178,25 @@ function generateYearRange() {
 </template>
 
 <style>
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(
+        197,
+        197,
+        197,
+        0.1
+    );
+    backdrop-filter: blur(2px);
+    z-index: 999;
+}
+
 .container {
     display: flex;
     justify-content: space-between;
@@ -205,10 +230,6 @@ textarea {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-}
-
-button:hover {
-    background-color: #0056b3;
 }
 
 .required {
