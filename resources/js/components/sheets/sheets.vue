@@ -7,9 +7,9 @@ const props = defineProps({
 
 const formData = ref([])
 
-const save = (idIndikator, bukti) => {
-    const newData = { id: idIndikator, bukti: bukti };
-    const index = formData.value.findIndex(item => item.id === idIndikator);
+const save = (id, bukti) => {
+    const newData = { id: id, bukti: bukti };
+    const index = formData.value.findIndex(item => item.id === id);
     if (index !== -1) {
         formData.value.splice(index, 1, newData);
     } else {
@@ -18,12 +18,12 @@ const save = (idIndikator, bukti) => {
 };
 
     const submitData = () => {
-        axios.post('/api/submit', formData.value)
+        axios.post('/api/submit', {data: formData.value})
             .then(response => {
                 console.log('Data submitted successfully:', response.data);
             })
             .catch(error => {
-                console.error('Error submitting data:', error);
+                console.error('Error submitting data:', error.response.data);
             });
     }
 
@@ -58,7 +58,6 @@ const openPopup = (indicator) =>{
       <th>Link Bukti</th>
     </tr>
     </thead>
-    <td colspan=6>input</td>
     <tbody>
     <template v-for="(standar, index) in data" :key="index">
       <tr>
@@ -67,10 +66,12 @@ const openPopup = (indicator) =>{
       <tr v-for="(indicator, index) in standar.indicators">
         <td>{{ indicator.indicator }}</td>
         <td>{{ indicator.target }}</td>
-        <td><input type="text" v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti)"></td>
+        <td>
+            <textarea v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti)"></textarea>
+        </td>
 <!--        <td>{{ indicator.bukti }}</td>-->
         <td>
-          <button class="pop" @click="openPopup(indicator.indicator)">Link</button>
+          <button v-if="indicator.idBukti != '' " class="pop" @click="openPopup(indicator.idBukti)">Link</button>
         </td>
       </tr>
     </template>
@@ -79,7 +80,7 @@ const openPopup = (indicator) =>{
   </table>
 
   <Modal v-if="popupTriggers"
-         :idS="selectedIndicator"
+         :idBukti="selectedIndicator"
          :togglePopup="togglePopup">
   </Modal>
 </template>

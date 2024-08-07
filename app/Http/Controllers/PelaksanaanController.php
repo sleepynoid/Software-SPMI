@@ -76,9 +76,21 @@ class PelaksanaanController extends Controller {
         return $this->sendRespons($data,'this is comment data');
     }
 
-    public function getLink() {
-        $data = link::all();
-        return $this->sendRespons($data,'this is the link data');
+    public function getLink($idBukti) {
+        $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
+
+        if (!$data){
+
+            return response()->json("null");
+        }
+
+        return response()->json($data);
+    }
+
+    public function submitLink(Request $request){
+        $data = $request->input('data');
+
+
     }
 
     public function postLink(Request $request) {
