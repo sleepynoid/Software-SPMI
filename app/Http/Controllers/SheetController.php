@@ -59,7 +59,7 @@ class SheetController extends Controller {
     }
 
     public function submit(Request $request){
-        $data = $request->json()->all();
+        $data = $request->json( )->all();
 
 //        $da = [];
 //
