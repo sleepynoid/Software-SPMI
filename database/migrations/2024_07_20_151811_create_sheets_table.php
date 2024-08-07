@@ -12,7 +12,7 @@ return new class extends Migration {
         Schema::create('sheets', function (Blueprint $table) {
             $table->id();
             $table->string('jurusan');
-            $table->date('periode');
+            $table->string('periode');
             $table->longText('note');
             $table->enum('tipe_sheet', ['pendidikan', 'pengabdian', 'penelitian']);
             // $table->foreignId('user_id')->constrained('users');
