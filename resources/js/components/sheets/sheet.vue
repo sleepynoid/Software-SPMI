@@ -23,7 +23,9 @@ watchEffect(async ()=> {
     loading.value = true;
     let response = await fetch(`/api/getPenetapan/${jurusan.value}/${periode.value}/${currentSheet.value}/${current.value}`);
     standarData.value = await response.json();
+
     loading.value = false;
+    // console.log(standarData)
 })
 
 
@@ -35,8 +37,6 @@ watchEffect(async ()=> {
     <div class="bodi">
 
     <router-link class="pop" to="/">Home</router-link>
-    <h1>{{idSheet}}</h1>
-
 <!--    <button class="pop">Save</button>-->
     <p>tipe:</p>
     <select v-model="currentSheet" class="tipe" required>
@@ -58,6 +58,9 @@ watchEffect(async ()=> {
             speed="2.5"
             color="black"
         ></l-dot-stream>
+    </div>
+    <div v-else-if="standarData =='Null'">
+        Belum ada data :)
     </div>
     <div v-else>
     <Sheets :data="standarData"/>

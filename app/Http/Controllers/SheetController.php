@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SheetResource;
+use App\Models\BuktiPelaksanaan;
 use App\Models\Indikator;
 use App\Models\Penetapan;
 use App\Models\Sheet;
@@ -22,11 +23,15 @@ class SheetController extends Controller {
     public function getPenetapan($jurusan, $periode, $tipePendidikan, $tipe){
 
         $shiit = Sheet::where('jurusan', '=', $jurusan)->where('periode', '=',$periode)->where('tipe_sheet', '=',$tipePendidikan)->first();
+        if (!$shiit){
+            return response()->json("Null");
+        }
 
         $penetapan = Penetapan::where('id_sheet', '=', $shiit->id)->first();
         $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', $tipe)->get();
         $indikator = Indikator::all();
         $target = Target::all();
+        $bukti = BuktiPelaksanaan::all();
 
         $respond = [];
         foreach ($standars as $s) {
@@ -46,7 +51,16 @@ class SheetController extends Controller {
                         }
                     }
 
-                    $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => ['']];
+                    $buk = '';
+                    $idB = '';
+                    foreach ($bukti as $b){
+                        if ($b->id_indikator == $i->id){
+                            $buk = $b->komentar;
+                            $idB = $b->id;
+                        }
+                    }
+
+                    $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => $buk, 'idBukti' => $idB];
                     array_push($data['indicators'], $newIndicator);
                 }
             }
@@ -66,15 +80,25 @@ class SheetController extends Controller {
     }
 
     public function submit(Request $request){
-        $data = $request->json()->all();
+        $data = $request->input('data');
 
-//        $da = [];
-//
-//        foreach ($data as $d){
-//            $newData = ['idIndikator' => $d['idIndikator'], 'bukti' => $d['bukti']];
-//            array_push($da, $newData);
-//        }
+        foreach ($data as $item) {
+            $idIndikator = $item['id'];
+            $bukti = $item['bukti'];
 
+            $buktiPelaksanaan = BuktiPelaksanaan::where('id_indikator', $idIndikator)->first();
+
+            if ($buktiPelaksanaan) {
+                $buktiPelaksanaan->komentar = $bukti;
+                $buktiPelaksanaan->save();
+            } else {
+                BuktiPelaksanaan::create([
+                    'id_pelaksanaan' => 1,
+                    'id_indikator' => $idIndikator,
+                    'komentar' => $bukti
+                ]);
+            }
+        }
 
         return $this->sendRespons($data,'iki datane');
     }
