@@ -107,11 +107,11 @@ function generateYearRange() {
                             v-for="year in generateYearRange()"
                             :key="year"
                         >
-                            <option :value="`${year}/${year + 1} Ganjil`">
-                                {{ `${year}/${year + 1} Ganjil` }}
+                            <option :value="`${year}-${year + 1} Ganjil`">
+                                {{ `${year}-${year + 1} Ganjil` }}
                             </option>
-                            <option :value="`${year}/${year + 1} Genap`">
-                                {{ `${year}/${year + 1} Genap` }}
+                            <option :value="`${year}-${year + 1} Genap`">
+                                {{ `${year}-${year + 1} Genap` }}
                             </option>
                         </template>
                     </select>
