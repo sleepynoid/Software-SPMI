@@ -58,6 +58,13 @@ class SheetController extends Controller {
         return response()->json($respond);
     }
 
+    public function getPeriode($jurusan)
+    {
+        $sheets = Sheet::where('jurusan', $jurusan)->get();
+        // $responseData = new SheetResource($sheets);
+        return response()->json($sheets);
+    }
+
     public function submit(Request $request){
         $data = $request->json()->all();
 
