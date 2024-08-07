@@ -17,6 +17,7 @@ Route::post('/register',[AccountController::class,'register']);
 Route::post('/penetapan/import',[PenetapanController::class,'import']);
 
 Route::get('/getPenetapan/{jurusan}/{periode}/{tipePendidikan}/{tipe}', [SheetController::class, 'getPenetapan']);
+Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
 
 Route::post('/submit', [SheetController::class, 'submit']);
 
