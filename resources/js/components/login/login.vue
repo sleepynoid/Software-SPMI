@@ -1,5 +1,24 @@
 <script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const email = ref('');
+const password = ref('');
+
+const login = async () => {
+    try {
+        const response = await axios.post('/api/login', {
+            email: email.value,
+            password: password.value,
+        });
+        localStorage.setItem('token', response.data.data.token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        router.push('/');
+    } catch (error) {
+        console.error('Login failed:', error);
+    }
+};
 </script>
 
 <template>
@@ -34,15 +53,15 @@
                     <strong>Login</strong>
 
                     <div>
-                        <h6>Username</h6>
-                        <input type="text" name="" id="">
+                        <h6>Email</h6>
+                        <input type="text" v-model="email">
                     </div>
 
                     <div>
                         <h6>Password</h6>
-                        <input type="password" name="" id="">
+                        <input type="password" v-model="password">
                     </div>
-                    <div class="log">login</div>
+                    <div class="log btn" @click="login">login</div>
                 </div>
             </div>
         </div>
@@ -65,7 +84,7 @@ img{
 
 .c1{
     width: 100vw;
-    //height: 200vh;
+    /* //height: 200vh; */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

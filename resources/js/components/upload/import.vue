@@ -4,6 +4,7 @@ import XlsxTable from "./XlsxTable.vue";
 import XlsxSheets from "./XlsxSheets.vue";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import axios from 'axios';
 
 const router = useRouter();
 const file = ref(null);
@@ -28,14 +29,16 @@ const submitData = async () => {
     formData.append("note", note.value);
 
     try {
+        const token = localStorage.getItem('token');
         const response = await axios.post("api/penetapan/import", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${token}`
             },
         });
         if (response.data.success) {
             alert(response.data.message);
-            router.push(response.data.redirect);
+            router.push('/');
         } else {
             alert("Error: " + response.data.message);
         }
