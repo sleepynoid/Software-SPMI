@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Imports\PenetapanImport;
-use App\Models\Standar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
-
+use Illuminate\Routing\Controller;
 
 class PenetapanController extends Controller {
+    public function __construct() {
+        $this->middleware('auth:sanctum');
+    }
 
     public function getPenetapan(Request $request) {
         
@@ -26,7 +28,7 @@ class PenetapanController extends Controller {
             Excel::import(new PenetapanImport($sheet), $request->file('file'));
             $request->file('file')->storeAs('uploads', $fileName, 'public');
 
-            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor', 'redirect' => '/']);
+            return response()->json(['success' => true, 'message' => 'Data berhasil diimpor']);
         } catch (ValidationException $e) {
             return $this->handleValidationException($e, $request);
         } catch (\Exception $e) {
