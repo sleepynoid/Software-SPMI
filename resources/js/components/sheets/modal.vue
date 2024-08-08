@@ -16,41 +16,52 @@ watch(escape, (v) =>{
 
 const link = ref('')
 const judulLink = ref('')
-const links = ref([])
-let id = 0;
+const count = ref(0);
 
 const savedLink = ref([]);
+
+watch(count, async () => {
+    try {
+        let response = await fetch(`/api/getLink/${props.idBukti}`);
+        savedLink.value = await response.json();
+        console.log(count.value);
+    } catch (error){
+        console.error('Error submitting data:', error.response.data);
+    }
+})
 
 watchEffect(async ()=> {
     let response = await fetch(`/api/getLink/${props.idBukti}`);
     savedLink.value = await response.json();
 
-    // console.log(standarData)
+    console.log(count.value);
 })
 
 const addLink = () => {
-    axios.post('/api/submitBukti', {data: {idBukti: props.idBukti, judul_link: judulLink.value, link: link.value}})
+    if (judulLink.value === '' || link.value === ''){
+        alert("tidak boleh kosong :)")
+        return;
+    }
+    axios.post('/api/submitLink', {data: {idBukti: props.idBukti, judul_link: judulLink.value, link: link.value}})
         .then(response => {
             console.log('Data submitted successfully:', response.data);
-            links.value.push({idBukti: props.idBukti, judul_link: judulLink.value, link: link.value})
             judulLink.value = '';
             link.value = '';
+            count.value++;
         })
         .catch(error => {
             console.error('Error submitting data:', error.response.data);
         });
 }
-
-// function addLink(){
-//     links.value.push({idBukti: props.idBukti, judul_link: judulLink.value, link: link.value})
-//     judulLink.value = '';
-//     link.value = '';
-//
-//     console.log(links);
-// }
-
-function removeTodo(link) {
-    links.value = links.value.filter((t) => t !== link)
+function removeTodo(IdLink) {
+    axios.post('/api/deleteLink', {idLink: {idL: IdLink}})
+        .then(response => {
+            console.log('link terhapus:', response.data);
+            count.value--;
+        })
+        .catch(err => {
+            console.log('Error menghapus:', err.response.data);
+        });
 }
 
 const openLink = (link) => {
@@ -71,15 +82,7 @@ const openLink = (link) => {
                     <div class="link">
                         <p>Judul: {{link.judul_link}}</p>
                         <button @click="openLink(link.link)">link</button>
-                        <button @click="removeTodo(link)">X</button>
-                    </div>
-                    <!--      <p>Link: {{link.link}}</p>-->
-                </li>
-                <li v-for="link in links" :key="link.id">
-                    <div class="link">
-                        <p>Judul: {{link.judul_link}}</p>
-                        <button @click="openLink(link.link)">link</button>
-<!--                    <button @click="removeTodo(link)">X</button>-->
+                        <button @click="removeTodo(link.id)">X</button>
                     </div>
                     <!--      <p>Link: {{link.link}}</p>-->
                 </li>

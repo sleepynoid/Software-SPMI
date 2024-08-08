@@ -90,7 +90,37 @@ class PelaksanaanController extends Controller {
     public function submitLink(Request $request){
         $data = $request->input('data');
 
+        if (is_array($data) && isset($data['idBukti']) && isset($data['judul_link']) && isset($data['link'])) {
+            $idBukti = $data['idBukti'];
+            $judul_link = $data['judul_link'];
+            $link = $data['link'];
 
+            link::create([
+                'judul_link' => $judul_link,
+                'link' => $link,
+                'id_bukti_pelaksanaan' => $idBukti,
+            ]);
+
+            // Proses data lebih lanjut di sini
+
+            return response()->json(['success' => 'Link submitted successfully']);
+        }
+
+
+        return response()->json("null");
+    }
+
+    public function deleteLink(Request $request){
+        $idLink = $request->input('idLink');
+        $id = $idLink['idL'];
+
+        $link = link::find($id);
+
+        if ($link){
+            $link->delete();
+        }
+
+        return response()->json("deleted");
     }
 
     public function postLink(Request $request) {
