@@ -42,6 +42,7 @@ class PelaksanaanController extends Controller {
                 Log::warning($bukti);
                 return $this->sendError('Id indikator tidak valid',$bukti);
             }
+            // check id pelaksanaan, kalau id tidak ada return error
             $id_pelaksanaan = $bukti['id_pelaksanaan'];
             $isExist = Pelaksanaan::where('id',$id_pelaksanaan)->exists();
             if (!$isExist) {
@@ -64,6 +65,7 @@ class PelaksanaanController extends Controller {
         // } else {
 
         // }
+        // create bukti pelaksanaan yang valid saja
         foreach ($buktiValid as $bukti) {
             Log::info($bukti);
             BuktiPelaksanaan::create($bukti);
@@ -80,9 +82,9 @@ class PelaksanaanController extends Controller {
         $idBukti = $request->input('idBukti');
         $bukti = BuktiPelaksanaan::find($idBukti);
         if (!$bukti) {
-            $bukti->delete();
             return response()->json(['message' => 'Comment not found.'], 404);
         }
+        $bukti->delete();
         return response()->json(['message' => 'Comment deleted successfully.']);
     }
 
