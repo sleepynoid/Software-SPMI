@@ -25,5 +25,6 @@ Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
 Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment']);
 
 Route::get('/getLink/{idBukti}',[PelaksanaanController::class, 'getLink']);
-Route::post('/submitLink',[PelaksanaanController::class,'postLink']);
+Route::post('/submitLink',[PelaksanaanController::class,'submitLink']);
+Route::post('/deleteLink',[PelaksanaanController::class,'deleteLink']);
 //Route::get('/sheed', [PenetapanController::class, 'index']);
