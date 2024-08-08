@@ -29,7 +29,7 @@ class PelaksanaanController extends Controller {
         // check if JSON data is array
         if (!is_array($bukti_pelaksanaan)) {
             Log::info('is  not an array');
-            return $this->sendError('data harus array',$bukti_pelaksanaan);
+            return $this->sendError('data harus array', $bukti_pelaksanaan);
         }
 
         // loop to check if id pelaksanaan & indikator valid
@@ -37,17 +37,17 @@ class PelaksanaanController extends Controller {
         foreach ($bukti_pelaksanaan as $bukti) {
             $id_indikator = $bukti['id_pelaksanaan'];
             // query to check id is match with $id_indikator return boolean
-            $isExist = Indikator::where('id',$id_indikator)->exists();
+            $isExist = Indikator::where('id', $id_indikator)->exists();
             if (!$isExist) {
                 Log::warning($bukti);
-                return $this->sendError('Id indikator tidak valid',$bukti);
+                return $this->sendError('Id indikator tidak valid', $bukti);
             }
             // check id pelaksanaan, kalau id tidak ada return error
             $id_pelaksanaan = $bukti['id_pelaksanaan'];
-            $isExist = Pelaksanaan::where('id',$id_pelaksanaan)->exists();
+            $isExist = Pelaksanaan::where('id', $id_pelaksanaan)->exists();
             if (!$isExist) {
                 Log::warning($bukti);
-                return $this->sendError('Id Pelaksanaan tidak valid',$bukti);
+                return $this->sendError('Id Pelaksanaan tidak valid', $bukti);
             }
             $buktiValid[] = $bukti;
         }
@@ -75,7 +75,7 @@ class PelaksanaanController extends Controller {
 
     public function getComment() {
         $data = BuktiPelaksanaan::all();
-        return $this->sendRespons($data,'this is comment data');
+        return $this->sendRespons($data, 'this is comment data');
     }
 
     public function delComment(Request $request) {
@@ -91,7 +91,7 @@ class PelaksanaanController extends Controller {
     public function getLink($idBukti) {
         $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
 
-        if (!$data){
+        if (!$data) {
 
             return response()->json("null");
         }
@@ -99,7 +99,7 @@ class PelaksanaanController extends Controller {
         return response()->json($data);
     }
 
-    public function submitLink(Request $request){
+    public function submitLink(Request $request) {
         $data = $request->input('data');
 
         if (is_array($data) && isset($data['idBukti']) && isset($data['judul_link']) && isset($data['link'])) {
@@ -122,13 +122,13 @@ class PelaksanaanController extends Controller {
         return response()->json("null");
     }
 
-    public function deleteLink(Request $request){
+    public function deleteLink(Request $request) {
         $idLink = $request->input('idLink');
         $id = $idLink['idL'];
 
         $link = link::find($id);
 
-        if ($link){
+        if ($link) {
             $link->delete();
         }
 
@@ -139,65 +139,38 @@ class PelaksanaanController extends Controller {
         Log::info('posting link');
         $link_bukti = $request->json()->all()['data'];
 
-        // check if JSON data is array
-        if (!is_array($link_bukti)) {
-            Log::info('is  not an array');
-            return $this->sendError('data harus array',$link_bukti);
-        }
+        // Ensure $data is always an array for consistent processing
+        $link_bukti = is_array($link_bukti) && isset($data[0]['idBukti']) ? $link_bukti : [$link_bukti];
 
         // loop to check if id bukti pelaksanaan valid
         $linkValid = [];
         foreach ($link_bukti as $link) {
-            $id_bukti_pelaksanaan = $link['id_bukti_pelaksanaan'];
+            // Check if each link contains the necessary fields
+            if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link'])) {
+                Log::info('Invalid data format', $link);
+                return $this->sendError('Data harus memiliki idBukti, judul_link, dan link yang valid', $link);
+            }
+
             // query to check id is match with $id_pelaksanaan return boolean
-            $isExist = link::where('id',$id_bukti_pelaksanaan)->exists();
+            $id_bukti_pelaksanaan = $link['idBukti'];
+            $isExist = BuktiPelaksanaan::where('id', $id_bukti_pelaksanaan)->exists();
+            Log::info($isExist);
             if (!$isExist) {
                 Log::warning($link);
-                return $this->sendError('Id bukti pelaksanaan tidak valid',$link);
+                return $this->sendError('Id bukti pelaksanaan tidak valid', $link);
             }
             $linkValid[] = $link;
         }
-        foreach ($link_bukti as $link) {
-            Log::info($link);
-            Link::create($link);
+
+        // Create valid links
+        foreach ($linkValid as $link) {
+            Log::info('Creating link: ', $link);
+            Link::create([
+                'judul_link' => $link['judul_link'],
+                'link' => $link['link'],
+                'id_bukti_pelaksanaan' => $link['idBukti'],
+            ]);
         }
         return $this->sendRespons($link, 'create link success');
-    }
-
-    public function storeData(Request $request) {
-        Log::info('storeData method called'); // Debugging statement
-
-        // Validate the incoming request
-        $request->validate([
-            'data' => 'required|string',
-        ]);
-
-        // Get current session data or initialize it as an empty array
-        $storedData = $request->session()->get('stored_data', []);
-
-        // Ensure $storedData is an array (in case it was not already)
-        if (!is_array($storedData)) {
-            $storedData = [$storedData];
-        }
-
-        // Append the new data to the session data
-        $storedData[] = $request->input('data');
-
-        // Store the updated data back in the session
-        $request->session()->put('stored_data', $storedData);
-
-        Log::info('Data stored successfully', ['user_id' => Auth::id(), 'data' => $storedData]);
-
-        return response()->json(['message' => 'Data stored successfully']);
-    }
-
-    public function getData(Request $request) {
-        Log::info('getData method called'); // Debugging statement
-
-        // Retrieve data from the session
-        $data = $request->session()->get('stored_data', 'No data found');
-        Log::info('Data retrieved', ['data' => $data]);
-
-        return response()->json(['data' => $data]);
     }
 }
