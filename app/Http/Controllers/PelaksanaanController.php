@@ -157,7 +157,7 @@ class PelaksanaanController extends Controller {
         }
         foreach ($link_bukti as $link) {
             Log::info($link);
-            BuktiPelaksanaan::create($link);
+            Link::create($link);
         }
         return $this->sendRespons($link, 'create link success');
     }
