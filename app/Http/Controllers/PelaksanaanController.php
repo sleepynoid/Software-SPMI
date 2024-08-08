@@ -76,6 +76,16 @@ class PelaksanaanController extends Controller {
         return $this->sendRespons($data,'this is comment data');
     }
 
+    public function delComment(Request $request) {
+        $idBukti = $request->input('idBukti');
+        $bukti = BuktiPelaksanaan::find($idBukti);
+        if (!$bukti) {
+            $bukti->delete();
+            return response()->json(['message' => 'Comment not found.'], 404);
+        }
+        return response()->json(['message' => 'Comment deleted successfully.']);
+    }
+
     public function getLink($idBukti) {
         $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
 
