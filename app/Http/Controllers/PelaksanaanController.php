@@ -91,11 +91,6 @@ class PelaksanaanController extends Controller {
     public function getLink($idBukti) {
         $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
 
-        if (!$data) {
-
-            return response()->json("null");
-        }
-
         return response()->json($data);
     }
 
