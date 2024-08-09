@@ -89,7 +89,7 @@ const openLink = (link) => {
             </ul>
 
             <input v-model="judulLink" required placeholder="judul link">
-            <input v-model="link" required placeholder="judul link">
+            <input v-model="link" required placeholder="link">
 
             <button @click="addLink">add</button>
             <br>

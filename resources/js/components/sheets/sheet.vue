@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, watchEffect} from 'vue';
+import {ref, watchEffect} from 'vue';
 import {useRoute} from "vue-router";
 import { dotStream } from 'ldrs'
 import Sheets from "@/components/sheets/sheets.vue"
@@ -28,7 +28,9 @@ watchEffect(async ()=> {
     // console.log(standarData)
 })
 
-
+const refreshPage = () => {
+    location.reload();
+};
 
 </script>
 
@@ -59,11 +61,13 @@ watchEffect(async ()=> {
             color="black"
         ></l-dot-stream>
     </div>
-    <div v-else-if="standarData =='Null'">
+    <div v-else-if="standarData ==='Null'">
         Belum ada data :)
     </div>
-    <div v-else>
-    <Sheets :data="standarData"/>
+    <div v-else class="dt">
+    <Sheets
+        :data="standarData"
+        :refresh="refreshPage"/>
     </div>
     </div>
 
@@ -77,15 +81,6 @@ watchEffect(async ()=> {
     padding: 3%;
 }
 
-table,
-th,
-td {
-    border: 1px solid black;
-    text-align: center;
-    padding: 5px;
-    width: 2rem;
-}
-
 button {
     width: 5rem;
     height: 1rem;
@@ -94,5 +89,9 @@ button {
 .pop{
     padding: 3px;
     height: 2rem;
+}
+
+.dt{
+  padding-bottom: 3%;
 }
 </style>
