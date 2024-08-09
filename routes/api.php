@@ -4,12 +4,10 @@ use App\Http\Controllers\PelaksanaanController;
 use App\Http\Controllers\SheetController;
 use App\Http\Controllers\testcontroller;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\JsonController;
 use App\Http\Controllers\PenetapanController;
 use App\Http\Controllers\AccountController;
 
 
-Route::apiResource('/sheet', JsonController::class);
 Route::apiResource('/penetapan',PenetapanController::class);
 Route::apiResource('/testing',testcontroller::class);
 Route::post('/login',[AccountController::class,'login']);

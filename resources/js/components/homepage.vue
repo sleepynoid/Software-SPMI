@@ -9,7 +9,6 @@ const periode = ref('0')
 const per = ref([])
 const loading = ref(true);
 
-
 function notify(){
     alert('Pilih jurusan 😈')
 }
@@ -28,10 +27,8 @@ watchEffect(async ()=> {
 <template>
 
     <div class="bodi">
-
-
+<!--    {{user}}-->
     <div class="c1">
-        <router-link to="/login">Login</router-link>
         <div class="c1-1">
             <h1>Mode Super User</h1>
             <button>

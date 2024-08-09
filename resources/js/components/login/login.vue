@@ -23,21 +23,6 @@ const login = async () => {
 
 <template>
     <div class="c1">
-        <div class="topbar">
-            <h2>SPMI</h2>
-            <div class="menu">
-                <strong>
-                    <router-link class="custom-router-link" to="/">Home</router-link>
-                </strong>
-                <strong>Login</strong>
-                <strong>Register</strong>
-                <strong>About</strong>
-            </div>
-            <div class="search">
-
-            </div>
-            <div class="login">login</div>
-        </div>
 
         <div class="main">
             <div class="main1">
@@ -69,10 +54,7 @@ const login = async () => {
 </template>
 
 <style scoped>
-.custom-router-link {
-    text-decoration: none;
-    color: inherit;
-}
+
 
 img{
     background-size: cover;
@@ -88,43 +70,12 @@ img{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 3%;
-    background: whitesmoke;
+    //padding: 3%;
+    //background: whitesmoke;
 
-    .topbar{
-        width: 100%;
-        height: 4rem;
-        background: white;
-        display: flex;
-        align-items: center;
-        padding: 0rem 2rem 0rem 2rem;
-        border-radius: 1rem;
-        box-shadow: 0 10px 20px 1px lightgray;
-    }
-
-    .menu{
-        display: flex;
-        gap: 3rem;
-        margin: 0 2.5rem 0 2.5rem;
-    }
-
-    .search{
-        width: 35%;
-        height: 70%;
-        background: lightgray;
-        border-radius: 10rem;
-        margin-right: 15rem;
-    }
-
-    .login{
-        width: 7%;
-        height: 50%;
-        background: #FFDA76;
-        border-radius: 10rem;
-    }
 
     .main{
-        margin-top: 3%;
+        //margin-top: 3%;
         width: 100%;
         height: 100%;
         display: flex;
