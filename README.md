@@ -71,8 +71,3 @@ ikuti langkah-langkah berikut:
 
 
 ## Catatan
-- Pastikan untuk mengonfigurasi file `.env` sesuai kebutuhan proyek.
-- Untuk migrasi database, jalankan:
-  ```bash
-  php artisan migrate
-  ```
