@@ -6,6 +6,8 @@ const props = defineProps({
 });
 
 const formData = ref([])
+const mode = ref(true);
+const role = ref('penetapan')
 
 const save = (id, bukti) => {
     const newData = { id: id, bukti: bukti };
@@ -43,12 +45,28 @@ const openPopup = (indicator) =>{
 
 
 <template>
-      <button @click="submitData">Save</button>
+    <label for="mo">mode: </label>
+    <select id="mo" v-model="mode" style="width: 10rem;">
+        <option :value="true">read</option>
+        <option :value="false">edit</option>
+    </select>
+    <br>
+    <br>
+    <label for="mo">role: </label>
+    <select id="mo" v-model="role" style="width: 10rem;">
+        <option>penetapan</option>
+        <option>super user</option>
+    </select>
+<!--    {{role}}-->
+    <br>
+    <br>
+  <button v-if="!mode" @click="submitData">Save</button>
   <table>
     <thead>
     <tr>
       <th colspan="3">Penetapan</th>
-      <th rowspan="1" colspan="2">Pelaksanaan</th>
+      <th colspan="2">Pelaksanaan</th>
+      <th colspan="3" v-if="role === 'super user'">Evaluasi</th>
 
     </tr>
     <tr>
@@ -57,6 +75,9 @@ const openPopup = (indicator) =>{
       <th>Target</th>
       <th>Komentar</th>
       <th>Link Bukti</th>
+      <th v-if="role === 'super user'">Komentar</th>
+      <th v-if="role === 'super user'">Adjusment</th>
+      <th v-if="role === 'super user'">Link Bukti</th>
     </tr>
     </thead>
     <tbody>
@@ -68,12 +89,15 @@ const openPopup = (indicator) =>{
         <td>{{ indicator.indicator }}</td>
         <td>{{ indicator.target }}</td>
         <td>
-            <textarea v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti)"></textarea>
+            <p v-if="mode">{{indicator.bukti}}</p>
+            <textarea v-else v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti)"></textarea>
         </td>
-<!--        <td>{{ indicator.bukti }}</td>-->
         <td>
           <button v-if="indicator.idBukti !== '' " class="pop" @click="openPopup(indicator.idBukti)">Link</button>
         </td>
+        <td v-if="role === 'super user'">daasd</td>
+        <td v-if="role === 'super user'">daasd</td>
+        <td v-if="role === 'super user'">daasd</td>
       </tr>
     </template>
 
@@ -82,7 +106,9 @@ const openPopup = (indicator) =>{
 
   <Modal v-if="popupTriggers"
          :idBukti="selectedIndicator"
-         :togglePopup="togglePopup">
+         :togglePopup="togglePopup"
+         :mode="mode"
+  >
   </Modal>
 </template>
 
@@ -93,6 +119,7 @@ table {
   width: 90vw;
   table-layout: fixed;
   border-collapse: collapse;
+  margin-top: 1rem;
 }
 
 th, td {
