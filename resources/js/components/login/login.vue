@@ -70,12 +70,12 @@ img{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    //padding: 3%;
-    //background: whitesmoke;
+    /* //padding: 3%;
+    //background: whitesmoke; */
 
 
     .main{
-        //margin-top: 3%;
+        /* //margin-top: 3%; */
         width: 100%;
         height: 100%;
         display: flex;
