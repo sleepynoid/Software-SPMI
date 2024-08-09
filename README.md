@@ -11,7 +11,7 @@ Proyek ini adalah aplikasi yang dibangun menggunakan framework Laravel dan Vue.j
 
 ## Langkah Awal
 
-ikuti langkah-langkah berikut sebelum menjalankan proyek Laravel:
+ikuti langkah-langkah berikut:
 
 1. **Clone Repository**:
    Gunakan perintah berikut untuk meng-clone repository:
