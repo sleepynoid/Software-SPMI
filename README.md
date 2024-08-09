@@ -9,9 +9,8 @@ Proyek ini adalah aplikasi yang dibangun menggunakan framework Laravel dan Vue.j
 - Node.js dan npm untuk manajemen dependensi JavaScript (https://nodejs.org/en/download/)
 - Paket `phpoffice/phpspreadsheet` untuk manipulasi spreadsheet
 
-## Langkah Awal Setelah Clone Repository
-
-Setelah Anda melakukan clone repository, ikuti langkah-langkah berikut sebelum menjalankan proyek Laravel:
+## Langkah Awal
+ikuti langkah-langkah berikut:
 
 1. **Clone Repository**:
    Gunakan perintah berikut untuk meng-clone repository:
