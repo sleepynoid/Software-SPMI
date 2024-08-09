@@ -9,9 +9,9 @@ Proyek ini adalah aplikasi yang dibangun menggunakan framework Laravel dan Vue.j
 - Node.js dan npm untuk manajemen dependensi JavaScript (https://nodejs.org/en/download/)
 - Paket `phpoffice/phpspreadsheet` untuk manipulasi spreadsheet
 
-## Langkah Awal
+## Langkah Awal Setelah Clone Repository
 
-ikuti langkah-langkah berikut:
+Setelah Anda melakukan clone repository, ikuti langkah-langkah berikut sebelum menjalankan proyek Laravel:
 
 1. **Clone Repository**:
    Gunakan perintah berikut untuk meng-clone repository:
@@ -49,12 +49,29 @@ ikuti langkah-langkah berikut:
    ```
 
 7. **Konfigurasi Database**:
-   Edit file `.env` untuk mengonfigurasi pengaturan database sesuai kebutuhan proyek Anda.
+   Edit file `.env` untuk mengonfigurasi pengaturan database sesuai kebutuhan proyek Anda. Berikut adalah contoh pengaturan untuk menggunakan MySQL:
+
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nama_database
+   DB_USERNAME=nama_pengguna
+   DB_PASSWORD=kata_sandi
+   ```
+
+   Gantilah `nama_database`, `nama_pengguna`, dan `kata_sandi` dengan informasi yang sesuai untuk database Anda.
 
 8. **Migrasi Database**:
    Jalankan perintah berikut untuk melakukan migrasi database:
    ```bash
    php artisan migrate
+   ```
+
+9. **Menjalankan Seeder User**:
+   Untuk mengisi database dengan data pengguna awal, jalankan perintah berikut:
+   ```bash
+   php artisan db:seed --class=UserSeeder
    ```
 
 ## Menjalankan Aplikasi
@@ -68,6 +85,5 @@ ikuti langkah-langkah berikut:
    ```bash
    npm run dev
    ```
-
 
 ## Catatan
