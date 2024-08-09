@@ -2,7 +2,7 @@
 import Modal from "@/components/sheets/modal.vue";
 import {ref} from "vue";
 const props = defineProps({
-  data: Object
+  data: Object, refresh: Function
 });
 
 const formData = ref([])
@@ -21,6 +21,7 @@ const save = (id, bukti) => {
         axios.post('/api/submit', {data: formData.value})
             .then(response => {
                 console.log('Data submitted successfully:', response.data);
+                props.refresh();
             })
             .catch(error => {
                 console.error('Error submitting data:', error.response.data);
@@ -42,7 +43,7 @@ const openPopup = (indicator) =>{
 
 
 <template>
-      <button @click="submitData"></button>
+      <button @click="submitData">Save</button>
   <table>
     <thead>
     <tr>
@@ -63,7 +64,7 @@ const openPopup = (indicator) =>{
       <tr>
         <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
       </tr>
-      <tr v-for="(indicator, index) in standar.indicators">
+      <tr v-for="indicator in standar.indicators">
         <td>{{ indicator.indicator }}</td>
         <td>{{ indicator.target }}</td>
         <td>
@@ -71,7 +72,7 @@ const openPopup = (indicator) =>{
         </td>
 <!--        <td>{{ indicator.bukti }}</td>-->
         <td>
-          <button v-if="indicator.idBukti != '' " class="pop" @click="openPopup(indicator.idBukti)">Link</button>
+          <button v-if="indicator.idBukti !== '' " class="pop" @click="openPopup(indicator.idBukti)">Link</button>
         </td>
       </tr>
     </template>
@@ -88,5 +89,34 @@ const openPopup = (indicator) =>{
 
 
 <style scoped>
+table {
+  width: 90vw;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+thead th {
+  background-color: #f5f5f5;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pop {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 </style>

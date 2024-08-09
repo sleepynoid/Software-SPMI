@@ -2,8 +2,9 @@
 import { ref } from 'vue';
 import Homepage from "@/components/homepage.vue";
 import Login from "@/components/login/login.vue";
+import Register from "@/components/login/register.vue";
 
-let user = localStorage.getItem('token');
+let token = localStorage.getItem('token');
 
 const page = ref('home');
 </script>
@@ -15,28 +16,25 @@ const page = ref('home');
             <div class="menu">
                 <strong @click="page = 'login'">Login</strong>
                 <strong @click="page = 'home'">Home</strong>
-                <strong>Register</strong>
+                <strong @click="page = 'reg'">Register</strong>
                 <strong>About</strong>
             </div>
             <div class="search">
                 <!-- Search content -->
             </div>
-            <div v-if="user" class="login">logout</div>
+            <div v-if="token" class="login">logout</div>
         </div>
 
         <div class="content">
             <Login v-if="page === 'login'"/>
             <Homepage v-if="page === 'home'"/>
+            <Register v-if="page === 'reg'"/>
         </div>
     </div>
 </template>
 
 
 <style scoped>
-.custom-router-link {
-    text-decoration: none;
-    color: inherit;
-}
 
 .c1{
     width: 100vw;

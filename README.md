@@ -1,2 +1,5 @@
 # Software-SPMI
-in progres
+
+## Requirement:
+- php SpreadSheet
+- 

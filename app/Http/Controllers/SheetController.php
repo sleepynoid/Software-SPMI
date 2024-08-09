@@ -74,7 +74,7 @@ class SheetController extends Controller {
 
     public function getPeriode($jurusan)
     {
-        $sheets = Sheet::where('jurusan', $jurusan)->get();
+        $sheets = Sheet::where('jurusan', $jurusan)->get()->unique('periode');
         // $responseData = new SheetResource($sheets);
         return response()->json($sheets);
     }
