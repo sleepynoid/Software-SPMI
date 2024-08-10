@@ -63,7 +63,17 @@ class SheetController extends Controller {
                                 }
                             }
 
-                            $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => $buk, 'idBukti' => $idB];
+                            $newIndicator = [
+                                'idPelaksanaan' =>$shiit->id,
+                                'id' => $i->id,
+                                'indicator' => $i->note,
+                                'target' => $tar->value,
+                                'bukti' => $buk,
+                                'idBukti' => $idB,
+                                'evaluasi' => '',
+                                'adjusment' => '',
+                                'idEvaluasi' => '',
+                            ];
                             array_push($data['indicators'], $newIndicator);
                         }
                     }
@@ -87,8 +97,9 @@ class SheetController extends Controller {
         $data = $request->input('data');
 
         foreach ($data as $item) {
-            $idIndikator = $item['id'];
+            $idIndikator = $item['idIndikator'];
             $bukti = $item['bukti'];
+            $idPelaksanaan = $item['idPelaksanaan'];
 
             $buktiPelaksanaan = BuktiPelaksanaan::where('id_indikator', $idIndikator)->first();
 

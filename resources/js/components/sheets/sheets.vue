@@ -6,16 +6,33 @@ const props = defineProps({
 });
 
 const formData = ref([])
+const dataEval = ref([])
 const mode = ref(true);
-const role = ref('penetapan')
+const role = ref('pelaksanaan')
 
-const save = (id, bukti) => {
-    const newData = { id: id, bukti: bukti };
-    const index = formData.value.findIndex(item => item.id === id);
+const save = (idIndikator, bukti, idP) => {
+    const newData = {idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
+    const index = formData.value.findIndex(item => item.id === idIndikator);
     if (index !== -1) {
         formData.value.splice(index, 1, newData);
     } else {
         formData.value.push(newData);
+    }
+};
+
+const saveEval = (idBuktiPelaksanaan, komenEval, adjusment, idP) => {
+    if (komenEval === ''){
+        alert("komentar harap di isi🗿");
+    }else {
+    const newData = { idBuktiPelaksanaan: idBuktiPelaksanaan, komentarEvaluasi: komenEval, adjusment: adjusment, idPelaksanaan:idP };
+    const index = dataEval.value.findIndex(item => item.id === idBuktiPelaksanaan);
+    if (index !== -1) {
+        dataEval.value.splice(index, 1, newData);
+    } else {
+        dataEval.value.push(newData);
+    }
+
+    console.log(dataEval)
     }
 };
 
@@ -41,33 +58,33 @@ const openPopup = (indicator) =>{
   selectedIndicator.value = indicator;
   togglePopup();
 }
+
+const adjusment = ['Melampaui', 'Mencapai', 'Belum mencapai','Menyimpang'];
+
+// document.addEventListener("contextmenu", function (event){
+//     alert("gaboleh klik kanan ea");
+//     event.preventDefault();
+// })
 </script>
 
 
 <template>
-    <label for="mo">mode: </label>
-    <select id="mo" v-model="mode" style="width: 10rem;">
-        <option :value="true">read</option>
-        <option :value="false">edit</option>
-    </select>
-    <br>
     <br>
     <label for="mo">role: </label>
     <select id="mo" v-model="role" style="width: 10rem;">
-        <option>penetapan</option>
-        <option>super user</option>
+        <option>pelaksanaan</option>
+        <option>superUser</option>
     </select>
 <!--    {{role}}-->
     <br>
     <br>
-  <button v-if="!mode" @click="submitData">Save</button>
-  <table>
+  <button v-if="role === 'pelaksanaan'" @click="submitData">Save</button>
+  <table :class="role">
     <thead>
     <tr>
       <th colspan="3">Penetapan</th>
       <th colspan="2">Pelaksanaan</th>
-      <th colspan="3" v-if="role === 'super user'">Evaluasi</th>
-
+      <th colspan="5" v-if="role === 'superUser'">Evaluasi</th>
     </tr>
     <tr>
       <th rowspan="">Standar</th>
@@ -75,9 +92,11 @@ const openPopup = (indicator) =>{
       <th>Target</th>
       <th>Komentar</th>
       <th>Link Bukti</th>
-      <th v-if="role === 'super user'">Komentar</th>
-      <th v-if="role === 'super user'">Adjusment</th>
-      <th v-if="role === 'super user'">Link Bukti</th>
+    <template v-if="role === 'superUser'">
+      <th  colspan="2">Komentar</th>
+      <th colspan="2">Adjusment</th>
+      <th>Link Bukti</th>
+        </template>
     </tr>
     </thead>
     <tbody>
@@ -88,16 +107,38 @@ const openPopup = (indicator) =>{
       <tr v-for="indicator in standar.indicators">
         <td>{{ indicator.indicator }}</td>
         <td>{{ indicator.target }}</td>
+
         <td>
-            <p v-if="mode">{{indicator.bukti}}</p>
-            <textarea v-else v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti)"></textarea>
+            <p v-if="role === 'superUser'">{{indicator.bukti}}</p>
+            <textarea v-else v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan)"></textarea>
         </td>
         <td>
-          <button v-if="indicator.idBukti !== '' " class="pop" @click="openPopup(indicator.idBukti)">Link</button>
+          <button
+              v-if="indicator.idBukti !== '' "
+              class="pop"
+              @click="openPopup(indicator.idBukti)">Link
+          </button>
         </td>
-        <td v-if="role === 'super user'">daasd</td>
-        <td v-if="role === 'super user'">daasd</td>
-        <td v-if="role === 'super user'">daasd</td>
+
+
+      <template v-if="role === 'superUser'">
+        <td colspan="2">
+            <textarea v-model="indicator.evaluasi"></textarea>
+        </td>
+        <td colspan="2">
+            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)" >
+                <option>{{indicator.adjusment}}</option>
+                <option v-for="a in adjusment">{{a}}</option>
+            </select>
+        </td>
+        <td>
+            <button
+                v-if="indicator.idEvaluasi !== '' "
+                class="pop"
+                @click="openPopup(indicator.idEvaluasi)">Link
+            </button>
+        </td>
+      </template>
       </tr>
     </template>
 
@@ -107,7 +148,7 @@ const openPopup = (indicator) =>{
   <Modal v-if="popupTriggers"
          :idBukti="selectedIndicator"
          :togglePopup="togglePopup"
-         :mode="mode"
+         :role="role"
   >
   </Modal>
 </template>
@@ -115,11 +156,15 @@ const openPopup = (indicator) =>{
 
 
 <style scoped>
-table {
-  width: 90vw;
+.superUser {
+  width: 120vw;
   table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1rem;
+}
+
+.pelaksanaan{
+    width: 92vw;
 }
 
 th, td {
@@ -139,7 +184,7 @@ textarea {
 }
 
 .pop {
-  width: 100%;
+  width: 80%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
