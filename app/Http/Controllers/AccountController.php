@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Auth;
+use \Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +14,7 @@ class AccountController extends Controller {
      */
     public function index() {
         //
+        return User::all();
     }
 
     /**
@@ -21,59 +22,63 @@ class AccountController extends Controller {
      */
     public function register(Request $request): JsonResponse {
         //
-        $validator = validator::make($request->all(), [
+        $validator = $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
-            'c_password' => 'required|same:password',
+            // 'c_password' => 'required|same:password',
+            'role' => 'required'
         ]);
 
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
         $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
-        $success['token'] = $user->createToken('token')->plainTextToken;
-        $success['name'] = $user->name;
 
-        return $this->sendRespons($success, 'User register successfully.');
+        User::create([
+            'name' => $input['name'],
+            'email' => $input['email'],
+            'role' => $input['role'],
+            'password' => bcrypt($input['password'])
+        ]);
+        $user = User::create($input);
+
+        return response()->json([
+            'success' => 'true',
+            'message' => 'User ' . $input['name'] . ' created successfuly'
+        ]);
     }
 
     public function login(Request $request): JsonResponse {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             $success['token'] = $user->createToken('token')->plainTextToken;
             $success['name'] = $user->name;
 
-            return $this->sendRespons($success, 'User login successfully.');
+            return response()->json([
+                'success' => 'true',
+                'message' => 'User ' . $user['name'] . ' Successfuly Login'
+            ]);
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+            return response()->json([
+                'success' => 'false',
+                'message' => 'User and Password Wrong'
+            ]);
+            ;
         }
     }
 
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function list() {
-        //
-        return User::all();
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id) {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id) {
-        //
+    public function logout(Request $request): JsonResponse {
+        $currentUser = Auth::user();
+        $login_status = Auth::check();
+        if (!$login_status) {
+            return $this->sendError('error User not found', $login_status);
+        }
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'success' => 'true',
+            'message' => 'User ' . $currentUser['name'] . ' Successfuly Logout'
+        ]);
     }
 }

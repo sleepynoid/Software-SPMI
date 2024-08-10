@@ -57,17 +57,17 @@ class PenetapanImport implements ToCollection, SkipsEmptyRows, WithHeadingRow, W
                     'note' => $row['indikator']
                 ]);
 
-                $buktiPelaksanaan = BuktiPelaksanaan::create([
-                    'komentar' => '',
-                    'id_indikator' => $indikator->id,
-                    'id_pelaksanaan' => $pelaksanaan->id
-                ]);
+                // $buktiPelaksanaan = BuktiPelaksanaan::create([
+                //     'komentar' => '',
+                //     'id_indikator' => $indikator->id,
+                //     'id_pelaksanaan' => $pelaksanaan->id
+                // ]);
 
-                link::create([
-                    'judul_link' => '',
-                    'link' => '',
-                    'id_bukti_pelaksanaan' => $buktiPelaksanaan->id
-                ]);
+                // link::create([
+                //     'judul_link' => '',
+                //     'link' => '',
+                //     'id_bukti_pelaksanaan' => $buktiPelaksanaan->id
+                // ]);
 
                 if (!empty($row['target'])) {
                     Target::create([
