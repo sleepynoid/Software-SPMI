@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BuktiPelaksanaan;
+use App\Models\Evaluasi;
 use App\Models\Indikator;
 use App\Models\link;
 use App\Models\Pelaksanaan;
@@ -26,49 +27,37 @@ class PelaksanaanController extends Controller {
         $bukti_pelaksanaan = $request->json()->all()['data'];
         // Log::info($bukti_pelaksanaan);
 
-        // check if JSON data is array
-        if (!is_array($bukti_pelaksanaan)) {
-            Log::info('is  not an array');
-            return $this->sendError('data harus array', $bukti_pelaksanaan);
-        }
+       // Ensure $data is always an array for consistent processing
+       $bukti_pelaksanaan = is_array($bukti_pelaksanaan) ? $bukti_pelaksanaan : [$bukti_pelaksanaan];
 
         // loop to check if id pelaksanaan & indikator valid
         $buktiValid = [];
         foreach ($bukti_pelaksanaan as $bukti) {
-            $id_indikator = $bukti['id_pelaksanaan'];
-            // query to check id is match with $id_indikator return boolean
-            $isExist = Indikator::where('id', $id_indikator)->exists();
+            // Check if each link contains the necessary fields
+            if (!isset($bukti['idBukti']) || !isset($bukti['judul_link']) || !isset($bukti['link'])) {
+                Log::info('Invalid data format', $bukti);
+                return $this->sendError('Data harus memiliki idBukti, judul_link, dan link yang valid', $bukti);
+            }
+
+            // query to check id is match with $id_pelaksanaan return boolean
+            $id_bukti_pelaksanaan = $bukti['idBukti'];
+            $isExist = BuktiPelaksanaan::where('id', $id_bukti_pelaksanaan)->exists();
+            Log::info($isExist);
             if (!$isExist) {
                 Log::warning($bukti);
-                return $this->sendError('Id indikator tidak valid', $bukti);
+                return $this->sendError('Id bukti pelaksanaan tidak valid', $bukti);
             }
-            // check id pelaksanaan, kalau id tidak ada return error
-            $id_pelaksanaan = $bukti['id_pelaksanaan'];
-            $isExist = Pelaksanaan::where('id', $id_pelaksanaan)->exists();
-            if (!$isExist) {
-                Log::warning($bukti);
-                return $this->sendError('Id Pelaksanaan tidak valid', $bukti);
-            }
-            $buktiValid[] = $bukti;
+            $linkValid[] = $bukti;
         }
-        // BuktiPelaksanaan::create($data);
-
-        // check if JSON data is array
-        // if (is_array($bukti_pelaksanaan)) {
-        //     // Loop through each user and check if the address is in NY
-        //     $validBukti = [];
-        //     foreach ($bukti_pelaksanaan as $bukti) {
-        //         if (isset($bukti['']['state']) && $bukti['address']['state'] === 'NY') {
-        //             $validUsers[] = $bukti;
-        //         }
-        //     }
-        // } else {
-
-        // }
+        
         // create bukti pelaksanaan yang valid saja
         foreach ($buktiValid as $bukti) {
             Log::info($bukti);
-            BuktiPelaksanaan::create($bukti);
+            BuktiPelaksanaan::create([
+                'id_pelaksanaan' => $bukti_pelaksanaan['idPelaksanaan'],
+                'id_indikator' => $bukti_pelaksanaan['idIndikator'],
+                'komentar' => $bukti_pelaksanaan['komentar']
+            ]);
         }
         return $this->sendRespons($buktiValid, 'create comment success');
     }
@@ -92,29 +81,6 @@ class PelaksanaanController extends Controller {
         $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
 
         return response()->json($data);
-    }
-
-    public function submitLink(Request $request) {
-        $data = $request->input('data');
-
-        if (is_array($data) && isset($data['idBukti']) && isset($data['judul_link']) && isset($data['link'])) {
-            $idBukti = $data['idBukti'];
-            $judul_link = $data['judul_link'];
-            $link = $data['link'];
-
-            link::create([
-                'judul_link' => $judul_link,
-                'link' => $link,
-                'id_bukti_pelaksanaan' => $idBukti,
-            ]);
-
-            // Proses data lebih lanjut di sini
-
-            return response()->json(['success' => 'Link submitted successfully']);
-        }
-
-
-        return response()->json("null");
     }
 
     public function deleteLink(Request $request) {
@@ -168,4 +134,6 @@ class PelaksanaanController extends Controller {
         }
         return $this->sendRespons($link, 'create link success');
     }
+
+    
 }

@@ -10,7 +10,9 @@ class Evaluasi extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_evaluasi',
         'id_sheet',
     ];
+    public function BuktiEvaluasi() {
+        $this->hasMany(BuktiEvaluasi::class,'id_evaluasi');
+    }
 }
