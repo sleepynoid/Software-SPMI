@@ -35,16 +35,15 @@ const login = async () => {
             </div>
             <div class="main2">
                 <div class="lojin">
-                    <strong>Login</strong>
-
+                    <strong style="text-align:center;">Login</strong>
                     <div>
                         <h6>Email</h6>
-                        <input type="text" v-model="email">
+                        <input type="text" v-model="email" required>
                     </div>
 
                     <div>
                         <h6>Password</h6>
-                        <input type="password" v-model="password">
+                        <input type="password" v-model="password" required>
                     </div>
                     <div class="log btn" @click="login">login</div>
                 </div>
@@ -66,12 +65,10 @@ img{
 
 .c1{
     width: 100vw;
-    /* //height: 200vh; */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* //padding: 3%;
-    //background: whitesmoke; */
+    padding: 3%;
 
 
     .main{

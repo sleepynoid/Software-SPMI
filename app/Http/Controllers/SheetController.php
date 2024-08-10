@@ -21,53 +21,67 @@ class SheetController extends Controller {
     }
 
     public function getPenetapan($jurusan, $periode, $tipePendidikan, $tipe){
+        $sheets = Sheet::where('jurusan', '=', $jurusan)
+                       ->where('periode', '=', $periode)
+                       ->where('tipe_sheet', '=', $tipePendidikan)
+                       ->get();
 
-        $shiit = Sheet::where('jurusan', '=', $jurusan)->where('periode', '=',$periode)->where('tipe_sheet', '=',$tipePendidikan)->first();
-        if (!$shiit){
+        if ($sheets->isEmpty()){
             return response()->json("Null");
         }
 
-        $penetapan = Penetapan::where('id_sheet', '=', $shiit->id)->first();
-        $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', $tipe)->get();
-        $indikator = Indikator::all();
-        $target = Target::all();
-        $bukti = BuktiPelaksanaan::all();
-
         $respond = [];
-        foreach ($standars as $s) {
+        foreach ($sheets as $shiit) {
+            $penetapan = Penetapan::where('id_sheet', '=', $shiit->id)->first();
+            if ($penetapan) {
+                $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', $tipe)->get();
+                $indikator = Indikator::all();
+                $target = Target::all();
+                $bukti = BuktiPelaksanaan::all();
 
-            $data = [
-                'standar' => $s->note,
-                'indicators' => []
-            ];
+                foreach ($standars as $s) {
+                    $data = [
+                        'standar' => $s->note,
+                        'indicators' => []
+                    ];
 
+                    foreach ($indikator as $i){
+                        if ($i->id_standar == $s->id){
+                            $tar = null;
+                            foreach ($target as $t){
+                                if ($t->id_indikator == $i->id){
+                                    $tar = $t;
+                                }
+                            }
 
-            foreach ($indikator as $i){
-                if ($i->id_standar == $s->id){
-                    $tar = null;
-                    foreach ($target as $t){
-                        if ($t->id_indikator == $i->id){
-                            $tar = $t;
+                            $buk = '';
+                            $idB = '';
+                            foreach ($bukti as $b){
+                                if ($b->id_indikator == $i->id){
+                                    $buk = $b->komentar;
+                                    $idB = $b->id;
+                                }
+                            }
+
+                            $newIndicator = [
+                                'idPelaksanaan' =>$shiit->id,
+                                'id' => $i->id,
+                                'indicator' => $i->note,
+                                'target' => $tar->value,
+                                'bukti' => $buk,
+                                'idBukti' => $idB,
+                                'evaluasi' => '',
+                                'adjusment' => '',
+                                'idEvaluasi' => '',
+                            ];
+                            array_push($data['indicators'], $newIndicator);
                         }
                     }
 
-                    $buk = '';
-                    $idB = '';
-                    foreach ($bukti as $b){
-                        if ($b->id_indikator == $i->id){
-                            $buk = $b->komentar;
-                            $idB = $b->id;
-                        }
-                    }
-
-                    $newIndicator = ['id' => $i->id, 'indicator' => $i->note, 'target' => $tar->value, 'bukti' => $buk, 'idBukti' => $idB];
-                    array_push($data['indicators'], $newIndicator);
+                    array_push($respond, $data);
                 }
             }
-
-            array_push($respond, $data);
         }
-
 
         return response()->json($respond);
     }
@@ -83,8 +97,9 @@ class SheetController extends Controller {
         $data = $request->input('data');
 
         foreach ($data as $item) {
-            $idIndikator = $item['id'];
+            $idIndikator = $item['idIndikator'];
             $bukti = $item['bukti'];
+            $idPelaksanaan = $item['idPelaksanaan'];
 
             $buktiPelaksanaan = BuktiPelaksanaan::where('id_indikator', $idIndikator)->first();
 

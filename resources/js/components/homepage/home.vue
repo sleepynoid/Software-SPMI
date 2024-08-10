@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import Homepage from "@/components/homepage.vue";
+import Homepage from "@/components/homepage/homepage.vue";
+import About from "@/components/homepage/about.vue";
 import Login from "@/components/login/login.vue";
 import Register from "@/components/login/register.vue";
 
@@ -14,10 +15,12 @@ const page = ref('home');
         <div class="topbar">
             <h2>SPMI</h2>
             <div class="menu">
-                <strong @click="page = 'login'">Login</strong>
+                <strong>
+                    <router-link to="/login">Login</router-link>
+                </strong>
                 <strong @click="page = 'home'">Home</strong>
                 <strong @click="page = 'reg'">Register</strong>
-                <strong>About</strong>
+                <strong @click="page = 'about'">About</strong>
             </div>
             <div class="search">
                 <!-- Search content -->
@@ -26,9 +29,9 @@ const page = ref('home');
         </div>
 
         <div class="content">
-            <Login v-if="page === 'login'"/>
             <Homepage v-if="page === 'home'"/>
             <Register v-if="page === 'reg'"/>
+            <About v-if="page === 'about'"/>
         </div>
     </div>
 </template>

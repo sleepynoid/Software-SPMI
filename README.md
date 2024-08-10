@@ -7,7 +7,6 @@ Proyek ini adalah aplikasi yang dibangun menggunakan framework Laravel dan Vue.j
 - PHP versi 8.2 atau lebih tinggi (https://www.php.net/downloads)
 - Composer untuk manajemen dependensi PHP (https://getcomposer.org/download/)
 - Node.js dan npm untuk manajemen dependensi JavaScript (https://nodejs.org/en/download/)
-- Paket `phpoffice/phpspreadsheet` untuk manipulasi spreadsheet
 
 ## Langkah Awal
 ikuti langkah-langkah berikut:
