@@ -92,6 +92,7 @@ button {
 }
 
 .dt{
+    overflow-x: auto;
   padding-bottom: 3%;
 }
 </style>

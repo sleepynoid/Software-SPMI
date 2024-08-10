@@ -6,7 +6,7 @@ const {escape} = useMagicKeys()
 const props = defineProps({
     togglePopup: Function,
     idBukti: String,
-    mode: Boolean,
+    role: String,
 });
 
 watch(escape, (v) =>{
@@ -90,7 +90,7 @@ const openLink = (link) => {
                 </li>
             </ul>
 
-            <div v-if="!props.mode">
+            <div v-if="props.role === 'pelaksanaan'">
                 <input v-model="judulLink" required placeholder="judul link">
                 <input v-model="link" required placeholder="link">
                 <button @click="addLink">add</button>
