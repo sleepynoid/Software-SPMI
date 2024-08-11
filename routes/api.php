@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\PelaksanaanController;
 use App\Http\Controllers\SheetController;
 use App\Http\Controllers\testcontroller;
@@ -17,7 +18,8 @@ Route::post('/penetapan/import',[PenetapanController::class,'import']);
 Route::get('/getPenetapan/{jurusan}/{periode}/{tipePendidikan}/{tipe}', [SheetController::class, 'getPenetapan']);
 Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
 
-Route::post('/submit', [SheetController::class, 'submit']);
+Route::post('/submitPelaksanaan', [SheetController::class, 'submitPelaksanaan']);
+Route::post('/submitEvaluasi', [EvaluasiController::class, 'postComment']);
 
 Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
 Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment']);

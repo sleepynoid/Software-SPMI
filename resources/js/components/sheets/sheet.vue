@@ -25,7 +25,7 @@ watchEffect(async ()=> {
     standarData.value = await response.json();
 
     loading.value = false;
-    // console.log(standarData)
+    console.log(standarData)
 })
 
 const refreshPage = () => {
