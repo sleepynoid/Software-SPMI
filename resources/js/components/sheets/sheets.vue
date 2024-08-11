@@ -7,7 +7,7 @@ const props = defineProps({
 
 const formData = ref([])
 const dataEval = ref([])
-const mode = ref(true);
+
 const role = ref('pelaksanaan')
 
 const save = (idIndikator, bukti, idP) => {
@@ -37,14 +37,25 @@ const saveEval = (idBuktiPelaksanaan, komenEval, adjusment, idP) => {
 };
 
     const submitData = () => {
-        axios.post('/api/submit', {data: formData.value})
-            .then(response => {
-                console.log('Data submitted successfully:', response.data);
-                props.refresh();
-            })
-            .catch(error => {
-                console.error('Error submitting data:', error.response.data);
-            });
+        if (role.value === 'pelaksanaan'){
+            axios.post('/api/submitPelaksanaan', {data: formData.value})
+                .then(response => {
+                    console.log('Data submitted successfully:', response.data);
+                    props.refresh();
+                })
+                .catch(error => {
+                    console.error('Error submitting data:', error.response.data);
+                });
+        } else {
+            axios.post('/api/submitEvaluasi', {data: dataEval.value})
+                .then(response => {
+                    console.log('Data submitted successfully:', response.data);
+                    props.refresh();
+                })
+                .catch(error => {
+                    console.error('Error submitting data:', error.response.data);
+                });
+        }
     }
 
 

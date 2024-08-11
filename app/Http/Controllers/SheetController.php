@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SheetResource;
+use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
 use App\Models\Indikator;
 use App\Models\Penetapan;
@@ -38,6 +39,7 @@ class SheetController extends Controller {
                 $indikator = Indikator::all();
                 $target = Target::all();
                 $bukti = BuktiPelaksanaan::all();
+                $evaluasi = BuktiEvaluasi::all();
 
                 foreach ($standars as $s) {
                     $data = [
@@ -56,10 +58,21 @@ class SheetController extends Controller {
 
                             $buk = '';
                             $idB = '';
+                            $eva = '';
+                            $adj = '';
+                            $idE = '';
                             foreach ($bukti as $b){
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
                                     $idB = $b->id;
+                                }
+
+                                foreach ($evaluasi as $e) {
+                                    if ($e->id_bukti_pelaksanaan == $b->id){
+                                        $eva = $e->komentar;
+                                        $adj = $e->adjustment;
+                                        $idE = $e->id_evaluasi;
+                                    }
                                 }
                             }
 
@@ -70,9 +83,9 @@ class SheetController extends Controller {
                                 'target' => $tar->value,
                                 'bukti' => $buk,
                                 'idBukti' => $idB,
-                                'evaluasi' => '',
-                                'adjusment' => '',
-                                'idEvaluasi' => '',
+                                'evaluasi' => $eva,
+                                'adjusment' => $adj,
+                                'idEvaluasi' => $idE,
                             ];
                             array_push($data['indicators'], $newIndicator);
                         }
@@ -93,7 +106,7 @@ class SheetController extends Controller {
         return response()->json($sheets);
     }
 
-    public function submit(Request $request){
+    public function submitPelaksanaan(Request $request){
         $data = $request->input('data');
 
         foreach ($data as $item) {
