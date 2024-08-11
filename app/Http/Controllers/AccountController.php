@@ -58,6 +58,7 @@ class AccountController extends Controller {
 
             return response()->json([
                 'success' => 'true',
+                'token' => $success['token'],
                 'message' => 'User ' . $user['name'] . ' Successfuly Login'
             ]);
         } else {
