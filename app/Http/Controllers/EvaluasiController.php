@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
+use App\Models\link;
 use Illuminate\Http\Request;
 use App\Models\Evaluasi;
 use Illuminate\Support\Facades\Log;
@@ -48,5 +49,28 @@ class EvaluasiController extends Controller {
             ]);
         }
         return $this->sendRespons($bukti, 'create BuktiEvaluasi success');
+    }
+
+    public function delComment(Request $request) {
+        $idBukti = $request->input('idBukti');
+        $bukti = BuktiEvaluasi::find($idBukti);
+        if (!$bukti) {
+            return response()->json(['message' => 'Comment not found.'], 404);
+        }
+        $bukti->delete();
+        return response()->json(['message' => 'Comment deleted successfully.']);
+    }
+
+    public function getLink($idBukti) {
+        $data = link::where('tipe_link', 'bukti_evaluasi')->where('id_bukti', $idBukti)->get();
+        if ($data) {
+            return response()->json([
+                'success' => 'false',
+                'message' => 'id bukti evaluasi not found'
+            ]); 
+        }
+        return response()->json([
+            'success' => 'true'
+        ]);
     }
 }
