@@ -2,7 +2,6 @@
 import { ref } from 'vue';
 import Homepage from "@/components/homepage/homepage.vue";
 import About from "@/components/homepage/about.vue";
-import Login from "@/components/login/login.vue";
 import Register from "@/components/login/register.vue";
 
 let token = localStorage.getItem('token');
@@ -11,6 +10,7 @@ const page = ref('home');
 </script>
 
 <template>
+    <h1 v-if="token != undefined">{{token}}</h1>
     <div class="c1">
         <div class="topbar">
             <h2>SPMI</h2>

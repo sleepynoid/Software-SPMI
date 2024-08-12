@@ -16,7 +16,8 @@ class EvaluasiController extends Controller {
         $bukti_evaluasi = $request->json()->all()['data'];
 
         // Ensure $data is always an array for consistent processing
-        $bukti_evaluasi = is_array($bukti_evaluasi) && isset($data[0]['idBuktiPelaksanaan']) ? $bukti_evaluasi : [$bukti_evaluasi];
+        $bukti_evaluasi = is_array($bukti_evaluasi) && isset($bukti_evaluasi[0]['idBuktiPelaksanaan']) ? $bukti_evaluasi : [$bukti_evaluasi];
+//        $bukti_evaluasi = is_array($bukti_evaluasi) && isset($data[0]['idBuktiPelaksanaan']) ? $bukti_evaluasi : [$bukti_evaluasi];
 
         // loop to check if id bukti pelaksanaan valid
         $buktiValid = [];
@@ -44,12 +45,42 @@ class EvaluasiController extends Controller {
             BuktiEvaluasi::create([
                 'adjustment' => $bukti['adjustment'],
                 'komentar' => $bukti['komentarEvaluasi'],
-                'Evaluasi' => $bukti['idEvaluasi'],
+                'id_evaluasi' => $bukti['idEvaluasi'],
                 'id_bukti_pelaksanaan' => $bukti['idBuktiPelaksanaan'],
             ]);
         }
         return $this->sendRespons($bukti, 'create BuktiEvaluasi success');
     }
+
+    public function submitEval(Request $request){
+        $data = $request->input('data');
+
+        foreach ($data as $item) {
+            $idBP = $item['idBuktiPelaksanaan'];
+            $adjusment = $item['adjusment'];
+            $komentarEvaluasi = $item['komentarEvaluasi'];
+            $idEvaluasi = $item['idEvaluasi'];
+
+            $isEval = BuktiEvaluasi::where('id_evaluasi', $idEvaluasi)->first();
+
+            if ($isEval) {
+                $isEval->komentarEvaluasi = $komentarEvaluasi;
+                $isEval->adjusment = $adjusment;
+
+                $isEval->save();
+            } else {
+                BuktiEvaluasi::create([
+                    'adjustment' => $adjusment,
+                    'komentar' => $komentarEvaluasi,
+                    'id_bukti_pelaksanaan' => $idBP,
+                    'id_evaluasi' => $idEvaluasi
+                ]);
+            }
+        }
+
+        return $this->sendRespons($data,'iki datane');
+    }
+
 
     public function delComment(Request $request) {
         $idBukti = $request->input('idBukti');
@@ -67,7 +98,7 @@ class EvaluasiController extends Controller {
             return response()->json([
                 'success' => 'false',
                 'message' => 'id bukti evaluasi not found'
-            ]); 
+            ]);
         }
         return response()->json([
             'success' => 'true'

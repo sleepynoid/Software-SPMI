@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\SheetResource;
 use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
+use App\Models\Evaluasi;
 use App\Models\Indikator;
 use App\Models\Penetapan;
 use App\Models\Sheet;
@@ -34,12 +35,13 @@ class SheetController extends Controller {
         $respond = [];
         foreach ($sheets as $shiit) {
             $penetapan = Penetapan::where('id_sheet', '=', $shiit->id)->first();
+            $evaluasi = Evaluasi::where('id_sheet', '=', $shiit->id)->first();
             if ($penetapan) {
                 $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', $tipe)->get();
                 $indikator = Indikator::all();
                 $target = Target::all();
                 $bukti = BuktiPelaksanaan::all();
-                $evaluasi = BuktiEvaluasi::all();
+                $buktieval = BuktiEvaluasi::all();
 
                 foreach ($standars as $s) {
                     $data = [
@@ -61,17 +63,19 @@ class SheetController extends Controller {
                             $eva = '';
                             $adj = '';
                             $idE = '';
+                            $idBE = '';
                             foreach ($bukti as $b){
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
                                     $idB = $b->id;
-                                }
 
-                                foreach ($evaluasi as $e) {
-                                    if ($e->id_bukti_pelaksanaan == $b->id){
-                                        $eva = $e->komentar;
-                                        $adj = $e->adjustment;
-                                        $idE = $e->id_evaluasi;
+                                    foreach ($buktieval as $e) {
+                                        if ($e->id_bukti_pelaksanaan == $b->id){
+                                            $idBE = $e->id;
+                                            $eva = $e->komentar;
+                                            $adj = $e->adjustment;
+                                            $idE = $e->id_evaluasi;
+                                        }
                                     }
                                 }
                             }
@@ -86,6 +90,7 @@ class SheetController extends Controller {
                                 'evaluasi' => $eva,
                                 'adjusment' => $adj,
                                 'idEvaluasi' => $idE,
+                                'idBuktiEval' => $idBE,
                             ];
                             array_push($data['indicators'], $newIndicator);
                         }
@@ -121,7 +126,7 @@ class SheetController extends Controller {
                 $buktiPelaksanaan->save();
             } else {
                 BuktiPelaksanaan::create([
-                    'id_pelaksanaan' => 1,
+                    'id_pelaksanaan' => $idPelaksanaan,
                     'id_indikator' => $idIndikator,
                     'komentar' => $bukti
                 ]);

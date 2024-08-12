@@ -24,7 +24,7 @@ const saveEval = (idBuktiPelaksanaan, komenEval, adjusment, idP) => {
     if (komenEval === ''){
         alert("komentar harap di isi🗿");
     }else {
-    const newData = { idBuktiPelaksanaan: idBuktiPelaksanaan, komentarEvaluasi: komenEval, adjusment: adjusment, idPelaksanaan:idP };
+    const newData = { idBuktiPelaksanaan: idBuktiPelaksanaan, komentarEvaluasi: komenEval, adjusment: adjusment, idEvaluasi:idP };
     const index = dataEval.value.findIndex(item => item.id === idBuktiPelaksanaan);
     if (index !== -1) {
         dataEval.value.splice(index, 1, newData);
@@ -70,7 +70,7 @@ const openPopup = (indicator) =>{
   togglePopup();
 }
 
-const adjusment = ['Melampaui', 'Mencapai', 'Belum mencapai','Menyimpang'];
+const adjusment = ['melampaui', 'mencapai', 'belum mencapai','menyimpang'];
 
 // document.addEventListener("contextmenu", function (event){
 //     alert("gaboleh klik kanan ea");
@@ -89,7 +89,7 @@ const adjusment = ['Melampaui', 'Mencapai', 'Belum mencapai','Menyimpang'];
 <!--    {{role}}-->
     <br>
     <br>
-  <button v-if="role === 'pelaksanaan'" @click="submitData">Save</button>
+  <button @click="submitData">Save</button>
   <table :class="role">
     <thead>
     <tr>
