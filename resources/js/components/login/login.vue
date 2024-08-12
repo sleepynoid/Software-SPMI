@@ -12,11 +12,11 @@ const login = async () => {
             email: email.value,
             password: password.value,
         });
-        localStorage.setItem('token', response.data.data.token);
+        localStorage.setItem('token', response.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         router.push('/');
     } catch (error) {
-        console.error('Login failed:', error);
+        console.error('Login failed:', error.response.data);
     }
 };
 </script>
