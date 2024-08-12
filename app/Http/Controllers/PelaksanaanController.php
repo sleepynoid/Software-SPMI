@@ -49,7 +49,7 @@ class PelaksanaanController extends Controller {
             }
             $linkValid[] = $bukti;
         }
-        
+
         // create bukti pelaksanaan yang valid saja
         foreach ($buktiValid as $bukti) {
             Log::info($bukti);
@@ -78,7 +78,7 @@ class PelaksanaanController extends Controller {
     }
 
     public function getLink($idBukti) {
-        $data = link::where('tipe_link', 'bukti_pelaksanaan')->where('id_bukti', $idBukti)->get();
+        $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
 
         return response()->json($data);
     }
@@ -129,12 +129,12 @@ class PelaksanaanController extends Controller {
             Link::create([
                 'judul_link' => $link['judul_link'],
                 'link' => $link['link'],
-                'tipe_bukti' => 'bukti_pelaksanaan',
-                'id_bukti' => $link['idBukti'],
+//                'tipe_bukti' => 'bukti_pelaksanaan',
+                'id_bukti_pelaksanaan' => $link['idBukti'],
             ]);
         }
         return $this->sendRespons($link, 'create link success');
     }
 
-    
+
 }

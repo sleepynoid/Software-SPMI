@@ -142,13 +142,13 @@ const adjusment = ['melampaui', 'mencapai', 'belum mencapai','menyimpang'];
                 <option v-for="a in adjusment">{{a}}</option>
             </select>
         </td>
-        <td>
-            <button
-                v-if="indicator.idEvaluasi !== '' "
-                class="pop"
-                @click="openPopup(indicator.idEvaluasi)">Link
-            </button>
-        </td>
+<!--        <td>-->
+<!--            <button-->
+<!--                v-if="indicator.idEvaluasi !== '' "-->
+<!--                class="pop"-->
+<!--                @click="openPopup(indicator.idEvaluasi)">Link-->
+<!--            </button>-->
+<!--        </td>-->
       </template>
       </tr>
     </template>
