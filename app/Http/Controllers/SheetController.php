@@ -122,14 +122,18 @@ class SheetController extends Controller {
             $buktiPelaksanaan = BuktiPelaksanaan::where('id_indikator', $idIndikator)->first();
 
             if ($buktiPelaksanaan) {
-                $buktiPelaksanaan->komentar = $bukti;
-                $buktiPelaksanaan->save();
+                if ($bukti !== null) {
+                    $buktiPelaksanaan->komentar = $bukti;
+                    $buktiPelaksanaan->save();
+                }
             } else {
-                BuktiPelaksanaan::create([
-                    'id_pelaksanaan' => $idPelaksanaan,
-                    'id_indikator' => $idIndikator,
-                    'komentar' => $bukti
-                ]);
+                if ($bukti !== null) {
+                    BuktiPelaksanaan::create([
+                        'id_pelaksanaan' => $idPelaksanaan,
+                        'id_indikator' => $idIndikator,
+                        'komentar' => $bukti
+                    ]);
+                }
             }
         }
 

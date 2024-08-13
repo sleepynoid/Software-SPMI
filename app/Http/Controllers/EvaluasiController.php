@@ -64,8 +64,8 @@ class EvaluasiController extends Controller {
             $isEval = BuktiEvaluasi::where('id_evaluasi', $idEvaluasi)->first();
 
             if ($isEval) {
-                $isEval->komentarEvaluasi = $komentarEvaluasi;
-                $isEval->adjusment = $adjusment;
+                $isEval->komentar = $komentarEvaluasi;
+                $isEval->adjustment = $adjusment;
 
                 $isEval->save();
             } else {
