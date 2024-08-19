@@ -1,11 +1,13 @@
 <script setup>
 import {ref, watch, watchEffect} from "vue";
-import {useMagicKeys} from "@vueuse/core";
+import {onClickOutside, useMagicKeys} from "@vueuse/core";
+import CustomLink from "@/components/comp/custom-link.vue";
 const {escape} = useMagicKeys()
 
 const props = defineProps({
     togglePopup: Function,
-    idBukti: String,
+    idBukti: Number,
+    tipe: String,
     role: String,
 });
 
@@ -15,16 +17,21 @@ watch(escape, (v) =>{
     }
 })
 
+const modal = ref(null);
+onClickOutside(modal, ()=> (props.togglePopup()))
+
 const link = ref('')
 const judulLink = ref('')
 const count = ref(0);
-
+const loading = ref(true);
 const savedLink = ref([]);
 
 watch(count, async () => {
     try {
-        let response = await fetch(`/api/getLink/${props.idBukti}`);
+        loading.value = true;
+        let response = await fetch(`/api/getLink/${props.idBukti}/${props.tipe}`);
         savedLink.value = await response.json();
+        loading.value = false;
         console.log(count.value);
     } catch (error){
         console.error('Error submitting data:', error.response.data);
@@ -32,18 +39,26 @@ watch(count, async () => {
 })
 
 watchEffect(async ()=> {
-    let response = await fetch(`/api/getLink/${props.idBukti}`);
+    loading.value = true;
+    let response = await fetch(`/api/getLink/${props.idBukti}/${props.tipe}`);
     savedLink.value = await response.json();
+    loading.value = false;
 
-    console.log(count.value);
+    // console.log(count.value);
 })
 
 const addLink = () => {
     if (judulLink.value === '' || link.value === ''){
-        alert("tidak boleh kosong :)")
+        alert("judul atau link bukti tidak boleh kosong :)")
         return;
     }
-    axios.post('/api/submitLink', {data: {idBukti: props.idBukti, judul_link: judulLink.value, link: link.value}})
+    axios.post('/api/submitLink',
+        {data: {
+            idBukti: props.idBukti,
+            judul_link: judulLink.value,
+            link: link.value,
+            tipeLink: props.tipe,
+        }})
         .then(response => {
             console.log('Data submitted successfully:', response.data);
             judulLink.value = '';
@@ -55,14 +70,16 @@ const addLink = () => {
         });
 }
 function removeTodo(IdLink) {
-    axios.post('/api/deleteLink', {idLink: {idL: IdLink}})
-        .then(response => {
-            console.log('link terhapus:', response.data);
-            count.value--;
-        })
-        .catch(err => {
-            console.log('Error menghapus:', err.response.data);
-        });
+    if (confirm("Hapus Link??") === true) {
+        axios.post('/api/deleteLink', {idLink: {idL: IdLink}})
+            .then(response => {
+                console.log('link terhapus:', response.data);
+                count.value--;
+            })
+            .catch(err => {
+                console.log('Error menghapus:', err.response.data);
+            });
+    }
 }
 
 const openLink = (link) => {
@@ -72,25 +89,19 @@ const openLink = (link) => {
 
 <template>
     <div class="popup">
-        <div class="popup-inner">
+        <div class="popup-inner" ref="modal">
             <slot/>
-            <h2>Link Bukti Pelaksanaan</h2>
-<!--            <h2>{{idBukti}}</h2>-->
-<!--            <input type="text" name="" id="">-->
+            <h2 class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
 
-            <p v-if="savedLink.length < 1">Belum ada Link</p>
-            <ul>
+            <p v-if="loading">Loading...</p>
+            <p v-if="savedLink.length < 1" :hidden="loading">Belum ada Link</p>
+            <ol>
                 <li v-for="link in savedLink" :key="link.id">
-                    <div class="link">
-                        <p>Judul: {{link.judul_link}}</p>
-                        <button @click="openLink(link.link)">link</button>
-                        <button @click="removeTodo(link.id)">X</button>
-                    </div>
-                    <!--      <p>Link: {{link.link}}</p>-->
+                    <custom-link :link="link" :open="openLink" :remove="removeTodo" :role="props.role" :tipe="props.tipe "/>
                 </li>
-            </ul>
+            </ol>
 
-            <div v-if="props.role === 'pelaksanaan'">
+            <div v-if="props.role === props.tipe" class="addLink">
                 <input v-model="judulLink" required placeholder="judul link">
                 <input v-model="link" required placeholder="link">
                 <button @click="addLink">add</button>
@@ -98,7 +109,7 @@ const openLink = (link) => {
 
             <br>
             <br>
-            <button class="popup-close" @click="props.togglePopup">CLose</button>
+            <button class="popup-close" @click="props.togglePopup" :title="'or press esc to close'">Close</button>
         </div>
     </div>
 </template>
@@ -123,10 +134,17 @@ const openLink = (link) => {
     margin-bottom: 10rem;
     background: #FFF;
     padding: 32px;
+    border-radius: 1rem;
+    box-shadow: 0 10px 5px 2px rgba(0,0,0,0.1);
 }
 
-.link{
+.lb{
+    margin-bottom: 1rem;
+}
+
+.addLink{
     display: flex;
-    gap: 1rem;
+    width: 100%;
+    margin-top: 8%;
 }
 </style>

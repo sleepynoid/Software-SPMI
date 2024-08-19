@@ -3,13 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BuktiPelaksanaan;
-use App\Models\Evaluasi;
-use App\Models\Indikator;
 use App\Models\link;
-use App\Models\Pelaksanaan;
-use App\Models\Standar;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class PelaksanaanController extends Controller {
@@ -77,8 +72,8 @@ class PelaksanaanController extends Controller {
         return response()->json(['message' => 'Comment deleted successfully.']);
     }
 
-    public function getLink($idBukti) {
-        $data = link::where('id_bukti_pelaksanaan', $idBukti)->get();
+    public function getLink($idBukti, $tipeLink) {
+        $data = link::where('id_bukti', $idBukti)->where('tipe_link', $tipeLink)->get();
 
         return response()->json($data);
     }
@@ -107,7 +102,7 @@ class PelaksanaanController extends Controller {
         $linkValid = [];
         foreach ($link_bukti as $link) {
             // Check if each link contains the necessary fields
-            if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link'])) {
+            if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link']) || !isset($link['tipeLink'])) {
                 Log::info('Invalid data format', $link);
                 return $this->sendError('Data harus memiliki idBukti, judul_link, dan link yang valid', $link);
             }
@@ -129,8 +124,8 @@ class PelaksanaanController extends Controller {
             Link::create([
                 'judul_link' => $link['judul_link'],
                 'link' => $link['link'],
-//                'tipe_bukti' => 'bukti_pelaksanaan',
-                'id_bukti_pelaksanaan' => $link['idBukti'],
+                'tipe_link' => $link['tipeLink'],
+                'id_bukti' => $link['idBukti'],
             ]);
         }
         return $this->sendRespons($link, 'create link success');

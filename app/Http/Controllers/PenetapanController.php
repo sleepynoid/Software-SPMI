@@ -10,12 +10,12 @@ use Maatwebsite\Excel\Validators\ValidationException;
 use Illuminate\Routing\Controller;
 
 class PenetapanController extends Controller {
-    public function __construct() {
-        $this->middleware('auth:sanctum');
-    }
+//    public function __construct() {
+//        $this->middleware('auth:sanctum');
+//    }
 
     public function getPenetapan(Request $request) {
-        
+
     }
 
     public function import(Request $request) {

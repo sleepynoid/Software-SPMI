@@ -6,6 +6,16 @@ import Register from "@/components/login/register.vue";
 
 let token = localStorage.getItem('token');
 
+const logout = async () => {
+    try {
+        const response = await axios.post('/api/logout', {data: token});
+        console.log(response.data.message);
+        router.push('/');
+    } catch (error) {
+        console.error('Logout failed:', error.response.data);
+    }
+};
+
 const page = ref('home');
 </script>
 
@@ -25,7 +35,7 @@ const page = ref('home');
             <div class="search">
                 <!-- Search content -->
             </div>
-            <div v-if="token" class="login">logout</div>
+            <button v-if="token" @click="logout" class="login">logout</button>
         </div>
 
         <div class="content">
