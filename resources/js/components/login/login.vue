@@ -12,7 +12,8 @@ const login = async () => {
             email: email.value,
             password: password.value,
         });
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', response.data.message);
+        console.log(response.data.message);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         router.push('/');
     } catch (error) {
