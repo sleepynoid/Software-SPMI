@@ -10,10 +10,36 @@ const router = useRouter();
 const file = ref(null);
 const selectedSheet = ref(null);
 const department = ref("");
+const selectedMajor = ref("");
 const type = ref("");
 const period = ref("");
 const note = ref("");
 const loading = ref(false);
+const showMajorError = ref(false);
+
+const departments = [
+    {
+        name: "F. Teknologi Industri",
+        majors: ["Teknik Mesin", "Teknik Industri", "Teknik Kimia", "Teknik Pertambangan", "Teknik Perkapalan"]
+    },
+    {
+        name: "F. Teknik Sipil & Perencanaan",
+        majors: ["Teknik Sipil", "Arsitektur", "Teknik Lingkungan"]
+    },
+    {
+        name: "F. Teknik Elektro dan Teknologi Informasi",
+        majors: ["Teknik Elektro", "Teknik Informatika", "Sistem Informasi"]
+    }
+];
+
+const validateMajorSelection = () => {
+    if (!department.value) {
+        showMajorError.value = true;
+        selectedMajor.value = "";
+    } else {
+        showMajorError.value = false;
+    }
+};
 
 const handleFileChange = (event) => {
     file.value = event.target.files ? event.target.files[0] : null;
@@ -23,7 +49,7 @@ const submitData = async () => {
     loading.value = true;
     const formData = new FormData();
     formData.append("file", file.value);
-    formData.append("jurusan", department.value);
+    formData.append("jurusan", selectedMajor.value);
     formData.append("tipe", type.value);
     formData.append("periode", period.value);
     formData.append("note", note.value);
@@ -81,19 +107,25 @@ function generateYearRange() {
                     />
                 </div>
                 <div class="form-group">
-                    <label for="department"
-                        >Jurusan <span class="required">*</span></label
-                    >
-                    <select id="department" v-model="department" required>
-                        <option value="">Pilih Jurusan</option>
-                        <option value="Teknik Informatika">
-                            Teknik Informatika
+                    <label for="department">Fakultas <span class="required">*</span></label>
+                    <select id="department" v-model="department" @change="validateMajorSelection" required>
+                        <option value="">Pilih Fakultas</option>
+                        <option v-for="dept in departments" :key="dept.name" :value="dept.name">
+                            {{ dept.name }}
                         </option>
-                        <option value="Sistem Informasi">
-                            Sistem Informasi
-                        </option>
-                        <option value="Teknik Elektro">Teknik Elektro</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="major">Jurusan <span class="required">*</span></label>
+                    <select id="major" v-model="selectedMajor" :disabled="!department" required>
+                        <option value="">Pilih Jurusan</option>
+                        <option v-for="major in departments.find(d => d.name === department)?.majors" :key="major" :value="major">
+                            {{ major }}
+                        </option>
+                    </select>
+                    <div v-if="showMajorError" class="error-message">
+                        <span style="color: red;">Silakan pilih fakultas terlebih dahulu.</span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="type"
@@ -274,5 +306,10 @@ textarea {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #94b6ff;
+}
+
+.error-message {
+    margin-top: 5px;
+    color: red;
 }
 </style>
