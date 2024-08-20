@@ -102,13 +102,8 @@ class PelaksanaanController extends Controller {
         $linkValid = [];
         foreach ($link_bukti as $link) {
             // Check if each link contains the necessary fields
-<<<<<<< HEAD
-            if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link'])) {
-                // Log::info('Invalid data format', $link);
-=======
             if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link']) || !isset($link['tipeLink'])) {
                 Log::info('Invalid data format', $link);
->>>>>>> acb0a165a91e332ec86cdf570cde6daf273f19d9
                 return $this->sendError('Data harus memiliki idBukti, judul_link, dan link yang valid', $link);
             }
 

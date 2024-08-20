@@ -17,36 +17,10 @@ const logout = async () => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log(response.data.message);
         localStorage.clear();
         router.push('/');
     } catch (error) {
         console.error('Logout failed:', error.response.data);
-    }
-};
-
-const logout = async () => {
-    try {
-        const response = await axios.post(
-            "/api/logout",
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-
-        console.log('respons: ',response);
-
-        if (response.data.success) {
-            localStorage.removeItem("token");
-            router.push("/login");
-        } else {
-            console.error("Logout failed");
-        }
-    } catch (error) {
-        console.error("Error during logout:", error);
     }
 };
 </script>
