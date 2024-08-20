@@ -5,9 +5,29 @@ import About from "@/components/homepage/about.vue";
 import Register from "@/components/login/register.vue";
 import { useRouter } from "vue-router";
 
+<<<<<<< HEAD
 let token = localStorage.getItem("token");
 const page = ref("home");
 const router = useRouter();
+=======
+let token = localStorage.getItem('token');
+console.log(token)
+
+const logout = async () => {
+    try {
+        const response = await axios.post('/api/logout', {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        console.log(response.data.message);
+        localStorage.clear();
+        router.push('/');
+    } catch (error) {
+        console.error('Logout failed:', error.response.data);
+    }
+};
+>>>>>>> acb0a165a91e332ec86cdf570cde6daf273f19d9
 
 const logout = async () => {
     try {
@@ -51,7 +71,11 @@ const logout = async () => {
             <div class="search">
                 <!-- Search content -->
             </div>
+<<<<<<< HEAD
             <button v-if="token" class="login" @click="logout">Logout</button>
+=======
+            <button v-if="token" @click="logout" class="login">logout</button>
+>>>>>>> acb0a165a91e332ec86cdf570cde6daf273f19d9
         </div>
 
         <div class="content">

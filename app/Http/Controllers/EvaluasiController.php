@@ -61,7 +61,7 @@ class EvaluasiController extends Controller {
             $komentarEvaluasi = $item['komentarEvaluasi'];
             $idEvaluasi = $item['idEvaluasi'];
 
-            $isEval = BuktiEvaluasi::where('id_evaluasi', $idEvaluasi)->first();
+            $isEval = BuktiEvaluasi::where('id_bukti_pelaksanaan', $idBP)->first();
 
             if ($isEval) {
                 $isEval->komentar = $komentarEvaluasi;
