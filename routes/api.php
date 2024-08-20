@@ -26,7 +26,7 @@ Route::post('/submitEvaluasi', [EvaluasiController::class, 'submitEval']);
 Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
 Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment']);
 
-Route::get('/getLink/{idBukti}',[PelaksanaanController::class, 'getLink']);
+Route::get('/getLink/{idBukti}/{tipeLink}',[PelaksanaanController::class, 'getLink']);
 Route::post('/submitLink',[PelaksanaanController::class,'postLink']);
 Route::post('/deleteLink',[PelaksanaanController::class,'deleteLink']);
 

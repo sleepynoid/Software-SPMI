@@ -1,17 +1,25 @@
 <script setup>
-import Modal from "@/components/sheets/modal.vue";
-import {ref} from "vue";
-const props = defineProps({
-  data: Object, refresh: Function
+import { defineAsyncComponent, ref } from "vue";
+import CustomButton from "@/components/comp/custom-button.vue";
+
+const Modal = defineAsyncComponent({
+    loader: () => import('../sheets/modal.vue'),
 });
 
-const formData = ref([])
-const dataEval = ref([])
+const props = defineProps({
+    data: Object,
+    role: String,
+});
 
-const role = ref('pelaksanaan')
+const emit = defineEmits(['submit-data']);
+
+const formData = ref([]);
+const dataEval = ref([]);
+
+const adjusmentOptions = ['melampaui', 'mencapai', 'belum mencapai', 'menyimpang'];
 
 const save = (idIndikator, bukti, idP) => {
-    const newData = {idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
+    const newData = { idIndikator, bukti, idPelaksanaan: idP };
     const index = formData.value.findIndex(item => item.id === idIndikator);
     if (index !== -1) {
         formData.value.splice(index, 1, newData);
@@ -21,185 +29,151 @@ const save = (idIndikator, bukti, idP) => {
 };
 
 const saveEval = (idBuktiPelaksanaan, komenEval, adjusment, idP) => {
-    if (komenEval === ''){
-        alert("komentar harap di isi🗿");
-    }else {
-    const newData = { idBuktiPelaksanaan: idBuktiPelaksanaan, komentarEvaluasi: komenEval, adjusment: adjusment, idEvaluasi:idP };
-    const index = dataEval.value.findIndex(item => item.id === idBuktiPelaksanaan);
-    if (index !== -1) {
-        dataEval.value.splice(index, 1, newData);
+    if (komenEval === '') {
+        alert("Komentar harap diisi 🗿");
     } else {
-        dataEval.value.push(newData);
-    }
-
-    console.log(dataEval)
+        const newData = {
+            idBuktiPelaksanaan,
+            komentarEvaluasi: komenEval,
+            adjusment,
+            idEvaluasi: idP,
+        };
+        const index = dataEval.value.findIndex(item => item.id === idBuktiPelaksanaan);
+        if (index !== -1) {
+            dataEval.value.splice(index, 1, newData);
+        } else {
+            dataEval.value.push(newData);
+        }
+        // console.log(dataEval.value);
     }
 };
 
-    const submitData = () => {
-        if (role.value === 'pelaksanaan'){
-            axios.post('/api/submitPelaksanaan', {data: formData.value})
-                .then(response => {
-                    console.log('Data submitted successfully:', response.data);
-                    props.refresh();
-                })
-                .catch(error => {
-                    console.error('Error submitting data:', error.response.data);
-                });
-        } else {
-            axios.post('/api/submitEvaluasi', {data: dataEval.value})
-                .then(response => {
-                    console.log('Data submitted successfully:', response.data);
-                    props.refresh();
-                })
-                .catch(error => {
-                    console.error('Error submitting data:', error.response.data);
-                });
-        }
-    }
+function submit(){
+    emit('submit-data', props.role === 'Pelaksanaan' ? formData.value : dataEval.value)
+}
 
+const popupTriggers = ref(false);
+const selectedIndicator = ref(null);
+const tipeLink = ref(null);
 
-const popupTriggers = ref(false)
-const selectedIndicator = ref(null)
 const togglePopup = () => {
-  popupTriggers.value = !popupTriggers.value
-}
+    popupTriggers.value = !popupTriggers.value;
+};
 
-const openPopup = (indicator) =>{
-  selectedIndicator.value = indicator;
-  togglePopup();
-}
-
-const adjusment = ['melampaui', 'mencapai', 'belum mencapai','menyimpang'];
-
-// document.addEventListener("contextmenu", function (event){
-//     alert("gaboleh klik kanan ea");
-//     event.preventDefault();
-// })
+const openPopup = (indicator, tipe) => {
+    selectedIndicator.value = indicator;
+    tipeLink.value = tipe;
+    togglePopup();
+};
 </script>
 
-
 <template>
-    <br>
-    <label for="mo">role: </label>
-    <select id="mo" v-model="role" style="width: 10rem;">
-        <option>pelaksanaan</option>
-        <option>superUser</option>
-    </select>
-<!--    {{role}}-->
-    <br>
-    <br>
-  <button @click="submitData">Save</button>
-  <table :class="role">
-    <thead>
-    <tr>
-      <th colspan="3">Penetapan</th>
-      <th colspan="2">Pelaksanaan</th>
-      <th colspan="5" v-if="role === 'superUser'">Evaluasi</th>
-    </tr>
-    <tr>
-      <th rowspan="">Standar</th>
-      <th>Indicator</th>
-      <th>Target</th>
-      <th>Komentar</th>
-      <th>Link Bukti</th>
-    <template v-if="role === 'superUser'">
-      <th  colspan="2">Komentar</th>
-      <th colspan="2">Adjusment</th>
-      <th>Link Bukti</th>
-        </template>
-    </tr>
-    </thead>
-    <tbody>
-    <template v-for="(standar, index) in data" :key="index">
-      <tr>
-        <td :rowspan="standar.indicators.length+1">{{ standar.standar }}</td>
-      </tr>
-      <tr v-for="indicator in standar.indicators">
-        <td>{{ indicator.indicator }}</td>
-        <td>{{ indicator.target }}</td>
+    <br />
+    <custom-button v-once @click="submit">Save</custom-button>
+    <div class="table">
+        <table :class="props.role">
+            <thead>
+            <tr>
+                <th colspan="3"><h3 class="font-poppin">Penetapan</h3></th>
+                <th colspan="2"><h3 class="font-poppin">Pelaksanaan</h3></th>
+                <th colspan="5" v-if="role === 'Evaluasi'"><h3 class="font-poppin">Evaluasi</h3></th>
+            </tr>
+            <tr>
+                <th><h3 class="font-poppin">Standar</h3></th>
+                <th><h3 class="font-poppin">Indikator</h3></th>
+                <th><h3 class="font-poppin">Target</h3></th>
+                <th><h3 class="font-poppin">Komentar</h3></th>
+                <th><h3 class="font-poppin">Link Bukti</h3></th>
+                <template v-if="role === 'Evaluasi'">
+                    <th colspan="2"><h3 class="font-poppin">Komentar Evaluasi</h3></th>
+                    <th colspan="2"><h3 class="font-poppin">Adjusment</h3></th>
+                    <th><h3 class="font-poppin">Link Bukti Evaluasi</h3></th>
+                </template>
+            </tr>
+            </thead>
+            <tbody>
+            <template v-for="(standar, index) in props.data" :key="index">
+                <tr>
+                    <td :rowspan="standar.indicators.length + 1">{{ standar.standar }}</td>
+                </tr>
+                <tr v-for="indicator in standar.indicators" :key="indicator.id">
+                    <td>{{ indicator.indicator }}</td>
+                    <td>{{ indicator.target }}</td>
 
-        <td>
-            <p v-if="role === 'superUser'">{{indicator.bukti}}</p>
-            <textarea v-else v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan)"></textarea>
-        </td>
-        <td>
-          <button
-              v-if="indicator.idBukti !== '' "
-              class="pop"
-              @click="openPopup(indicator.idBukti)">Link
-          </button>
-        </td>
+                    <td>
+                        <p v-if="role === 'Evaluasi'">{{ indicator.bukti }}</p>
+                        <textarea v-else v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan)"></textarea>
+                    </td>
+                    <td>
+                        <button
+                                v-if="indicator.idBukti !== ''"
+                                class="pop"
+                                @click="openPopup(indicator.idBukti, 'Pelaksanaan')"
+                        >
+                            Link
+                        </button>
+                    </td>
 
+                    <template v-if="role === 'Evaluasi'">
+                        <td colspan="2">
+                            <textarea v-model="indicator.evaluasi"></textarea>
+                        </td>
+                        <td colspan="2">
+                            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)">
+                                <option>{{ indicator.adjusment }}</option>
+                                <option v-for="a in adjusmentOptions" :key="a">{{ a }}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button
+                                    v-if="indicator.idEvaluasi !== ''"
+                                    class="pop"
+                                    @click="openPopup(indicator.idEvaluasi, 'Evaluasi')"
+                            >
+                                Link
+                            </button>
+                        </td>
+                    </template>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
 
-      <template v-if="role === 'superUser'">
-        <td colspan="2">
-            <textarea v-model="indicator.evaluasi"></textarea>
-        </td>
-        <td colspan="2">
-            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)" >
-                <option>{{indicator.adjusment}}</option>
-                <option v-for="a in adjusment">{{a}}</option>
-            </select>
-        </td>
-<!--        <td>-->
-<!--            <button-->
-<!--                v-if="indicator.idEvaluasi !== '' "-->
-<!--                class="pop"-->
-<!--                @click="openPopup(indicator.idEvaluasi)">Link-->
-<!--            </button>-->
-<!--        </td>-->
-      </template>
-      </tr>
-    </template>
-
-    </tbody>
-  </table>
-
-  <Modal v-if="popupTriggers"
-         :idBukti="selectedIndicator"
-         :togglePopup="togglePopup"
-         :role="role"
-  >
-  </Modal>
+    <Modal
+            v-if="popupTriggers"
+            :togglePopup="togglePopup"
+            :idBukti="selectedIndicator"
+            :tipe="tipeLink"
+            :role="role"
+    />
 </template>
 
-
-
 <style scoped>
-.superUser {
-  width: 120vw;
-  table-layout: fixed;
-  border-collapse: collapse;
-  margin-top: 1rem;
+.table {
+    overflow-x: auto;
+    padding-right: 2%;
 }
 
-.pelaksanaan{
+.Evaluasi {
+    width: 120vw;
+    margin-top: 1rem;
+}
+
+.Pelaksanaan {
     width: 92vw;
-}
-
-th, td {
-  padding: 8px;
-  border: 1px solid #ccc;
-  text-align: center;
-  word-wrap: break-word;
-}
-
-thead th {
-  background-color: #f5f5f5;
+    margin-top: 1rem;
 }
 
 textarea {
-  width: 100%;
-  box-sizing: border-box;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .pop {
-  width: 80%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-
 </style>

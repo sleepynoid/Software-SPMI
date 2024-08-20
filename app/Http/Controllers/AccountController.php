@@ -23,13 +23,20 @@ class AccountController extends Controller {
      */
     public function register(Request $request): JsonResponse {
         //
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            // 'c_password' => 'required|same:password',
-            'role' => 'required'
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+            'role' => 'required|string',
+
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         $input = $request->all();
 
@@ -39,7 +46,6 @@ class AccountController extends Controller {
             'role' => $input['role'],
             'password' => bcrypt($input['password'])
         ]);
-        // $user = User::create($input);
 
         return response()->json([
             'success' => 'true',
@@ -60,6 +66,7 @@ class AccountController extends Controller {
             return response()->json([
                 'success' => 'true',
                 'token' => $success['token'],
+                'userRole' => $user['role'],
                 'message' => 'User ' . $user['name'] . ' Successfuly Login'
             ]);
         } else {

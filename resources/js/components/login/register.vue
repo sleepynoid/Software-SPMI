@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const email = ref('');
+const role = ref('');
+const name = ref('');
 const password = ref('');
 const role = ref('');
 const name = ref('');
@@ -33,7 +35,7 @@ const register = async () => {
                     <h1>POWERED BY <br> CREATORS AROUND <br> THE WORLD.</h1>
                 </div>
                 <div class="mi">
-                    <img src="https://images.unsplash.com/photo-1722170529553-3d486ba8ffba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOXx8fGVufDB8fHx8fA%3D%3D" class="mii"></img>
+                    <img src="https://images.unsplash.com/photo-1722170529553-3d486ba8ffba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOXx8fGVufDB8fHx8fA%3D%3D" class="mii">
                 </div>
             </div>
             <div class="main2">
@@ -43,7 +45,6 @@ const register = async () => {
                         <h6>Name</h6>
                         <input type="text" v-model="name" required>
                     </div>
-
                     <div>
                         <h6>Email</h6>
                         <input type="text" v-model="email" required>
