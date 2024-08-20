@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use \Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AccountController extends Controller {
     /**
@@ -22,7 +23,7 @@ class AccountController extends Controller {
      */
     public function register(Request $request): JsonResponse {
         //
-        $validator = $request->validate([
+        $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
@@ -38,7 +39,7 @@ class AccountController extends Controller {
             'role' => $input['role'],
             'password' => bcrypt($input['password'])
         ]);
-        $user = User::create($input);
+        // $user = User::create($input);
 
         return response()->json([
             'success' => 'true',

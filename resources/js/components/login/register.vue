@@ -5,18 +5,21 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const email = ref('');
 const password = ref('');
+const role = ref('');
+const name = ref('');
 
-const login = async () => {
+const register = async () => {
     try {
-        const response = await axios.post('/api/login', {
+        const response = await axios.post('/api/register', {
+            name: name.value,
             email: email.value,
             password: password.value,
+            role: role.value,
         });
-        localStorage.setItem('token', response.data.data.token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        console.log(response);
         router.push('/');
     } catch (error) {
-        console.error('Login failed:', error);
+        console.error('Registration failed:', error);
     }
 };
 </script>
@@ -37,6 +40,11 @@ const login = async () => {
                 <div class="lojin">
                     <strong style="text-align:center;">Register</strong>
                     <div>
+                        <h6>Name</h6>
+                        <input type="text" v-model="name" required>
+                    </div>
+
+                    <div>
                         <h6>Email</h6>
                         <input type="text" v-model="email" required>
                     </div>
@@ -47,12 +55,13 @@ const login = async () => {
                     </div>
                     <div>
                         <label for="">Role</label>
-                        <select name="" id="">
-                            <option value="">penetapan</option>
-                            <option value="">pelaksanaan</option>
+                        <select v-model="role">
+                            <option value="">Pilih Role</option>
+                            <option value="penetapan">Penetapan</option>
+                            <option value="pelaksanaan">Pelaksanaan</option>
                         </select>
                     </div>
-                    <div class="log btn" @click="login">Register</div>
+                    <div class="log btn" @click="register">Register</div>
                 </div>
             </div>
         </div>
