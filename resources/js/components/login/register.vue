@@ -7,6 +7,8 @@ const email = ref('');
 const role = ref('');
 const name = ref('');
 const password = ref('');
+const role = ref('');
+const name = ref('');
 
 const register = async () => {
     try {
@@ -16,10 +18,10 @@ const register = async () => {
             password: password.value,
             role: role.value,
         });
-        console.log(response.data)
-        // await router.push('/');
+        console.log(response);
+        router.push('/');
     } catch (error) {
-        console.error('Register failed:', error);
+        console.error('Registration failed:', error);
     }
 };
 </script>
@@ -55,8 +57,9 @@ const register = async () => {
                     <div>
                         <label for="">Role</label>
                         <select v-model="role">
-                            <option>Penetapan</option>
-                            <option>Pelaksanaan</option>
+                            <option value="">Pilih Role</option>
+                            <option value="penetapan">Penetapan</option>
+                            <option value="pelaksanaan">Pelaksanaan</option>
                         </select>
                     </div>
                     <div class="log btn" @click="register">Register</div>
