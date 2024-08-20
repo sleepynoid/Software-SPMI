@@ -65,7 +65,6 @@ class PenetapanController extends Controller {
             foreach ($failure->errors() as $error) {
                 $errorMessages[] = $error;
                 $request->session()->flash('error', $error);
-                Log::error($error);
             }
         }
         return response()->json(['success' => false, 'message' => 'Data gagal diimpor', 'errors' => $errorMessages]);

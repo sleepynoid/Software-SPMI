@@ -1,9 +1,15 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 import Homepage from "@/components/homepage/homepage.vue";
 import About from "@/components/homepage/about.vue";
 import Register from "@/components/login/register.vue";
+import { useRouter } from "vue-router";
 
+<<<<<<< HEAD
+let token = localStorage.getItem("token");
+const page = ref("home");
+const router = useRouter();
+=======
 let token = localStorage.getItem('token');
 console.log(token)
 
@@ -21,12 +27,36 @@ const logout = async () => {
         console.error('Logout failed:', error.response.data);
     }
 };
+>>>>>>> acb0a165a91e332ec86cdf570cde6daf273f19d9
 
-const page = ref('home');
+const logout = async () => {
+    try {
+        const response = await axios.post(
+            "/api/logout",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        console.log('respons: ',response);
+
+        if (response.data.success) {
+            localStorage.removeItem("token");
+            router.push("/login");
+        } else {
+            console.error("Logout failed");
+        }
+    } catch (error) {
+        console.error("Error during logout:", error);
+    }
+};
 </script>
 
 <template>
-    <h1 v-if="token != undefined">{{token}}</h1>
+    <h1 v-if="token != undefined">{{ token }}</h1>
     <div class="c1">
         <div class="topbar">
             <h2>SPMI</h2>
@@ -41,21 +71,23 @@ const page = ref('home');
             <div class="search">
                 <!-- Search content -->
             </div>
+<<<<<<< HEAD
+            <button v-if="token" class="login" @click="logout">Logout</button>
+=======
             <button v-if="token" @click="logout" class="login">logout</button>
+>>>>>>> acb0a165a91e332ec86cdf570cde6daf273f19d9
         </div>
 
         <div class="content">
-            <Homepage v-if="page === 'home'"/>
-            <Register v-if="page === 'reg'"/>
-            <About v-if="page === 'about'"/>
+            <Homepage v-if="page === 'home'" />
+            <Register v-if="page === 'reg'" />
+            <About v-if="page === 'about'" />
         </div>
     </div>
 </template>
 
-
 <style scoped>
-
-.c1{
+.c1 {
     width: 100vw;
     /* //height: 200vh; */
     display: flex;
@@ -65,7 +97,7 @@ const page = ref('home');
     background: whitesmoke;
 }
 
-.topbar{
+.topbar {
     width: 100%;
     height: 4rem;
     background: white;
@@ -76,17 +108,17 @@ const page = ref('home');
     box-shadow: 0 10px 20px 1px lightgray;
 }
 
-.menu{
+.menu {
     display: flex;
     gap: 3rem;
     margin: 0 2.5rem 0 2.5rem;
 
-    strong{
+    strong {
         cursor: pointer;
     }
 }
 
-.search{
+.search {
     width: 35%;
     height: 70%;
     background: lightgray;
@@ -94,17 +126,17 @@ const page = ref('home');
     margin-right: 15rem;
 }
 
-.login{
+.login {
     width: 7%;
     height: 50%;
-    background: #FFDA76;
+    background: #ffda76;
     border-radius: 10rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.content{
+.content {
     display: flex;
     z-index: 0;
     padding: 3%;

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class PelaksanaanController extends Controller {
     //
     public function postComment(Request $request) {
-        Log::info('posting comment');
+        // Log::info('posting comment');
 
         // validasi request
         // $request->validate([
@@ -30,16 +30,16 @@ class PelaksanaanController extends Controller {
         foreach ($bukti_pelaksanaan as $bukti) {
             // Check if each link contains the necessary fields
             if (!isset($bukti['idBukti']) || !isset($bukti['judul_link']) || !isset($bukti['link'])) {
-                Log::info('Invalid data format', $bukti);
+                // Log::info('Invalid data format', $bukti);
                 return $this->sendError('Data harus memiliki idBukti, judul_link, dan link yang valid', $bukti);
             }
 
             // query to check id is match with $id_pelaksanaan return boolean
             $id_bukti_pelaksanaan = $bukti['idBukti'];
             $isExist = BuktiPelaksanaan::where('id', $id_bukti_pelaksanaan)->exists();
-            Log::info($isExist);
+            // Log::info($isExist);
             if (!$isExist) {
-                Log::warning($bukti);
+                // Log::warning($bukti);
                 return $this->sendError('Id bukti pelaksanaan tidak valid', $bukti);
             }
             $linkValid[] = $bukti;
@@ -47,7 +47,7 @@ class PelaksanaanController extends Controller {
 
         // create bukti pelaksanaan yang valid saja
         foreach ($buktiValid as $bukti) {
-            Log::info($bukti);
+            // Log::info($bukti);
             BuktiPelaksanaan::create([
                 'id_pelaksanaan' => $bukti_pelaksanaan['idPelaksanaan'],
                 'id_indikator' => $bukti_pelaksanaan['idIndikator'],
@@ -92,7 +92,7 @@ class PelaksanaanController extends Controller {
     }
 
     public function postLink(Request $request) {
-        Log::info('posting link');
+        // Log::info('posting link');
         $link_bukti = $request->json()->all()['data'];
 
         // Ensure $data is always an array for consistent processing
@@ -102,17 +102,22 @@ class PelaksanaanController extends Controller {
         $linkValid = [];
         foreach ($link_bukti as $link) {
             // Check if each link contains the necessary fields
+<<<<<<< HEAD
+            if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link'])) {
+                // Log::info('Invalid data format', $link);
+=======
             if (!isset($link['idBukti']) || !isset($link['judul_link']) || !isset($link['link']) || !isset($link['tipeLink'])) {
                 Log::info('Invalid data format', $link);
+>>>>>>> acb0a165a91e332ec86cdf570cde6daf273f19d9
                 return $this->sendError('Data harus memiliki idBukti, judul_link, dan link yang valid', $link);
             }
 
             // query to check id is match with $id_pelaksanaan return boolean
             $id_bukti_pelaksanaan = $link['idBukti'];
             $isExist = BuktiPelaksanaan::where('id', $id_bukti_pelaksanaan)->exists();
-            Log::info($isExist);
+            // Log::info($isExist);
             if (!$isExist) {
-                Log::warning($link);
+                // Log::warning($link);
                 return $this->sendError('Id bukti pelaksanaan tidak valid', $link);
             }
             $linkValid[] = $link;
@@ -120,7 +125,7 @@ class PelaksanaanController extends Controller {
 
         // Create valid links
         foreach ($linkValid as $link) {
-            Log::info('Creating link: ', $link);
+            // Log::info('Creating link: ', $link);
             Link::create([
                 'judul_link' => $link['judul_link'],
                 'link' => $link['link'],

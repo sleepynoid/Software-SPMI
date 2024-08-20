@@ -48,7 +48,7 @@ const login = async () => {
                         <h6>Password</h6>
                         <input type="password" v-model="password" required>
                     </div>
-                    <div class="log btn" @click="login">login</div>
+                    <button class="log btn" @click="login">login</button>
                 </div>
             </div>
         </div>
