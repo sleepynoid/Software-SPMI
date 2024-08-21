@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class link extends Model
+class BuktiPengendalian extends Model
 {
     use HasFactory;
-    
     protected $fillable = [
-        'judul_link',
-        'link',
-        'id_bukti',
-        'tipe_link'
+        'temuan',
+        'akar_masalah',
+        'rtl',
+        'pelaksanaan_rtl',
+        'id_bukti_evaluasi'
     ];
 }
