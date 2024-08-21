@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->string('jurusan');
             $table->string('periode');
-            $table->longText('note');
+            $table->longText('note')->nullable();
             $table->enum('tipe_sheet', ['pendidikan', 'pengabdian', 'penelitian']);
             // $table->foreignId('user_id')->constrained('users');
             $table->timestamps();

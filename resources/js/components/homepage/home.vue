@@ -12,21 +12,6 @@ const router = useRouter();
 
 const logout = async () => {
     try {
-        const response = await axios.post('/api/logout', {}, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        console.log(response.data.message);
-        localStorage.clear();
-        router.push('/');
-    } catch (error) {
-        console.error('Logout failed:', error.response.data);
-    }
-};
-
-const logout = async () => {
-    try {
         const response = await axios.post(
             "/api/logout",
             {},

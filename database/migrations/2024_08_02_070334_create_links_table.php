@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('judul_link');
             $table->string('link');
             // $table->unsignedBigInteger('id_bukti_pelaksanaan');
-            $table->enum('tipe_link',['bukti_pelaksanaan','bukti_evaluasi']);
+            $table->enum('tipe_link',['Pelaksanaan','Evaluasi']);
             $table->unsignedBigInteger('id_bukti');
             $table->timestamps();
 
