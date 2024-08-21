@@ -85,12 +85,12 @@ class SheetController extends Controller {
                                 'id' => $i->id,
                                 'indicator' => $i->note,
                                 'target' => $tar->value,
-                                'bukti' => $buk,
                                 'idBukti' => $idB,
-                                'evaluasi' => $eva,
-                                'adjusment' => $adj,
+                                'bukti' => $buk,
                                 'idEvaluasi' => $idE,
                                 'idBuktiEval' => $idBE,
+                                'evaluasi' => $eva,
+                                'adjusment' => $adj,
                             ];
                             array_push($data['indicators'], $newIndicator);
                         }

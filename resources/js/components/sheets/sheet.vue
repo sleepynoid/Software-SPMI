@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { dotStream } from 'ldrs';
 import Sheets from "@/components/sheets/sheets.vue";
 import CustomSelect from "@/components/comp/custom-select.vue";
+import Pengendalian from "@/components/sheets/pengendalian.vue";
 
 dotStream.register();
 
@@ -13,7 +14,7 @@ const loading = ref(true);
 const tipe = ['input', 'proses', 'output'];
 const current = ref(tipe[0]);
 
-const roleUser = ['Pelaksanaan', 'Evaluasi'];
+const roleUser = ['Pelaksanaan', 'Evaluasi', 'Pengendalian'];
 const role = ref(roleUser[0]);
 
 const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
@@ -75,7 +76,8 @@ const submitData = (formData) => {
         <div v-else class="dt">
             <h2 class="font-poppin" v-once>Role: </h2>
             <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>
-            <Sheets :data="standarData" :role="role" @submit-data="submitData"></Sheets>
+            <Sheets v-if="role!== 'Pengendalian'" :data="standarData" :role="role" @submit-data="submitData"></Sheets>
+            <pengendalian :data="standarData"></pengendalian>
         </div>
     </div>
 </template>

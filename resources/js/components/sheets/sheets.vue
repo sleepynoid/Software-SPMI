@@ -1,6 +1,7 @@
 <script setup>
 import { defineAsyncComponent, ref } from "vue";
 import CustomButton from "@/components/comp/custom-button.vue";
+import {debounce} from "lodash";
 
 const Modal = defineAsyncComponent({
     loader: () => import('../sheets/modal.vue'),
@@ -28,7 +29,7 @@ const save = (idIndikator, bukti, idP) => {
     }
 };
 
-const saveEval = (idBuktiPelaksanaan, komenEval, adjusment, idP) => {
+const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idP) => {
     if (komenEval === '') {
         alert("Komentar harap diisi 🗿");
     } else {
@@ -44,9 +45,9 @@ const saveEval = (idBuktiPelaksanaan, komenEval, adjusment, idP) => {
         } else {
             dataEval.value.push(newData);
         }
-        // console.log(dataEval.value);
+        console.log(dataEval.value);
     }
-};
+}, 500);
 
 function submit(){
     emit('submit-data', props.role === 'Pelaksanaan' ? formData.value : dataEval.value)
@@ -108,15 +109,14 @@ const openPopup = (indicator, tipe) => {
                         <button
                                 v-if="indicator.idBukti !== ''"
                                 class="pop"
-                                @click="openPopup(indicator.idBukti, 'Pelaksanaan')"
-                        >
+                                @click="openPopup(indicator.idBukti, 'Pelaksanaan')">
                             Link
                         </button>
                     </td>
 
                     <template v-if="role === 'Evaluasi'">
                         <td colspan="2">
-                            <textarea v-model="indicator.evaluasi"></textarea>
+                            <textarea v-model="indicator.evaluasi" @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)"></textarea>
                         </td>
                         <td colspan="2">
                             <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)">
