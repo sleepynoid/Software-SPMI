@@ -9,6 +9,7 @@ const props = defineProps({
     idBukti: Number,
     tipe: String,
     role: String,
+    komentar: String
 });
 
 watch(escape, (v) =>{
@@ -91,6 +92,7 @@ const openLink = (link) => {
     <div class="popup">
         <div class="popup-inner" ref="modal">
             <slot/>
+            <h1>{{komentar}}</h1>
             <h2 class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
 
             <p v-if="loading">Loading...</p>
