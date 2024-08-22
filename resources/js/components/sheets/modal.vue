@@ -92,10 +92,12 @@ const openLink = (link) => {
     <div class="popup">
         <div class="popup-inner" ref="modal">
             <slot/>
-            <h1>{{komentar}}</h1>
-            <h2 class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
+            <p v-if="role === 'Pengendalian'">{{komentar}}</p>
+            <h2 v-else class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
 
             <p v-if="loading">Loading...</p>
+
+            <p style="margin-top: 2rem">Link Bukti:</p>
             <p v-if="savedLink.length < 1" :hidden="loading">Belum ada Link</p>
             <ol>
                 <li v-for="link in savedLink" :key="link.id">
@@ -132,8 +134,10 @@ const openLink = (link) => {
 }
 
 .popup-inner{
+    width: 50vw;
+    text-align: justify;
     position: relative;
-    margin-bottom: 10rem;
+    margin-bottom: 10%;
     background: #FFF;
     padding: 32px;
     border-radius: 1rem;
