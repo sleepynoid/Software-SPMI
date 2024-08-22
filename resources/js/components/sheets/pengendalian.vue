@@ -23,8 +23,8 @@ const togglePopup = () => {
 </script>
 
 <template>
-<!--    <p>{{data}}</p>-->
-    <table :class="props.role">
+    <div class="bodi">
+        <table class="tb">
         <thead>
         <tr>
             <th colspan="3"><h3 class="font-poppin">Penetapan</h3></th>
@@ -84,7 +84,7 @@ const togglePopup = () => {
         </template>
         </tbody>
     </table>
-
+    </div>
     <Modal
         v-if="popupTriggers"
         :togglePopup="togglePopup"
@@ -98,5 +98,15 @@ const togglePopup = () => {
 <style scoped>
 .w10{
   width: 10rem;
+}
+
+.bodi{
+    overflow-x: auto;
+    padding-right: 2%;
+    margin-top: 1rem;
+}
+
+.tb{
+    //width: 100%;
 }
 </style>
