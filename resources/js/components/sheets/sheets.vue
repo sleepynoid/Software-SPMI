@@ -12,14 +12,14 @@ const props = defineProps({
     role: String,
 });
 
-const emit = defineEmits(['submit-data']);
+const emit = defineEmits(['submit-data', 'update']);
 
 const formData = ref([]);
 const dataEval = ref([]);
 
 const adjusmentOptions = ['melampaui', 'mencapai', 'belum mencapai', 'menyimpang'];
 
-const save = (idIndikator, bukti, idP) => {
+const save = debounce((idIndikator, bukti, idP) => {
     const newData = { idIndikator, bukti, idPelaksanaan: idP };
     const index = formData.value.findIndex(item => item.id === idIndikator);
     if (index !== -1) {
@@ -27,7 +27,9 @@ const save = (idIndikator, bukti, idP) => {
     } else {
         formData.value.push(newData);
     }
-};
+    emit('update', true);
+
+}, 500);
 
 const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idP) => {
     if (komenEval === '') {
@@ -47,6 +49,8 @@ const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idP) => {
         }
         console.log(dataEval.value);
     }
+    emit('update', true);
+
 }, 500);
 
 function submit(){
@@ -126,9 +130,9 @@ const openPopup = (indicator, tipe) => {
                         </td>
                         <td>
                             <button
-                                    v-if="indicator.idEvaluasi !== ''"
+                                    v-if="indicator.idBuktiEval !== ''"
                                     class="pop"
-                                    @click="openPopup(indicator.idEvaluasi, 'Evaluasi')"
+                                    @click="openPopup(indicator.idBuktiEval, 'Evaluasi')"
                             >
                                 Link
                             </button>
