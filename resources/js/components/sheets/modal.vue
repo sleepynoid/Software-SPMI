@@ -54,12 +54,12 @@ const addLink = () => {
         return;
     }
     axios.post('/api/submitLink',
-        {data: {
+        {
             idBukti: props.idBukti,
             judul_link: judulLink.value,
             link: link.value,
             tipeLink: props.tipe,
-        }})
+        })
         .then(response => {
             console.log('Data submitted successfully:', response.data);
             judulLink.value = '';

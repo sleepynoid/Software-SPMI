@@ -13,7 +13,7 @@ const login = async () => {
             password: password.value,
         });
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', response.data.userRole);
+        localStorage.setItem('userRole', response.data.userRole);
 
         console.log(response.data.message);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
@@ -49,6 +49,11 @@ const login = async () => {
                         <input type="password" v-model="password" required>
                     </div>
                     <button class="log btn" @click="login">login</button>
+                    <div style="text-align:center;">
+                        <p>Don't have an account yet?
+                            <router-link to="/register"> register </router-link>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

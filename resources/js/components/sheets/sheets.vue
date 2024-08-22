@@ -15,9 +15,6 @@ const props = defineProps({
 const emit = defineEmits(['submit-data', 'update']);
 
 const formData = ref([]);
-const dataEval = ref([]);
-
-const adjusmentOptions = ['melampaui', 'mencapai', 'belum mencapai', 'menyimpang'];
 
 const save = debounce((idIndikator, bukti, idP) => {
     const newData = { idIndikator, bukti, idPelaksanaan: idP };
@@ -31,30 +28,9 @@ const save = debounce((idIndikator, bukti, idP) => {
 
 }, 500);
 
-const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idP) => {
-    if (komenEval === '') {
-        alert("Komentar harap diisi 🗿");
-    } else {
-        const newData = {
-            idBuktiPelaksanaan,
-            komentarEvaluasi: komenEval,
-            adjusment,
-            idEvaluasi: idP,
-        };
-        const index = dataEval.value.findIndex(item => item.id === idBuktiPelaksanaan);
-        if (index !== -1) {
-            dataEval.value.splice(index, 1, newData);
-        } else {
-            dataEval.value.push(newData);
-        }
-        console.log(dataEval.value);
-    }
-    emit('update', true);
-
-}, 500);
 
 function submit(){
-    emit('submit-data', props.role === 'Pelaksanaan' ? formData.value : dataEval.value)
+    emit('submit-data', formData.value)
 }
 
 const popupTriggers = ref(false);
@@ -81,19 +57,13 @@ const openPopup = (indicator, tipe) => {
             <tr>
                 <th colspan="3"><h3 class="font-poppin">Penetapan</h3></th>
                 <th colspan="2"><h3 class="font-poppin">Pelaksanaan</h3></th>
-                <th colspan="5" v-if="role === 'Evaluasi'"><h3 class="font-poppin">Evaluasi</h3></th>
             </tr>
             <tr>
-                <th><h3 class="font-poppin">Standar</h3></th>
-                <th><h3 class="font-poppin">Indikator</h3></th>
+                <th><h3 class="font-poppin" style="width: 10rem">Standar</h3></th>
+                <th><h3 class="font-poppin" style="width: 10rem">Indikator</h3></th>
                 <th><h3 class="font-poppin">Target</h3></th>
-                <th><h3 class="font-poppin">Komentar</h3></th>
+                <th><h3 class="xd">Komentar</h3></th>
                 <th><h3 class="font-poppin">Link Bukti</h3></th>
-                <template v-if="role === 'Evaluasi'">
-                    <th colspan="2"><h3 class="font-poppin">Komentar Evaluasi</h3></th>
-                    <th colspan="2"><h3 class="font-poppin">Adjusment</h3></th>
-                    <th><h3 class="font-poppin">Link Bukti Evaluasi</h3></th>
-                </template>
             </tr>
             </thead>
             <tbody>
@@ -106,8 +76,7 @@ const openPopup = (indicator, tipe) => {
                     <td>{{ indicator.target }}</td>
 
                     <td>
-                        <p v-if="role === 'Evaluasi'">{{ indicator.bukti }}</p>
-                        <textarea v-else v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan)"></textarea>
+                        <textarea v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan)"></textarea>
                     </td>
                     <td>
                         <button
@@ -117,27 +86,6 @@ const openPopup = (indicator, tipe) => {
                             Link
                         </button>
                     </td>
-
-                    <template v-if="role === 'Evaluasi'">
-                        <td colspan="2">
-                            <textarea v-model="indicator.evaluasi" @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)"></textarea>
-                        </td>
-                        <td colspan="2">
-                            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)">
-                                <option>{{ indicator.adjusment }}</option>
-                                <option v-for="a in adjusmentOptions" :key="a">{{ a }}</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button
-                                    v-if="indicator.idBuktiEval !== ''"
-                                    class="pop"
-                                    @click="openPopup(indicator.idBuktiEval, 'Evaluasi')"
-                            >
-                                Link
-                            </button>
-                        </td>
-                    </template>
                 </tr>
             </template>
             </tbody>
@@ -159,9 +107,10 @@ const openPopup = (indicator, tipe) => {
     padding-right: 2%;
 }
 
-.Evaluasi {
-    width: 120vw;
-    margin-top: 1rem;
+
+
+.xd{
+    width: 30rem;
 }
 
 .Pelaksanaan {
