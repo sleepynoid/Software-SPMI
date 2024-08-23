@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import Homepage from "@/components/homepage/homepage.vue";
 import About from "@/components/homepage/about.vue";
-import Register from "@/components/login/register.vue";
 import { useRouter } from "vue-router";
 
 
@@ -10,43 +9,51 @@ const token = localStorage.getItem("token");
 const page = ref("home");
 const router = useRouter();
 
+console.log(token)
+
 const logout = async () => {
     try {
-        const response = await axios.post('/api/logout', {}, {
-            headers: {
-                'Authorization': `Bearer ${token}`
+        const response = await axios.post(
+            "/api/logout",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             }
-        });
-        localStorage.clear();
-        router.push('/');
+        );
+
+        console.log('respons: ',response);
+
+        if (response.data.success) {
+            localStorage.removeItem("token");
+            router.push("/login");
+        } else {
+            console.error("Logout failed");
+        }
     } catch (error) {
-        console.error('Logout failed:', error.response.data);
+        console.error("Error during logout:", error);
     }
 };
 </script>
 
 <template>
-    <h1 v-if="token != undefined">{{ token }}</h1>
+    <h1 v-if="token !== undefined">{{ token }}</h1>
     <div class="c1">
         <div class="topbar">
             <h2>SPMI</h2>
             <div class="menu">
-                <strong>
-                    <router-link to="/login">Login</router-link>
+                <strong v-if="token === null">
+                    <router-link  to="/login">Login</router-link>
                 </strong>
                 <strong @click="page = 'home'">Home</strong>
-                <strong @click="page = 'reg'">Register</strong>
                 <strong @click="page = 'about'">About</strong>
-            </div>
-            <div class="search">
-                <!-- Search content -->
             </div>
             <button v-if="token" class="login" @click="logout">Logout</button>
         </div>
 
         <div class="content">
             <Homepage v-if="page === 'home'" />
-            <Register v-if="page === 'reg'" />
             <About v-if="page === 'about'" />
         </div>
     </div>

@@ -2,12 +2,14 @@
 import {ref, watchEffect} from "vue";
 import { dotStream } from 'ldrs'
 dotStream.register()
+const role = localStorage.getItem("userRole");
 
 const message = ref('upload new sheet')
 const jurusan = ref('a')
 const periode = ref('0')
 const per = ref([])
 const loading = ref(true);
+const token = localStorage.getItem("token");
 const faculties = [
     {
         name: "F. Teknologi Industri",
@@ -53,8 +55,10 @@ watchEffect(async ()=> {
 <!--    {{user}}-->
     <div class="c1">
         <div class="c1-1">
-            <h1>Mode Super User</h1>
-            <button>
+            <h1>Software Penjamin Mutu Internal</h1>
+
+
+            <button v-if="role === 'Evaluasi'">
                   <router-link
                       to="/import"
                       class="custom-router-link"
@@ -63,8 +67,8 @@ watchEffect(async ()=> {
             </button>
         </div>
     </div>
-
-    <div class="c2">
+    <p v-if="token === null">Anda Belum <router-link  to="/login">Login</router-link> 🫨</p>
+    <div class="c2" v-else>
         <h5>Pilih Fakultas:</h5>
         <select v-model="jurusan" class="pilihSheet" required>
             <option disabled value="">Pilih Fakultas</option>
@@ -93,7 +97,7 @@ watchEffect(async ()=> {
                 color="black"
             ></l-dot-stream>
         </div>
-        <div v-else-if="per.length == 0">
+        <div v-else-if="per.length === 0">
             <p>Sheet dengan jurusan {{ selectedMajor }} belum ada</p>
         </div>
         <div v-else class="periode">

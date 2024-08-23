@@ -3,10 +3,10 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const email = ref('');
-const role = ref('');
 const name = ref('');
+const email = ref('');
 const password = ref('');
+const role = ref('');
 
 const register = async () => {
     try {
@@ -17,7 +17,7 @@ const register = async () => {
             role: role.value,
         });
         console.log(response);
-        router.push('/');
+        router.push('/login');
     } catch (error) {
         console.error('Registration failed:', error);
     }
@@ -56,8 +56,9 @@ const register = async () => {
                         <label for="">Role</label>
                         <select v-model="role">
                             <option value="">Pilih Role</option>
-                            <option value="penetapan">Penetapan</option>
-                            <option value="pelaksanaan">Pelaksanaan</option>
+                            <option value="Evaluasi">Penetapan / Evaluasi</option>
+                            <option>Pelaksanaan</option>
+                            <option>Pengendalian</option>
                         </select>
                     </div>
                     <div class="log btn" @click="register">Register</div>
@@ -80,12 +81,10 @@ img{
 
 .c1{
     width: 100vw;
-    /* //height: 200vh; */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* //padding: 3%;
-    //background: whitesmoke; */
+    padding: 3%;
 
 
     .main{

@@ -1,9 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { useRoute } from "vue-router";
+import {onBeforeMount, ref, watch} from 'vue';
+import {useRoute, useRouter} from "vue-router";
 import { dotStream } from 'ldrs';
 import Sheets from "@/components/sheets/sheets.vue";
 import CustomSelect from "@/components/comp/custom-select.vue";
+import Pengendalian from "@/components/sheets/pengendalian.vue";
+import data from "bootstrap/js/src/dom/data.js";
+import Evaluasi from "@/components/sheets/evaluasi.vue";
 
 dotStream.register();
 
@@ -13,13 +16,18 @@ const loading = ref(true);
 const tipe = ['input', 'proses', 'output'];
 const current = ref(tipe[0]);
 
-const roleUser = ['Pelaksanaan', 'Evaluasi'];
-const role = ref(roleUser[0]);
+const roleUser = ['Pelaksanaan', 'Evaluasi', 'Pengendalian'];
+// const role = ref(roleUser[0]);
+
+const role = localStorage.getItem("userRole");
+// console.log(role)
 
 const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
 const currentSheet = ref(tipeSheet[0]);
 
 const route = useRoute();
+const routes = useRouter();
+const update = ref(false);
 const periode = ref(route.params.periode);
 const jurusan = ref(route.params.jurusan);
 
@@ -35,17 +43,37 @@ watch([re, periode, jurusan, currentSheet, current], async () => {
 
 
 const submitData = (formData) => {
-    const apiEndpoint = role.value === 'Pelaksanaan' ? '/api/submitPelaksanaan' : '/api/submitEvaluasi';
+    const apiEndpoint = role === 'Pelaksanaan' ? '/api/submitPelaksanaan' : '/api/submitEvaluasi';
 
     axios.post(apiEndpoint, { data: formData })
         .then(response => {
             console.log('Data submitted successfully:', response.data);
             re.value++;
+            update.value = false;
         })
         .catch(error => {
             console.error('Error submitting data:', error.response.data);
         });
 };
+const checkFormDataBeforeLeave = (to, from, next) => {
+    if (update.value) {
+        const answer = confirm('Perubahan anda belum disave. Apakah anda yakin ingin meninggalkan halaman ini?');
+        if (answer) {
+            update.value = false;
+            next();
+        } else {
+            next(false);
+        }
+    } else {
+        next();
+    }
+};
+
+onBeforeMount(() => {
+    routes.beforeEach((to, from, next) => {
+        checkFormDataBeforeLeave(to, from, next);
+    });
+});
 </script>
 
 <template>
@@ -63,7 +91,8 @@ const submitData = (formData) => {
             <input type="radio" :id="t" :value="t" v-model="current">
             <label :for="t" style="margin-right: 0.5rem;">{{ t }}</label>
         </template>
-
+        <h2 class="font-poppin" v-once>{{role}}</h2>
+<!--        <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>-->
         <div v-if="loading">
             <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
         </div>
@@ -73,9 +102,19 @@ const submitData = (formData) => {
         </div>
 
         <div v-else class="dt">
-            <h2 class="font-poppin" v-once>Role: </h2>
-            <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>
-            <Sheets :data="standarData" :role="role" @submit-data="submitData"></Sheets>
+            <Sheets
+                v-if="role=== 'Pelaksanaan'"
+                :data="standarData"
+                :role="role"
+                @submit-data="submitData"
+                @update="(data) => update = data"></Sheets>
+            <evaluasi
+                v-else-if="role=== 'Evaluasi'"
+                :data="standarData"
+                :role="role"
+                @submit-data="submitData"
+                @update="(data) => update = data"></evaluasi>
+            <pengendalian v-else-if="role=== 'Pengendalian'" :data="standarData"></pengendalian>
         </div>
     </div>
 </template>
@@ -92,13 +131,13 @@ button {
     height: 1rem;
 }
 
+.dt{
+    padding-bottom: 3%;
+}
+
 .pop {
     padding: 3px;
     height: 2rem;
 }
 
-.dt {
-    overflow-x: auto;
-    padding-bottom: 3%;
-}
 </style>
