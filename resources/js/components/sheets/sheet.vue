@@ -2,7 +2,7 @@
 import {onBeforeMount, ref, watch} from 'vue';
 import {useRoute, useRouter} from "vue-router";
 import { dotStream } from 'ldrs';
-import Sheets from "@/components/sheets/sheets.vue";
+import Pelaksanaan from "@/components/sheets/pelaksanaan.vue";
 import CustomSelect from "@/components/comp/custom-select.vue";
 import Pengendalian from "@/components/sheets/pengendalian.vue";
 import data from "bootstrap/js/src/dom/data.js";
@@ -102,12 +102,12 @@ onBeforeMount(() => {
         </div>
 
         <div v-else class="dt">
-            <Sheets
+            <Pelaksanaan
                 v-if="role=== 'Pelaksanaan'"
                 :data="standarData"
                 :role="role"
                 @submit-data="submitData"
-                @update="(data) => update = data"></Sheets>
+                @update="(data) => update = data"></Pelaksanaan>
             <evaluasi
                 v-else-if="role=== 'Evaluasi'"
                 :data="standarData"
