@@ -46,7 +46,7 @@ const login = async () => {
 
                     <div>
                         <h6>Password</h6>
-                        <input type="password" v-model="password" required>
+                        <input type="password" v-model="password" @keypress.enter="login" required>
                     </div>
                     <button class="log btn" @click="login">login</button>
                     <div style="text-align:center;">

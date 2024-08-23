@@ -38,7 +38,7 @@ const logout = async () => {
 </script>
 
 <template>
-    <h1 v-if="token !== undefined">{{ token }}</h1>
+<!--    <h1 v-if="token !== undefined">{{ token }}</h1>-->
     <div class="c1">
         <div class="topbar">
             <h2>SPMI</h2>
