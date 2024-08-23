@@ -16,15 +16,30 @@ const emit = defineEmits(['submit-data', 'update']);
 
 const formData = ref([]);
 
-const save = debounce((idIndikator, bukti, idP) => {
-    const newData = { idIndikator, bukti, idPelaksanaan: idP };
-    const index = formData.value.findIndex(item => item.id === idIndikator);
+const save = debounce((idIndikator, bukti, idP, idBuk) => {
+    const newData = { idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
+    const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
     if (index !== -1) {
-        formData.value.splice(index, 1, newData);
+        if (bukti !== ''){
+            formData.value.splice(index, 1, newData);
+            return;
+        }
+        if (bukti === '' && idBuk !== ''){
+            formData.value.splice(index, 1, newData);
+            return;
+        }
+        formData.value.splice(index, 1);
     } else {
         formData.value.push(newData);
     }
-    emit('update', true);
+
+    if (formData.value.length > 0){
+        emit('update', true);
+    } else {
+        emit('update', false);
+    }
+
+    console.log(formData.value)
 
 }, 500);
 
@@ -76,7 +91,7 @@ const openPopup = (indicator, tipe) => {
                     <td>{{ indicator.target }}</td>
 
                     <td>
-                        <textarea v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan)"></textarea>
+                        <textarea v-model="indicator.bukti" @input="save(indicator.id, indicator.bukti, indicator.idPelaksanaan, indicator.idBukti)"></textarea>
                     </td>
                     <td>
                         <button
