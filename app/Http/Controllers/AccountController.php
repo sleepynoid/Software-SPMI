@@ -67,6 +67,7 @@ class AccountController extends Controller {
                 'success' => 'true',
                 'token' => $success['token'],
                 'userRole' => $user['role'],
+                'name' => $user['name'],
                 'message' => 'User ' . $user['name'] . ' Successfuly Login'
             ]);
         } else {

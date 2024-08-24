@@ -6,10 +6,11 @@ import { useRouter } from "vue-router";
 
 
 const token = localStorage.getItem("token");
+const user = localStorage.getItem("name");
 const page = ref("home");
 const router = useRouter();
 
-console.log(token)
+console.log(user)
 
 const logout = async () => {
     try {
@@ -27,6 +28,7 @@ const logout = async () => {
 
         if (response.data.success) {
             localStorage.removeItem("token");
+            localStorage.removeItem("userRole");
             router.push("/login");
         } else {
             console.error("Logout failed");
@@ -49,7 +51,10 @@ const logout = async () => {
                 <strong @click="page = 'home'">Home</strong>
                 <strong @click="page = 'about'">About</strong>
             </div>
-            <button v-if="token" class="login" @click="logout">Logout</button>
+
+            <strong v-if="token" class="login" @click="logout">Logout</strong>
+            <p class="usr">Halo {{user}}</p>
+
         </div>
 
         <div class="content">
@@ -100,18 +105,17 @@ const logout = async () => {
 }
 
 .login {
-    width: 7%;
-    height: 50%;
-    background: #ffda76;
-    border-radius: 10rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    cursor: pointer;
 }
 
 .content {
     display: flex;
     z-index: 0;
     padding: 3%;
+}
+
+.usr{
+    position: relative;
+    margin-left: 60%;;
 }
 </style>

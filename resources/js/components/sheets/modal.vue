@@ -90,9 +90,9 @@ const openLink = (link) => {
 
 <template>
     <div class="popup">
-        <div class="popup-inner" ref="modal">
+        <div class="popup-inner" :class="role" ref="modal">
             <slot/>
-            <p v-if="role === 'Pengendalian'" :class="role">{{komentar}}</p>
+            <p v-if="role === 'Pengendalian'" class="peng">{{komentar}}</p>
             <h2 v-else class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
 
             <p v-if="loading">Loading...</p>
@@ -133,9 +133,7 @@ const openLink = (link) => {
 .popup-inner{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 50vw;
-    height: 70vh;
+    gap: 1rem;
     text-align: justify;
     position: relative;
     margin-bottom: 10%;
@@ -146,6 +144,12 @@ const openLink = (link) => {
 }
 
 .Pengendalian{
+    justify-content: space-between;
+    width: 50vw;
+    height: 70vh;
+}
+
+.peng{
     height: 40%;
     overflow-y: auto;
     padding-right: 2%;
