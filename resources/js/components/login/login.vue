@@ -5,13 +5,17 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const email = ref('');
 const password = ref('');
+const loading = ref(false);
 
 const login = async () => {
     try {
+        loading.value = true;
         const response = await axios.post('/api/login', {
             email: email.value,
             password: password.value,
         });
+        loading.value = false;
+        localStorage.setItem('name', response.data.name);
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userRole', response.data.userRole);
 
@@ -20,13 +24,14 @@ const login = async () => {
         router.push('/');
     } catch (error) {
         console.error('Login failed:', error.response.data);
+        alert("email atau password salah 🫨")
+        loading.value = false;
     }
 };
 </script>
 
 <template>
     <div class="c1">
-
         <div class="main">
             <div class="main1">
                 <div class="ma">
@@ -58,6 +63,8 @@ const login = async () => {
             </div>
         </div>
     </div>
+
+
 </template>
 
 <style scoped>

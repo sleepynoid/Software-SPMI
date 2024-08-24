@@ -8,7 +8,7 @@ const message = ref('upload new sheet')
 const jurusan = ref('a')
 const periode = ref('0')
 const per = ref([])
-const loading = ref(true);
+const loading = ref(false);
 const token = localStorage.getItem("token");
 const faculties = [
     {
@@ -55,6 +55,7 @@ watchEffect(async ()=> {
 <!--    {{user}}-->
     <div class="c1">
         <div class="c1-1">
+
             <h1>Software Penjamin Mutu Internal</h1>
 
 
