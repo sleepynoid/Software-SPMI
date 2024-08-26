@@ -82,7 +82,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="bodi">
+    <div class="c1">
         <router-link class="pop" to="/">Home</router-link>
 
         <p>tipe:</p>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="c1">
         <input type="file" @change="handleFileUpload" accept=".xlsx" />
         <table>
             <thead>

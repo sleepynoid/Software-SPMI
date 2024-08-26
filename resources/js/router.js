@@ -9,30 +9,54 @@ import NotFound from './components/notFound.vue';
 const routes =[
     {
         path: '/',
-        component: Home
+        component: Home,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
     },
     {
         path: '/sheet/:jurusan/:periode',
         name: 'Sheet',
-        component: Sheet
+        component: Sheet,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
     },
     {
         path: '/import',
-        component: Importexcel
+        component: Importexcel,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
     },
     {
         path: '/login',
-        component: Login
+        component: Login,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
     },
     {
         path: '/register',
-        component: Register
+        component: Register,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
     },
 
-    // {
-    //     path: '/:pathMatch(.*)*',
-    //     component: NotFound
-    // }
+    {
+        path: '/:pathMatch(.*)*',
+        component: NotFound,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
+    }
 ]
 
 const router = createRouter({
