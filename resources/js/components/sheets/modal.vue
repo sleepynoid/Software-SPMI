@@ -127,7 +127,6 @@ const openLink = (link) => {
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
 
 .popup-inner{

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Loading from "@/components/login/loading.vue"
 
 const router = useRouter();
 const email = ref('');
@@ -21,7 +22,7 @@ const login = async () => {
 
         console.log(response.data.message);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-        router.push('/');
+        await router.push('/');
     } catch (error) {
         console.error('Login failed:', error.response.data);
         alert("email atau password salah 🫨")
@@ -64,7 +65,7 @@ const login = async () => {
         </div>
     </div>
 
-
+    <Loading v-if="loading"/>
 </template>
 
 <style scoped>
@@ -79,6 +80,8 @@ img{
 }
 
 .c1{
+    position: absolute;
+    width: 100vw;
     padding: 3%;
     .main{
         /* //margin-top: 3%; */
