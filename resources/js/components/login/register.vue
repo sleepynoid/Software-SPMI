@@ -80,13 +80,7 @@ img{
 }
 
 .c1{
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
     padding: 3%;
-
-
     .main{
         /* //margin-top: 3%; */
         width: 100%;
