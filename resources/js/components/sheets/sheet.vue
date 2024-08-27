@@ -129,9 +129,9 @@ onBeforeMount(() => {
 </template>
 
 <style scoped>
-.bodi {
+.c1 {
+    position: absolute;
     width: 100vw;
-    height: 100vh;
     padding: 3%;
 }
 

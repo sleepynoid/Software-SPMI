@@ -86,7 +86,8 @@ function generateYearRange() {
 </script>
 
 <template>
-    <div v-if="loading" class="loading-overlay">
+    <div class="c1">
+        <div v-if="loading" class="loading-overlay">
         <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
     </div>
     <div class="container">
@@ -210,9 +211,16 @@ function generateYearRange() {
             </xlsx-read>
         </div>
     </div>
+    </div>
 </template>
 
-<style>
+<style scoped>
+.c1{
+    position: absolute;
+    width: 100vw;
+    padding: 3%;
+}
+
 .loading-overlay {
     position: fixed;
     top: 0;

@@ -4,7 +4,7 @@ import Homepage from "@/components/homepage/homepage.vue";
 import About from "@/components/homepage/about.vue";
 import { useRouter } from "vue-router";
 
-
+const loading = ref(false);
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("name");
 const page = ref("home");
@@ -14,6 +14,7 @@ console.log(user)
 
 const logout = async () => {
     try {
+        loading.value = true;
         const response = await axios.post(
             "/api/logout",
             {},
@@ -23,7 +24,7 @@ const logout = async () => {
                 },
             }
         );
-
+        loading.value = false;
         console.log('respons: ',response);
 
         if (response.data.success) {
@@ -62,10 +63,13 @@ const logout = async () => {
             <About v-if="page === 'about'" />
         </div>
     </div>
+
+    <Loading v-if="loading"/>
 </template>
 
 <style scoped>
 .c1 {
+    position: absolute;
     width: 100vw;
     /* //height: 200vh; */
     display: flex;
