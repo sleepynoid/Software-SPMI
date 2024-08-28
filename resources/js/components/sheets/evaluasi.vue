@@ -114,7 +114,15 @@ const openPopup = (indicator, tipe) => {
                     </td>
 
                         <td colspan="2">
-                            <textarea class="ta" v-model="indicator.evaluasi" @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)"></textarea>
+                            <p
+                                v-if="indicator.bukti === ''"
+                                class="ta"
+                            > Belum ada Pelaksanaan</p>
+                            <textarea class="ta"
+                                v-else
+                                v-model="indicator.evaluasi"
+                                @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)"
+                            ></textarea>
                         </td>
                         <td colspan="2">
                             <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)">
@@ -150,6 +158,7 @@ const openPopup = (indicator, tipe) => {
 <style scoped>
 .table {
     overflow-x: auto;
+    padding-bottom: 2%;
     padding-right: 2%;
 }
 
