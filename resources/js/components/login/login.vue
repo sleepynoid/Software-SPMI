@@ -65,7 +65,7 @@ const login = async () => {
         </div>
     </div>
 
-    <Loading v-if="loading"/>
+<!--    <Loading v-if="loading"/>-->
 </template>
 
 <style scoped>
