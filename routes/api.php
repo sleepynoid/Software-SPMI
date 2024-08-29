@@ -7,7 +7,7 @@ use App\Http\Controllers\testcontroller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenetapanController;
 use App\Http\Controllers\AccountController;
-
+use App\Http\Controllers\PengendalianController;
 
 Route::apiResource('/penetapan',PenetapanController::class);
 Route::apiResource('/testing',testcontroller::class);
@@ -36,3 +36,5 @@ Route::post('/deleteLink',[PelaksanaanController::class,'deleteLink']);
 Route::post('/submitComment',[PelaksanaanController::class,'postComment']);
 Route::post('/deleteComment',[PelaksanaanController::class,'delComment']);
 //Route::get('/sheed', [PenetapanController::class, 'index']);
+
+Route::post('/pengendalian/submit', [PengendalianController::class, 'submitPengendalian']);
