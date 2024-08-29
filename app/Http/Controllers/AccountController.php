@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use function Laravel\Prompts\error;
 
 class AccountController extends Controller {
     /**
@@ -28,14 +29,15 @@ class AccountController extends Controller {
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'role' => 'required|string',
-
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            return error($validator->errors());
+
+//            return response()->json([
+//                'success' => false,
+//                'errors' => $validator->errors()
+//            ], 422);
         }
 
         $input = $request->all();
@@ -71,11 +73,7 @@ class AccountController extends Controller {
                 'message' => 'User ' . $user['name'] . ' Successfuly Login'
             ]);
         } else {
-            return response()->json([
-                'success' => 'false',
-                'message' => 'User and Password Wrong'
-            ]);
-            ;
+            return error("gagal login");
         }
     }
 
