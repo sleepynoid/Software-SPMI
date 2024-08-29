@@ -6,7 +6,9 @@ import Register from './components/login/register.vue';
 import Login from './components/login/login.vue';
 import NotFound from './components/notFound.vue';
 
-const routes =[
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
     {
         path: '/',
         component: Home,
@@ -49,19 +51,15 @@ const routes =[
         },
     },
 
-    {
-        path: '/:pathMatch(.*)*',
-        component: NotFound,
-        meta: {
-            enterClass: 'animate__animated animate__fadeInLeft',
-            leaveClass: 'animate__animated animate__fadeOutRight'
+        {
+            path: '/:pathMatch(.*)*',
+            component: NotFound,
+            meta: {
+                enterClass: 'animate__animated animate__fadeInLeft',
+                leaveClass: 'animate__animated animate__fadeOutRight'
+            },
         },
-    }
-]
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes
-});
+    ]
+})
 
 export default router

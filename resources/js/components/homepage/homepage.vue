@@ -90,7 +90,7 @@ watchEffect(async ()=> {
             </option>
         </select>
 
-        <button v-if="selectedMajor" @click.prevent="notify"><h5>go</h5></button>
+<!--        <button v-if="selectedMajor" @click.prevent="notify"><h5>go</h5></button>-->
         <div v-if="loading">
             <l-dot-stream
                 size="60"
