@@ -27,10 +27,6 @@ const faculties = [
 const selectedMajor = ref("");
 const showMajorError = ref(false);
 
-function notify(){
-    alert('Pilih jurusan 😈')
-}
-
 const validateMajorSelection = () => {
     if (!jurusan.value) {
         showMajorError.value = true;
@@ -108,7 +104,13 @@ watchEffect(async ()=> {
             </select>
 <!--                {{idS}}-->
 
-            <button>
+            <button v-if="role === 'SuperUser'">
+                <router-link
+                    :to="{ name: 'SuperUser', params: {jurusan: selectedMajor, periode: periode}}"
+                    class="custom-router-link"
+                ><h5>go</h5></router-link>
+            </button>
+            <button v-else>
                 <router-link
                     :to="{ name: 'Sheet', params: {jurusan: selectedMajor, periode: periode}}"
                     class="custom-router-link"
