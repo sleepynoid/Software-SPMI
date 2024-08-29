@@ -17,8 +17,9 @@ const register = async () => {
             role: role.value,
         });
         console.log(response);
-        // router.push('/login');
+        router.push('/login');
     } catch (error) {
+        alert(error);
         console.error('Registration failed:', error);
     }
 };
@@ -41,16 +42,16 @@ const register = async () => {
                     <strong style="text-align:center;">Register</strong>
                     <div>
                         <h6>Name</h6>
-                        <input type="text" v-model="name" required>
+                        <input type="text" v-model="name" placeholder="Nama anda" required>
                     </div>
                     <div>
                         <h6>Email</h6>
-                        <input type="text" v-model="email" required>
+                        <input type="text" v-model="email" placeholder="Email anda" required>
                     </div>
 
                     <div>
                         <h6>Password</h6>
-                        <input type="password" v-model="password" required>
+                        <input type="password" v-model="password" placeholder="Minimaln 6 karakter" required>
                     </div>
                     <div>
                         <label for="">Role:</label>
