@@ -60,6 +60,7 @@ const register = async () => {
                             <option value="Evaluasi">Penetapan / Evaluasi</option>
                             <option>Pelaksanaan</option>
                             <option>Pengendalian</option>
+                            <option>SuperUser</option>
                         </select>
 
                         <div class="log btn" @click="register">Register</div>

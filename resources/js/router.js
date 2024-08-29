@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Home from './components/homepage/home.vue';
 import Sheet from './components/sheets/sheet.vue';
+import SuperUser from './components/sheets/superUser.vue';
 import Importexcel from './components/upload/import.vue';
 import Register from './components/login/register.vue';
 import Login from './components/login/login.vue';
@@ -21,6 +22,15 @@ const router = createRouter({
         path: '/sheet/:jurusan/:periode',
         name: 'Sheet',
         component: Sheet,
+        meta: {
+            enterClass: 'animate__animated animate__fadeInLeft',
+            leaveClass: 'animate__animated animate__fadeOutRight'
+        },
+    },
+    {
+        path: '/superUser/:jurusan/:periode',
+        name: 'SuperUser',
+        component: SuperUser,
         meta: {
             enterClass: 'animate__animated animate__fadeInLeft',
             leaveClass: 'animate__animated animate__fadeOutRight'
