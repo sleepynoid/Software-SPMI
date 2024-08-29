@@ -1,32 +1,38 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Loading from "@/components/login/loading.vue"
 
 const router = useRouter();
 const email = ref('');
 const password = ref('');
+const loading = ref(false);
 
 const login = async () => {
     try {
+        loading.value = true;
         const response = await axios.post('/api/login', {
             email: email.value,
             password: password.value,
         });
+        loading.value = false;
+        localStorage.setItem('name', response.data.name);
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userRole', response.data.userRole);
 
         console.log(response.data.message);
         axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-        router.push('/');
+        await router.push('/');
     } catch (error) {
         console.error('Login failed:', error.response.data);
+        alert("email atau password salah 🫨")
+        loading.value = false;
     }
 };
 </script>
 
 <template>
     <div class="c1">
-
         <div class="main">
             <div class="main1">
                 <div class="ma">
@@ -46,7 +52,7 @@ const login = async () => {
 
                     <div>
                         <h6>Password</h6>
-                        <input type="password" v-model="password" required>
+                        <input type="password" v-model="password" @keypress.enter="login" required>
                     </div>
                     <button class="log btn" @click="login">login</button>
                     <div style="text-align:center;">
@@ -58,6 +64,8 @@ const login = async () => {
             </div>
         </div>
     </div>
+
+<!--    <Loading v-if="loading"/>-->
 </template>
 
 <style scoped>
@@ -72,13 +80,9 @@ img{
 }
 
 .c1{
+    position: absolute;
     width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
     padding: 3%;
-
-
     .main{
         /* //margin-top: 3%; */
         width: 100%;

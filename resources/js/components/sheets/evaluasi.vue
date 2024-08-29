@@ -18,25 +18,36 @@ const dataEval = ref([]);
 
 const adjusmentOptions = ['melampaui', 'mencapai', 'belum mencapai', 'menyimpang'];
 
-const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idP) => {
-    if (komenEval === '') {
-        alert("Komentar harap diisi 🗿");
-    } else {
-        const newData = {
-            idBuktiPelaksanaan,
-            komentarEvaluasi: komenEval,
-            adjusment,
-            idEvaluasi: idP,
-        };
-        const index = dataEval.value.findIndex(item => item.id === idBuktiPelaksanaan);
-        if (index !== -1) {
+const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idE, idBE) => {
+
+    const newData = {
+        idBuktiPelaksanaan: idBuktiPelaksanaan,
+        komentarEvaluasi: komenEval,
+        adjusment,
+        idEvaluasi: idE,
+    };
+    const index = dataEval.value.findIndex(item => item.idBuktiPelaksanaan === idBuktiPelaksanaan);
+    if (index !== -1) {
+        if (komenEval !== '' || adjusment !== ''){
             dataEval.value.splice(index, 1, newData);
-        } else {
-            dataEval.value.push(newData);
+            return;
         }
-        console.log(dataEval.value);
+        if (komenEval !== '' || adjusment !== '' || idBE !== ''){
+            dataEval.value.splice(index, 1, newData);
+            return;
+        }
+        dataEval.value.splice(index, 1);
+    } else {
+        dataEval.value.push(newData);
     }
-    emit('update', true);
+
+    if (dataEval.value.length > 0){
+        emit('update', true);
+    } else {
+        emit('update', false);
+    }
+
+    console.log(dataEval.value);
 
 }, 500);
 
@@ -76,7 +87,7 @@ const openPopup = (indicator, tipe) => {
                 <th><h3 class="font-poppin">Target</h3></th>
                 <th><h3 class="xd">Komentar</h3></th>
                 <th><h3 class="font-poppin">Link Bukti</h3></th>
-                <th colspan="2"><h3 class="font-poppin">Komentar Evaluasi</h3></th>
+                <th colspan="2" class="xd"><h3 class="font-poppin">Komentar Evaluasi</h3></th>
                 <th colspan="2"><h3 class="font-poppin">Adjusment</h3></th>
                 <th><h3 class="font-poppin">Link Bukti Evaluasi</h3></th>
             </tr>
@@ -103,11 +114,20 @@ const openPopup = (indicator, tipe) => {
                     </td>
 
                         <td colspan="2">
-                            <textarea class="ta" v-model="indicator.evaluasi" @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)"></textarea>
+                            <p
+                                v-if="indicator.bukti === ''"
+                                class="ta"
+                            > Belum ada Pelaksanaan</p>
+                            <textarea class="ta"
+                                v-else
+                                v-model="indicator.evaluasi"
+                                @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)"
+                            ></textarea>
                         </td>
                         <td colspan="2">
-                            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan)">
-                                <option>{{ indicator.adjusment }}</option>
+                            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)">
+                                <option value=""></option>
+<!--                                <option>{{ indicator.adjusment }}</option>-->
                                 <option v-for="a in adjusmentOptions" :key="a">{{ a }}</option>
                             </select>
                         </td>
@@ -138,11 +158,12 @@ const openPopup = (indicator, tipe) => {
 <style scoped>
 .table {
     overflow-x: auto;
+    padding-bottom: 2%;
     padding-right: 2%;
 }
 
 .ta{
-    height: 100%;
+    height: 10rem;
 }
 
 .Evaluasi {

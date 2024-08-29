@@ -1,8 +1,8 @@
 <script setup>
-import {onBeforeMount, ref, watch} from 'vue';
+import {computed, onBeforeMount, ref, watch} from 'vue';
 import {useRoute, useRouter} from "vue-router";
 import { dotStream } from 'ldrs';
-import Sheets from "@/components/sheets/sheets.vue";
+import Pelaksanaan from "@/components/sheets/pelaksanaan.vue";
 import CustomSelect from "@/components/comp/custom-select.vue";
 import Pengendalian from "@/components/sheets/pengendalian.vue";
 import data from "bootstrap/js/src/dom/data.js";
@@ -11,16 +11,12 @@ import Evaluasi from "@/components/sheets/evaluasi.vue";
 dotStream.register();
 
 const standarData = ref([]);
-const loading = ref(true);
+const loading = ref(false);
 
 const tipe = ['input', 'proses', 'output'];
 const current = ref(tipe[0]);
 
-const roleUser = ['Pelaksanaan', 'Evaluasi', 'Pengendalian'];
-// const role = ref(roleUser[0]);
-
 const role = localStorage.getItem("userRole");
-// console.log(role)
 
 const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
 const currentSheet = ref(tipeSheet[0]);
@@ -30,17 +26,19 @@ const routes = useRouter();
 const update = ref(false);
 const periode = ref(route.params.periode);
 const jurusan = ref(route.params.jurusan);
+const search = ref('');
 
 let re = ref(0);
 
-watch([re, periode, jurusan, currentSheet, current], async () => {
-    loading.value = true;
-    let response = await fetch(`/api/getPenetapan/${jurusan.value}/${periode.value}/${currentSheet.value}/${current.value}`);
-    standarData.value = await response.json();
-    loading.value = false;
-    // console.log(standarData.value);
-}, { immediate: true });
-
+if (role !== null){
+    watch([re, periode, jurusan, currentSheet, current], async () => {
+        loading.value = true;
+        let response = await fetch(`/api/getPenetapan/${jurusan.value}/${periode.value}/${currentSheet.value}/${current.value}`);
+        standarData.value = await response.json();
+        loading.value = false;
+        // console.log(standarData.value);
+    }, { immediate: true });
+}
 
 const submitData = (formData) => {
     const apiEndpoint = role === 'Pelaksanaan' ? '/api/submitPelaksanaan' : '/api/submitEvaluasi';
@@ -69,6 +67,13 @@ const checkFormDataBeforeLeave = (to, from, next) => {
     }
 };
 
+const filtered = computed(()=>{
+    return standarData.value.filter(stand =>
+        stand.standar.toLowerCase().includes(search.value.toLowerCase())
+    )
+});
+
+
 onBeforeMount(() => {
     routes.beforeEach((to, from, next) => {
         checkFormDataBeforeLeave(to, from, next);
@@ -77,7 +82,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="bodi">
+    <div class="c1">
         <router-link class="pop" to="/">Home</router-link>
 
         <p>tipe:</p>
@@ -91,8 +96,9 @@ onBeforeMount(() => {
             <input type="radio" :id="t" :value="t" v-model="current">
             <label :for="t" style="margin-right: 0.5rem;">{{ t }}</label>
         </template>
-        <h2 class="font-poppin" v-once>{{role}}</h2>
-<!--        <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>-->
+<!--        <h2 v-if="role !== null" class="font-poppin" v-once>{{role}}</h2>-->
+<!--        <p v-else>Anda Belum <router-link  to="/login">Login</router-link> 🫨</p>-->
+        <!--        <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>-->
         <div v-if="loading">
             <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
         </div>
@@ -102,27 +108,30 @@ onBeforeMount(() => {
         </div>
 
         <div v-else class="dt">
-            <Sheets
+            <br>
+            <input v-if="role !== null" v-model="search" placeholder="Search Standars">
+
+            <Pelaksanaan
                 v-if="role=== 'Pelaksanaan'"
-                :data="standarData"
+                :data="filtered"
                 :role="role"
                 @submit-data="submitData"
-                @update="(data) => update = data"></Sheets>
+                @update="(data) => update = data"></Pelaksanaan>
             <evaluasi
                 v-else-if="role=== 'Evaluasi'"
-                :data="standarData"
+                :data="filtered"
                 :role="role"
                 @submit-data="submitData"
                 @update="(data) => update = data"></evaluasi>
-            <pengendalian v-else-if="role=== 'Pengendalian'" :data="standarData"></pengendalian>
+            <pengendalian v-else-if="role=== 'Pengendalian'" :data="filtered"></pengendalian>
         </div>
     </div>
 </template>
 
 <style scoped>
-.bodi {
+.c1 {
+    position: absolute;
     width: 100vw;
-    height: 100vh;
     padding: 3%;
 }
 

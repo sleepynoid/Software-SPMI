@@ -20,8 +20,8 @@ const props = defineProps({
 .ling{
   display: flex;
   align-items: center;
-  gap: 4%;
-  margin-bottom: 4%;
+  gap: 2%;
+  margin-bottom: 2%;
 }
 
 .judul{

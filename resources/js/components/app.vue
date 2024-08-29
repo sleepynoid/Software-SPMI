@@ -1,12 +1,21 @@
 <script setup>
-import Import from './upload/import.vue';
 </script>
 
 <template>
-    <div>
-        <router-view></router-view>
-<!--        <Import />-->
-    </div>
+        <RouterView v-slot="{ Component, route }">
+            <transition
+                :enter-active-class="route.meta.enterClass"
+                :leave-active-class="route.meta.leaveClass"
+            >
+                <component :is="Component"/>
+            </transition>
+        </RouterView>
 </template>
 
-<style scoped></style>
+<style>
+.h1{
+    position: absolute;
+    top: 2rem;
+    left: 3rem;
+}
+</style>

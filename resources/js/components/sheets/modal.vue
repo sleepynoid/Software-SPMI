@@ -90,29 +90,26 @@ const openLink = (link) => {
 
 <template>
     <div class="popup">
-        <div class="popup-inner" ref="modal">
+        <div class="popup-inner" :class="role" ref="modal">
             <slot/>
-            <p v-if="role === 'Pengendalian'">{{komentar}}</p>
+            <p v-if="role === 'Pengendalian'" class="peng">{{komentar}}</p>
             <h2 v-else class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
 
             <p v-if="loading">Loading...</p>
-
-            <p style="margin-top: 2rem">Link Bukti:</p>
-            <p v-if="savedLink.length < 1" :hidden="loading">Belum ada Link</p>
-            <ol>
-                <li v-for="link in savedLink" :key="link.id">
-                    <custom-link :link="link" :open="openLink" :remove="removeTodo" :role="props.role" :tipe="props.tipe "/>
-                </li>
-            </ol>
-
-            <div v-if="props.role === props.tipe" class="addLink">
-                <input v-model="judulLink" required placeholder="judul link">
-                <input v-model="link" required placeholder="link">
-                <button @click="addLink">add</button>
+            <div>
+                <p style="margin: 2% 0 2% 0">Link Bukti:</p>
+                <p v-if="savedLink.length < 1" :hidden="loading">Belum ada Link</p>
+                <ol>
+                    <li v-for="link in savedLink" :key="link.id">
+                        <custom-link :link="link" :open="openLink" :remove="removeTodo" :role="props.role" :tipe="props.tipe "/>
+                    </li>
+                </ol>
+                <div v-if="props.role === props.tipe" class="addLink">
+                    <input v-model="judulLink" required placeholder="judul link">
+                    <input v-model="link" required placeholder="link">
+                    <button @click="addLink">add</button>
+                </div>
             </div>
-
-            <br>
-            <br>
             <button class="popup-close" @click="props.togglePopup" :title="'or press esc to close'">Close</button>
         </div>
     </div>
@@ -130,11 +127,12 @@ const openLink = (link) => {
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
 
 .popup-inner{
-    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     text-align: justify;
     position: relative;
     margin-bottom: 10%;
@@ -144,6 +142,18 @@ const openLink = (link) => {
     box-shadow: 0 10px 5px 2px rgba(0,0,0,0.1);
 }
 
+.Pengendalian{
+    justify-content: space-between;
+    width: 50vw;
+    height: 70vh;
+}
+
+.peng{
+    height: 40%;
+    overflow-y: auto;
+    padding-right: 2%;
+}
+
 .lb{
     margin-bottom: 1rem;
 }
@@ -151,6 +161,6 @@ const openLink = (link) => {
 .addLink{
     display: flex;
     width: 100%;
-    margin-top: 8%;
+    margin-top: 5%;
 }
 </style>

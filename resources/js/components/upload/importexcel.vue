@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="c1">
         <input type="file" @change="handleFileUpload" accept=".xlsx" />
         <table>
             <thead>
@@ -129,9 +129,15 @@ export default {
 </script>
 
 <style scoped>
+.c1{
+    position: absolute;
+    width: 100vw;
+    padding: 3%;
+}
+
 body {
     width: 100vw;
-    overflow-x: hidden;
+    //overflow-x: hidden;
     padding: 3rem;
 }
 

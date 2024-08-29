@@ -4,15 +4,17 @@ import Homepage from "@/components/homepage/homepage.vue";
 import About from "@/components/homepage/about.vue";
 import { useRouter } from "vue-router";
 
-
+const loading = ref(false);
 const token = localStorage.getItem("token");
+const user = localStorage.getItem("name");
 const page = ref("home");
 const router = useRouter();
 
-console.log(token)
+console.log(user)
 
 const logout = async () => {
     try {
+        loading.value = true;
         const response = await axios.post(
             "/api/logout",
             {},
@@ -22,11 +24,12 @@ const logout = async () => {
                 },
             }
         );
-
+        loading.value = false;
         console.log('respons: ',response);
 
         if (response.data.success) {
             localStorage.removeItem("token");
+            localStorage.removeItem("userRole");
             router.push("/login");
         } else {
             console.error("Logout failed");
@@ -38,7 +41,7 @@ const logout = async () => {
 </script>
 
 <template>
-    <h1 v-if="token !== undefined">{{ token }}</h1>
+<!--    <h1 v-if="token !== undefined">{{ token }}</h1>-->
     <div class="c1">
         <div class="topbar">
             <h2>SPMI</h2>
@@ -49,7 +52,10 @@ const logout = async () => {
                 <strong @click="page = 'home'">Home</strong>
                 <strong @click="page = 'about'">About</strong>
             </div>
-            <button v-if="token" class="login" @click="logout">Logout</button>
+
+            <strong v-if="token" class="login" @click="logout">Logout</strong>
+            <p class="usr">Halo {{user}}</p>
+
         </div>
 
         <div class="content">
@@ -57,10 +63,13 @@ const logout = async () => {
             <About v-if="page === 'about'" />
         </div>
     </div>
+
+<!--    <Loading v-if="loading"/>-->
 </template>
 
 <style scoped>
 .c1 {
+    position: absolute;
     width: 100vw;
     /* //height: 200vh; */
     display: flex;
@@ -100,18 +109,17 @@ const logout = async () => {
 }
 
 .login {
-    width: 7%;
-    height: 50%;
-    background: #ffda76;
-    border-radius: 10rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    cursor: pointer;
 }
 
 .content {
     display: flex;
     z-index: 0;
     padding: 3%;
+}
+
+.usr{
+    position: relative;
+    margin-left: 60%;;
 }
 </style>

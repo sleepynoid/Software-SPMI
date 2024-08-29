@@ -17,7 +17,7 @@ const register = async () => {
             role: role.value,
         });
         console.log(response);
-        router.push('/login');
+        // router.push('/login');
     } catch (error) {
         console.error('Registration failed:', error);
     }
@@ -37,7 +37,7 @@ const register = async () => {
                 </div>
             </div>
             <div class="main2">
-                <div class="lojin">
+                <div class="regis">
                     <strong style="text-align:center;">Register</strong>
                     <div>
                         <h6>Name</h6>
@@ -53,16 +53,22 @@ const register = async () => {
                         <input type="password" v-model="password" required>
                     </div>
                     <div>
-                        <label for="">Role</label>
+                        <label for="">Role:</label>
                         <select v-model="role">
                             <option value="">Pilih Role</option>
                             <option value="Evaluasi">Penetapan / Evaluasi</option>
                             <option>Pelaksanaan</option>
                             <option>Pengendalian</option>
                         </select>
+
+                        <div class="log btn" @click="register">Register</div>
+                            <div style="text-align:center;">
+                                <p>Already have an account ?
+                                    <router-link to="/login"> login </router-link>
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="log btn" @click="register">Register</div>
-                </div>
             </div>
         </div>
     </div>
@@ -80,13 +86,9 @@ img{
 }
 
 .c1{
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
     padding: 3%;
-
-
+    position: absolute;
+    width: 100vw;
     .main{
         /* //margin-top: 3%; */
         width: 100%;
@@ -134,7 +136,7 @@ img{
             align-items: center;
             justify-content: center;
 
-            .lojin{
+            .regis{
                 width: 60%;
                 height: 70%;
                 padding: 3%;
@@ -142,7 +144,7 @@ img{
                 background: white;
                 border-radius: 2rem;
                 display: flex;
-                gap: 2rem;
+                gap: 1.3rem;
             }
 
             .log{
