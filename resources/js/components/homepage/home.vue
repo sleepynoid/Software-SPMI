@@ -75,7 +75,7 @@ const logout = async () => {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 3%;
+    //padding: 3%;
     background: whitesmoke;
 }
 

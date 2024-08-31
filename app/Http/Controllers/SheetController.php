@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\SheetResource;
 use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
+use App\Models\BuktiPengendalian;
 use App\Models\Evaluasi;
 use App\Models\Indikator;
 use App\Models\Penetapan;
@@ -42,6 +43,7 @@ class SheetController extends Controller {
                 $target = Target::all();
                 $bukti = BuktiPelaksanaan::all();
                 $buktieval = BuktiEvaluasi::all();
+                $buktiPengendalian = BuktiPengendalian::all();
 
                 foreach ($standars as $s) {
                     $data = [
@@ -64,6 +66,11 @@ class SheetController extends Controller {
                             $adj = '';
                             $idE = '';
                             $idBE = '';
+                            $idBPengendalian = '';
+                            $temuan = '';
+                            $akar_masalah = '';
+                            $rtl = '';
+                            $pelaksanaan_rtl = '';
                             foreach ($bukti as $b){
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
@@ -75,22 +82,38 @@ class SheetController extends Controller {
                                             $eva = $e->komentar;
                                             $adj = $e->adjustment;
                                             $idE = $e->id_evaluasi;
+
+                                            foreach ($buktiPengendalian as $bp) {
+                                                if ($bp->id_bukti_evaluasi == $e->id){
+                                                    $idBPengendalian = $bp->id;
+                                                    $temuan = $bp->temuan;
+                                                    $akar_masalah = $bp->akar_masalah;
+                                                    $rtl = $bp->rtl;
+                                                    $pelaksanaan_rtl = $bp->pelaksanaan_rtl;
+                                                }
+                                            }
+
                                         }
                                     }
                                 }
                             }
 
                             $newIndicator = [
-                                'idPelaksanaan' =>$shiit->id,
-                                'id' => $i->id,
-                                'indicator' => $i->note,
-                                'target' => $tar->value,
-                                'idBukti' => $idB,
-                                'bukti' => $buk,
-                                'idEvaluasi' => $idE,
-                                'idBuktiEval' => $idBE,
-                                'evaluasi' => $eva,
-                                'adjusment' => $adj,
+                                'idPelaksanaan'    =>$shiit->id,
+                                'id'               => $i->id,
+                                'indicator'        => $i->note,
+                                'target'           => $tar->value,
+                                'idBukti'          => $idB,
+                                'bukti'            => $buk,
+                                'idEvaluasi'       => $idE,
+                                'idBuktiEval'      => $idBE,
+                                'evaluasi'         => $eva,
+                                'adjusment'        => $adj,
+                                'idBPengendalian'  => $idBPengendalian,
+                                'temuan'           => $temuan,
+                                'akar_masalah'     => $akar_masalah,
+                                'rtl'              => $rtl,
+                                'pelaksanaan_rtl'  => $pelaksanaan_rtl,
                             ];
                             array_push($data['indicators'], $newIndicator);
                         }

@@ -25,6 +25,7 @@ Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
 
 Route::post('/submitPelaksanaan', [SheetController::class, 'submitPelaksanaan']);
 Route::post('/submitEvaluasi', [EvaluasiController::class, 'submitEval']);
+Route::post('/submitPengendalian', [PengendalianController::class, 'submitPengendalian']);
 
 Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
 Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment']);
@@ -37,4 +38,3 @@ Route::post('/submitComment',[PelaksanaanController::class,'postComment']);
 Route::post('/deleteComment',[PelaksanaanController::class,'delComment']);
 //Route::get('/sheed', [PenetapanController::class, 'index']);
 
-Route::post('/pengendalian/submit', [PengendalianController::class, 'submitPengendalian']);
