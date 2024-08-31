@@ -40,7 +40,15 @@ if (role !== null){
 }
 
 const submitData = (formData) => {
-    const apiEndpoint = role === 'Pelaksanaan' ? '/api/submitPelaksanaan' : '/api/submitEvaluasi';
+    let apiEndpoint = '';
+
+    if (role === 'Pelaksanaan'){
+        apiEndpoint = '/api/submitPelaksanaan';
+    } else if (role === 'Evaluasi'){
+        apiEndpoint = '/api/submitEvaluasi';
+    } else if (role === 'Pengendalian'){
+        apiEndpoint = '/api/submitPengendalian';
+    }
 
     axios.post(apiEndpoint, { data: formData })
         .then(response => {
@@ -123,6 +131,7 @@ onBeforeMount(() => {
             <pengendalian
                 v-else-if="role=== 'Pengendalian'"
                 :data="filtered"
+                @submit-data="submitData"
                 @update="(data) => update = data"></pengendalian>
         </div>
     </div>

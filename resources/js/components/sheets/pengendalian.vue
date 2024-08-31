@@ -2,10 +2,14 @@
 import {ref} from "vue";
 import Modal from "@/components/sheets/modal.vue";
 import {debounce} from "lodash";
+import CustomButton from "@/components/comp/custom-button.vue";
 
 const props = defineProps({
     data: Object,
 });
+
+const emit = defineEmits(['submit-data', 'update']);
+
 
 const popupTriggers = ref(false);
 const selectedIndicator = ref(null);
@@ -35,7 +39,7 @@ const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
     };
     const index = dataPengendalian.value.findIndex(item => item.id_bukti_evaluasi === idBEval);
     if (index !== -1){
-
+        dataPengendalian.value.splice(index, 1, newData);
     }else {
         dataPengendalian.value.push(newData);
     }
@@ -46,11 +50,19 @@ const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
         emit('update', false);
     }
 
-})
+    console.log(dataPengendalian.value)
+
+}, 500);
+
+function submit(){
+    emit('submit-data', dataPengendalian.value)
+}
 
 </script>
 
 <template>
+    <br>
+    <custom-button v-once @click="submit">Save</custom-button>
     <div class="bodi">
         <table class="tb">
         <thead>
@@ -91,7 +103,7 @@ const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
                 <td>
                     <button
                     v-if="data.evaluasi !== ''"
-                    @click="openPopup(data.idBukti, 'Evaluasi', data.evaluasi)"
+                    @click="openPopup(data.idBuktiEval, 'Evaluasi', data.evaluasi)"
                     :title="data.evaluasi">
                         Link
                     </button>
@@ -100,25 +112,33 @@ const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
                         <textarea
                             :disabled="data.idBukti === ''"
                             class="ta"
-                            v-model="data.temuan"></textarea>
+                            v-model="data.temuan"
+                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                        ></textarea>
                     </td>
                     <td>
                         <textarea
                             :disabled="data.idBukti === ''"
                             class="ta"
-                            v-model="data.akar_masalah"></textarea>
+                            v-model="data.akar_masalah"
+                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                        ></textarea>
                     </td>
                     <td>
                         <textarea
                             :disabled="data.idBukti === ''"
                             class="ta"
-                            v-model="data.rtl"></textarea>
+                            v-model="data.rtl"
+                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                        ></textarea>
                     </td>
                     <td>
                         <textarea
                             :disabled="data.idBukti === ''"
                             class="ta"
-                            v-model="data.pelaksanaan_rtl"></textarea>
+                            v-model="data.pelaksanaan_rtl"
+                            @input="savePengendalian(data.idBukti, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                        ></textarea>
                     </td>
             </tr>
         </template>
@@ -136,9 +156,6 @@ const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
 </template>
 
 <style scoped>
-.w10{
-  width: 10rem;
-}
 
 .bodi{
     overflow-x: auto;

@@ -91,7 +91,7 @@ const openPopup = (indicator, tipe) => {
                     <td>{{ data.target }}</td>
 
                     <td>
-                        <textarea v-model="data.bukti" @input="save(data.id, data.bukti, data.idPelaksanaan, data.idBukti)"></textarea>
+                        <textarea class="tb" v-model="data.bukti" @input="save(data.id, data.bukti, data.idPelaksanaan, data.idBukti)"></textarea>
                     </td>
                     <td>
                         <button
@@ -126,6 +126,10 @@ const openPopup = (indicator, tipe) => {
 
 .xd{
     width: 30rem;
+}
+
+.tb{
+    height: 7rem;
 }
 
 .Pelaksanaan {
