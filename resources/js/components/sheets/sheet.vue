@@ -3,7 +3,6 @@ import {computed, onBeforeMount, ref, watch} from 'vue';
 import {useRoute, useRouter} from "vue-router";
 import { dotStream } from 'ldrs';
 import Pelaksanaan from "@/components/sheets/pelaksanaan.vue";
-import CustomSelect from "@/components/comp/custom-select.vue";
 import Pengendalian from "@/components/sheets/pengendalian.vue";
 import data from "bootstrap/js/src/dom/data.js";
 import Evaluasi from "@/components/sheets/evaluasi.vue";
@@ -108,9 +107,7 @@ onBeforeMount(() => {
         </div>
 
         <div v-else class="dt">
-            <br>
             <input v-if="role !== null" v-model="search" placeholder="Search Standars">
-
             <Pelaksanaan
                 v-if="role=== 'Pelaksanaan'"
                 :data="filtered"
@@ -123,7 +120,10 @@ onBeforeMount(() => {
                 :role="role"
                 @submit-data="submitData"
                 @update="(data) => update = data"></evaluasi>
-            <pengendalian v-else-if="role=== 'Pengendalian'" :data="filtered"></pengendalian>
+            <pengendalian
+                v-else-if="role=== 'Pengendalian'"
+                :data="filtered"
+                @update="(data) => update = data"></pengendalian>
         </div>
     </div>
 </template>
@@ -141,7 +141,7 @@ button {
 }
 
 .dt{
-    padding-bottom: 3%;
+    padding-bottom: 1%;
 }
 
 .pop {

@@ -47,6 +47,15 @@ const router = createRouter({
     {
         path: '/login',
         component: Login,
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem("token");
+            if (token === null){
+                next();
+            } else {
+                alert('anda sudah login 😊')
+                next('/')
+            }
+        },
         meta: {
             enterClass: 'animate__animated animate__fadeInLeft',
             leaveClass: 'animate__animated animate__fadeOutRight'
@@ -69,7 +78,7 @@ const router = createRouter({
                 leaveClass: 'animate__animated animate__fadeOutRight'
             },
         },
-    ]
+    ],
 })
 
 export default router

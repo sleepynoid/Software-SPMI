@@ -23,7 +23,7 @@ const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idE, idBE) 
     const newData = {
         idBuktiPelaksanaan: idBuktiPelaksanaan,
         komentarEvaluasi: komenEval,
-        adjusment,
+        adjusment: adjusment,
         idEvaluasi: idE,
     };
     const index = dataEval.value.findIndex(item => item.idBuktiPelaksanaan === idBuktiPelaksanaan);
@@ -77,19 +77,19 @@ const openPopup = (indicator, tipe) => {
         <table :class="props.role">
             <thead>
             <tr>
-                <th colspan="3"><h3 class="font-poppin">Penetapan</h3></th>
-                <th colspan="2"><h3 class="font-poppin">Pelaksanaan</h3></th>
-                <th colspan="5"><h3 class="font-poppin">Evaluasi</h3></th>
+                <th colspan="3"><h4 class="font-poppin">Penetapan</h4></th>
+                <th colspan="2"><h4 class="font-poppin">Pelaksanaan</h4></th>
+                <th colspan="5"><h4 class="font-poppin">Evaluasi</h4></th>
             </tr>
             <tr>
-                <th><h3 class="font-poppin" style="width: 10rem">Standar</h3></th>
-                <th><h3 class="font-poppin" style="width: 10rem">Indikator</h3></th>
-                <th><h3 class="font-poppin">Target</h3></th>
-                <th><h3 class="xd">Komentar</h3></th>
-                <th><h3 class="font-poppin">Link Bukti</h3></th>
-                <th colspan="2" class="xd"><h3 class="font-poppin">Komentar Evaluasi</h3></th>
-                <th colspan="2"><h3 class="font-poppin">Adjusment</h3></th>
-                <th><h3 class="font-poppin">Link Bukti Evaluasi</h3></th>
+                <th><div class="th">Standar</div></th>
+                <th><div class="th">Indicator</div></th>
+                <th>Target</th>
+                <th><div class="xd">Komentar</div></th>
+                <th><div class="font-poppin link">Link Bukti</div></th>
+                <th colspan="2"><div class="font-poppin th">Komentar Evaluasi</div></th>
+                <th colspan="2"><div class="font-poppin">Adjusment</div></th>
+                <th><div class="font-poppin link">Link Bukti Evaluasi</div></th>
             </tr>
             </thead>
             <tbody>
@@ -97,45 +97,42 @@ const openPopup = (indicator, tipe) => {
                 <tr>
                     <td :rowspan="standar.indicators.length + 1">{{ standar.standar }}</td>
                 </tr>
-                <tr v-for="indicator in standar.indicators" :key="indicator.id">
-                    <td>{{ indicator.indicator }}</td>
-                    <td>{{ indicator.target }}</td>
+                <tr v-for="data in standar.indicators" :key="data.id">
+                    <td>{{ data.indicator }}</td>
+                    <td>{{ data.target }}</td>
 
                     <td>
-                        <p>{{ indicator.bukti }}</p>
+                        <p>{{ data.bukti }}</p>
                     </td>
                     <td>
                         <button
-                            v-if="indicator.idBukti !== ''"
+                            v-if="data.idBukti !== ''"
                             class="pop"
-                            @click="openPopup(indicator.idBukti, 'Pelaksanaan')">
+                            @click="openPopup(data.idBukti, 'Pelaksanaan')">
                             Link
                         </button>
                     </td>
 
                         <td colspan="2">
-                            <p
-                                v-if="indicator.bukti === ''"
+                            <textarea
                                 class="ta"
-                            > Belum ada Pelaksanaan</p>
-                            <textarea class="ta"
-                                v-else
-                                v-model="indicator.evaluasi"
-                                @input="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)"
+                                :disabled="data.bukti === ''"
+                                v-model="data.evaluasi"
+                                @input="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)"
                             ></textarea>
                         </td>
                         <td colspan="2">
-                            <select v-model="indicator.adjusment" @change="saveEval(indicator.idBukti, indicator.evaluasi, indicator.adjusment, indicator.idPelaksanaan, indicator.idBuktiEval)">
+                            <select v-model="data.adjusment" @change="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)">
                                 <option value=""></option>
-<!--                                <option>{{ indicator.adjusment }}</option>-->
+<!--                                <option>{{ data.adjusment }}</option>-->
                                 <option v-for="a in adjusmentOptions" :key="a">{{ a }}</option>
                             </select>
                         </td>
                         <td>
                             <button
-                                v-if="indicator.idBuktiEval !== ''"
+                                v-if="data.idBuktiEval !== ''"
                                 class="pop"
-                                @click="openPopup(indicator.idBuktiEval, 'Evaluasi')"
+                                @click="openPopup(data.idBuktiEval, 'Evaluasi')"
                             >
                                 Link
                             </button>
