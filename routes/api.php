@@ -20,6 +20,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 });
 
 Route::post('/penetapan/import',[PenetapanController::class,'import']);
+Route::get('/downloadSheet', [SheetController::class, 'downloadExcel']);
+
 Route::get('/getPenetapan/{jurusan}/{periode}/{tipePendidikan}/{tipe}', [SheetController::class, 'getPenetapan']);
 Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
 

@@ -83,7 +83,7 @@ const openPopup = (indicator, tipe) => {
             </tr>
             <tr>
                 <th><div class="th">Standar</div></th>
-                <th><div class="th">Indicator</div></th>
+                <th><div class="th">Indikator</div></th>
                 <th>Target</th>
                 <th><div class="xd">Komentar</div></th>
                 <th><div class="font-poppin link">Link Bukti</div></th>
