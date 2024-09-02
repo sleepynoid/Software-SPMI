@@ -83,6 +83,26 @@ function generateYearRange() {
     }
     return years;
 }
+
+const downloadFile = async () => {
+    try {
+        const response = await axios({
+            url: '/api/downloadSheet',
+            method: 'GET',
+            responseType: 'blob',
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'TemplatePenetapan.xlsx'); // Nama file saat diunduh
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error('Download failed:', error.response.data);
+    }
+};
 </script>
 
 <template>
@@ -92,7 +112,7 @@ function generateYearRange() {
     </div>
     <div class="container">
         <div class="upload-section">
-            <router-link to="/">Home</router-link>
+            <button class="bt" @click="downloadFile">Download Template</button>
             <h2>Tambah/ Unggah Berkas</h2>
             <form @submit.prevent="submitData">
                 <div class="form-group">
@@ -219,6 +239,11 @@ function generateYearRange() {
     position: absolute;
     width: 100vw;
     padding: 3%;
+}
+
+.bt{
+    width: 10rem;
+    margin-bottom: 1rem;
 }
 
 .loading-overlay {

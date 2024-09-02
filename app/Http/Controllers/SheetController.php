@@ -162,4 +162,8 @@ class SheetController extends Controller {
 
         return $this->sendRespons($data,'iki datane');
     }
+
+    public function downloadExcel(){
+        return response()->download(storage_path('../dokumentasi/example.xlsx'));
+    }
 }

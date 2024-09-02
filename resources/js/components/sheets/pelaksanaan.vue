@@ -132,6 +132,7 @@ const openPopup = (indicator, tipe) => {
     height: 7rem;
 }
 
+
 .Pelaksanaan {
     width: 92vw;
     margin-top: 1rem;
