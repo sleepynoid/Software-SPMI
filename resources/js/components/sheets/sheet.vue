@@ -132,7 +132,9 @@ onBeforeMount(() => {
                 v-else-if="role=== 'Pengendalian'"
                 :data="filtered"
                 @submit-data="submitData"
-                @update="(data) => update = data"></pengendalian>
+                @update="(data) => update = data">
+            </pengendalian>
+
         </div>
     </div>
 </template>

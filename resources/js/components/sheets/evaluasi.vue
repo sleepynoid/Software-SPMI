@@ -98,7 +98,8 @@ const openPopup = (indicator, tipe) => {
                     <td :rowspan="standar.indicators.length + 1">{{ standar.standar }}</td>
                 </tr>
                 <tr v-for="data in standar.indicators" :key="data.id">
-                    <td>{{ data.indicator }}</td>
+<!--                    <td>{{ data.indicator }}</td>-->
+                    <textarea v-model="data.indicator" ></textarea>
                     <td>{{ data.target }}</td>
 
                     <td>
@@ -122,9 +123,11 @@ const openPopup = (indicator, tipe) => {
                             ></textarea>
                         </td>
                         <td colspan="2">
-                            <select v-model="data.adjusment" @change="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)">
+                            <select
+                                v-model="data.adjusment"
+                                :disabled="data.bukti === ''"
+                                @change="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)">
                                 <option value=""></option>
-<!--                                <option>{{ data.adjusment }}</option>-->
                                 <option v-for="a in adjusmentOptions" :key="a">{{ a }}</option>
                             </select>
                         </td>

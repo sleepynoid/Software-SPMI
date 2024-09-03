@@ -7,6 +7,7 @@ import CustomSelect from "@/components/comp/custom-select.vue";
 import Pengendalian from "@/components/sheets/pengendalian.vue";
 import data from "bootstrap/js/src/dom/data.js";
 import Evaluasi from "@/components/sheets/evaluasi.vue";
+import Peningkatan from "@/components/sheets/peningkatan.vue";
 
 dotStream.register();
 
@@ -16,7 +17,7 @@ const loading = ref(false);
 const tipe = ['input', 'proses', 'output'];
 const current = ref(tipe[0]);
 
-const roleUser = ['Evaluasi', 'Pelaksanaan', 'Pengendalian'];
+const roleUser = ['Pelaksanaan','Evaluasi', 'Pengendalian', 'Peningkatan'];
 const role = ref(roleUser[0]);
 
 const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
@@ -106,9 +107,6 @@ onBeforeMount(() => {
             <input type="radio" :id="t" :value="t" v-model="current">
             <label :for="t" style="margin-right: 0.5rem;">{{ t }}</label>
         </template>
-        <!--        <h2 v-if="role !== null" class="font-poppin" v-once>{{role}}</h2>-->
-        <!--        <p v-else>Anda Belum <router-link  to="/login">Login</router-link> 🫨</p>-->
-        <!--        <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>-->
         <div v-if="loading">
             <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
         </div>
@@ -136,11 +134,17 @@ onBeforeMount(() => {
                 @update="(data) => update = data">
             </evaluasi>
             <pengendalian
-                    v-else-if="role=== 'Pengendalian'"
-                    :data="filtered"
-                    @submit-data="submitData"
-                    @update="(data) => update = data">
+                v-else-if="role=== 'Pengendalian'"
+                :data="filtered"
+                @submit-data="submitData"
+                @update="(data) => update = data">
             </pengendalian>
+            <peningkatan
+                v-else-if="role=== 'Peningkatan'"
+                :data="filtered"
+                @submit-data="submitData"
+                @update="(data) => update = data">
+            </peningkatan>
         </div>
     </div>
 </template>

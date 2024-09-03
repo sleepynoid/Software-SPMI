@@ -92,12 +92,15 @@ const openLink = (link) => {
     <div class="popup">
         <div class="popup-inner" :class="role" ref="modal">
             <slot/>
-            <p v-if="role === 'Pengendalian'" class="peng">{{komentar}}</p>
+            <div class="pe" v-if="role === 'Pengendalian' || role === 'Peningkatan'">
+                <h1>Bukti {{tipe}}</h1>
+                <p class="peng">{{komentar}}</p>
+            </div>
             <h2 v-else class="lb font-rubik">Link Bukti {{props.tipe}}</h2>
 
             <p v-if="loading">Loading...</p>
             <div>
-                <p style="margin: 2% 0 2% 0">Link Bukti:</p>
+                <p style="margin: 0 0 2% 0">Link Bukti:</p>
                 <p v-if="savedLink.length < 1" :hidden="loading">Belum ada Link</p>
                 <ol>
                     <li v-for="link in savedLink" :key="link.id">
@@ -148,8 +151,17 @@ const openLink = (link) => {
     height: 70vh;
 }
 
+.Peningkatan{
+    justify-content: space-between;
+    width: 50vw;
+    height: 70vh;
+}
+
+.pe{
+    height: 100%;
+}
 .peng{
-    height: 40%;
+    height: 80%;
     overflow-y: auto;
     padding-right: 2%;
 }

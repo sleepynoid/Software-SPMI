@@ -9,6 +9,7 @@ use App\Models\BuktiPengendalian;
 use App\Models\Evaluasi;
 use App\Models\Indikator;
 use App\Models\Penetapan;
+use App\Models\Peningkatan;
 use App\Models\Sheet;
 use App\Models\Standar;
 use App\Models\Target;
@@ -44,6 +45,7 @@ class SheetController extends Controller {
                 $bukti = BuktiPelaksanaan::all();
                 $buktieval = BuktiEvaluasi::all();
                 $buktiPengendalian = BuktiPengendalian::all();
+                $buktiPeningkatan = Peningkatan::all();
 
                 foreach ($standars as $s) {
                     $data = [
@@ -71,6 +73,8 @@ class SheetController extends Controller {
                             $akar_masalah = '';
                             $rtl = '';
                             $pelaksanaan_rtl = '';
+                            $idPeningkatan = '';
+                            $komenPeningkatan='';
                             foreach ($bukti as $b){
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
@@ -90,6 +94,14 @@ class SheetController extends Controller {
                                                     $akar_masalah = $bp->akar_masalah;
                                                     $rtl = $bp->rtl;
                                                     $pelaksanaan_rtl = $bp->pelaksanaan_rtl;
+
+                                                    foreach ($buktiPeningkatan as $p){
+                                                        if ($p->id_pengendalian == $bp->id){
+                                                            $idPeningkatan = $p->id;
+                                                            $komenPeningkatan = $p->komentar;
+                                                        }
+                                                    }
+
                                                 }
                                             }
 
@@ -114,6 +126,8 @@ class SheetController extends Controller {
                                 'akar_masalah'     => $akar_masalah,
                                 'rtl'              => $rtl,
                                 'pelaksanaan_rtl'  => $pelaksanaan_rtl,
+                                'idPeningkatan'    => $idPeningkatan,
+                                'komenPeningkatan' => $komenPeningkatan,
                             ];
                             array_push($data['indicators'], $newIndicator);
                         }

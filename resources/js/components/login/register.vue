@@ -17,7 +17,7 @@ const register = async () => {
             role: role.value,
         });
         console.log(response);
-        router.push('/login');
+        await router.push('/login');
     } catch (error) {
         alert(error);
         console.error('Registration failed:', error);
@@ -34,7 +34,7 @@ const register = async () => {
                     <h1>POWERED BY <br> CREATORS AROUND <br> THE WORLD.</h1>
                 </div>
                 <div class="mi">
-                    <img src="https://images.unsplash.com/photo-1722170529553-3d486ba8ffba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOXx8fGVufDB8fHx8fA%3D%3D" class="mii">
+                    <img src="https://images.unsplash.com/photo-1722170529553-3d486ba8ffba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyOXx8fGVufDB8fHx8fA%3D%3D" class="mii" alt="">
                 </div>
             </div>
             <div class="main2">
@@ -60,6 +60,7 @@ const register = async () => {
                             <option value="Evaluasi">Penetapan / Evaluasi</option>
                             <option>Pelaksanaan</option>
                             <option>Pengendalian</option>
+                            <option>Peningkatan</option>
                             <option>SuperUser</option>
                         </select>
 

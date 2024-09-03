@@ -137,7 +137,7 @@ function submit(){
                             :disabled="data.idBukti === ''"
                             class="ta"
                             v-model="data.pelaksanaan_rtl"
-                            @input="savePengendalian(data.idBukti, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
                         ></textarea>
                     </td>
             </tr>
@@ -167,7 +167,6 @@ function submit(){
 .ta{
     width: 15rem;
     height: 10rem;
-    padding: 3%;
     font-size: 1rem;
 }
 
