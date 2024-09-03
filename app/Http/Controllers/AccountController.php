@@ -89,4 +89,8 @@ class AccountController extends Controller {
             'message' => 'User ' . $currentUser['name'] . ' Successfuly Logout'
         ]);
     }
+
+    public function listUser(): JsonResponse {
+        return response()->json(User::all());
+    }
 }
