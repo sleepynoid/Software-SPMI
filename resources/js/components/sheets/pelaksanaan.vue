@@ -15,32 +15,32 @@ const emit = defineEmits(['submit-data', 'update']);
 
 const formData = ref([]);
 
-const save = debounce((idIndikator, bukti, idP, idBuk) => {
+const save = (idIndikator, bukti, idP, idBuk) => {
   const newData = { idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
-  const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
-  if (index !== -1) {
-    if (bukti !== ''){
-      formData.value.splice(index, 1, newData);
-      return;
-    }
-    if (bukti === '' && idBuk !== ''){
-      formData.value.splice(index, 1, newData);
-      return;
-    }
-    formData.value.splice(index, 1);
-  } else {
-    formData.value.push(newData);
-  }
-
-  if (formData.value.length > 0){
-    emit('update', true);
-  } else {
-    emit('update', false);
-  }
+  // const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
+  // if (index !== -1) {
+  //   if (bukti !== ''){
+  //     formData.value.splice(index, 1, newData);
+  //     return;
+  //   }
+  //   if (bukti === '' && idBuk !== ''){
+  //     formData.value.splice(index, 1, newData);
+  //     return;
+  //   }
+  //   formData.value.splice(index, 1);
+  // } else {
+  //   formData.value.push(newData);
+  // }
+  //
+  // if (formData.value.length > 0){
+  //   emit('update', true);
+  // } else {
+  //   emit('update', false);
+  // }
 
   console.log(formData.value)
-
-}, 500);
+  emit('submit-data', newData)
+};
 
 const submit = (idIndikator) => {
     const send = ref([])
@@ -50,7 +50,6 @@ const submit = (idIndikator) => {
 
   console.log(formData.value)
   console.log(send.value)
-    emit('submit-data', send.value)
 };
 
 const popupTriggers = ref(false);
@@ -104,7 +103,7 @@ const isUpdate = (idBP, update, komen) => {
                     <td>
                         <textarea class="tb"
                             v-model="data.bukti"
-                            @input="data.isUpdate = true, save(data.id, data.bukti, data.idPelaksanaan, data.idBukti)"></textarea>
+                            @input="data.isUpdate = true"></textarea>
                     </td>
                     <td>
                         <button
@@ -115,7 +114,7 @@ const isUpdate = (idBP, update, komen) => {
                         </button>
                     </td>
                     <td>
-                      <button v-if="data.isUpdate" class="btnn" @click="submit(data.id)">save</button>
+                      <button v-if="data.isUpdate" class="btnn" @click="save(data.id, data.bukti, data.idPelaksanaan, data.idBukti)">save</button>
                       <button v-else >save</button>
                     </td>
                 </tr>
