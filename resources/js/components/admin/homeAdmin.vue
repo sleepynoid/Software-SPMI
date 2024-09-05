@@ -59,7 +59,7 @@
 <script>
 import { ref, reactive, onMounted } from 'vue';
 // import Modal from Modal; // Import the Modal component
-import Modal from './modal.vue';
+import Modal from '../sheets/modal.vue';
 
 export default {
   components: { Modal },

@@ -18,9 +18,6 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 
 class SheetController extends Controller {
-    public function __construct() {
-        $this->middleware('auth:sanctum')->only('submitPelaksanaan');
-    }
     //
     public function indexSheet() {
         $data = Sheet::all();
