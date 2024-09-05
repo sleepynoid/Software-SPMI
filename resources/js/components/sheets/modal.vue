@@ -26,6 +26,7 @@ const judulLink = ref('')
 const count = ref(0);
 const loading = ref(true);
 const savedLink = ref([]);
+const token = localStorage.getItem('token');
 
 watch(count, async () => {
     try {
@@ -53,7 +54,6 @@ const addLink = () => {
         alert("judul atau link bukti tidak boleh kosong :)")
         return;
     }
-    const token = localStorage.getItem('token');
     axios.post('/api/submitLink',
         {
             idBukti: props.idBukti,
@@ -77,7 +77,11 @@ const addLink = () => {
 }
 function removeTodo(IdLink) {
     if (confirm("Hapus Link??") === true) {
-        axios.post('/api/deleteLink', {idLink: {idL: IdLink}})
+        axios.post('/api/deleteLink', {idLink: {idL: IdLink}}, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log('link terhapus:', response.data);
                 count.value--;
