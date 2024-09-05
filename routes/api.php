@@ -42,4 +42,5 @@ Route::post('/deleteComment',[PelaksanaanController::class,'delComment']);
 //Route::get('/sheed', [PenetapanController::class, 'index']);
 
 Route::get('/admin/listuser', [AccountController::class, 'listUser']);
+Route::post('/admin/register', [AccountController::class, 'register']);
 
