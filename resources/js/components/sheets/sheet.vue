@@ -28,12 +28,13 @@ const search = ref('');
 let re = ref(0);
 
 if (role !== null){
-    watch(re, async () => {
+    watch([re, periode, jurusan, currentSheet, current], async () => {
         loading.value = true;
         let response = await fetch(`/api/getPenetapan/${jurusan.value}/${periode.value}/${currentSheet.value}/${current.value}`);
         standarData.value = await response.json();
         loading.value = false;
-    });
+        // console.log(standarData.value);
+    }, { immediate: true });
 }
 
 
