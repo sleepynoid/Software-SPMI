@@ -1,65 +1,71 @@
 <template>
-  <div class="admin-page">
-    <h1>Admin Dashboard</h1>
-    <button @click="showModal = true" class="dashboard-button">Register User</button>
+  <main class="admin-page">
+    <header>
+      <h1>Admin Dashboard</h1>
+      <button @click="showModal = true" class="dashboard-button">Register User</button>
+      <!-- Registration Modal -->
+      <Modal class="modalRegisterAdmin" v-if="showModal" @close="closeModal">
+        <h2>Register User</h2>
+        <form @submit.prevent="registerUser">
+          <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" v-model="newUser.email" required />
+          </div>
+          <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" v-model="newUser.name" required />
+          </div>
+          <div>
+            <label for="role">Role:</label>
+            <input type="text" id="role" v-model="newUser.role" required />
+          </div>
+          <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" v-model="newUser.password" required />
+          </div>
+          <div>
+            <button type="submit">Submit</button>
+            <button type="button" @click="closeModal">Cancel</button>
+          </div>
+        </form>
+      </Modal>
+    </header>
 
-    <!-- Registration Modal -->
-    <Modal v-if="showModal" @close="closeModal">
-      <h2>Register User</h2>
-      <form @submit.prevent="registerUser">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" v-model="newUser.email" required />
-        </div>
-        <div>
-          <label for="name">Name:</label>
-          <input type="text" id="name" v-model="newUser.name" required />
-        </div>
-        <div>
-          <label for="role">Role:</label>
-          <input type="text" id="role" v-model="newUser.role" required />
-        </div>
-        <div>
-          <button type="submit">Submit</button>
-          <button type="button" @click="closeModal">Cancel</button>
-        </div>
-      </form>
-    </Modal>
-
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Name</th>
-          <th>Role</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in users" :key="user.id">
-          <td>{{ user.email }}</td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.role }}</td>
-          <td>
-            <div class="actions-dropdown">
-              <button @click="toggleDropdown(user.id)">Edit</button>
-              <div v-if="dropdownVisible[user.id]" class="dropdown-menu">
-                <button @click="viewHistory(user)">View History</button>
-                <button @click="editRole(user)">Edit Role</button>
-                <button @click="deleteUser(user)">Delete User</button>
+    <section>
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in users" :key="user.id">
+            <td>{{ user.email }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+              <div class="actions-dropdown">
+                <button @click="toggleDropdown(user.id)">Edit</button>
+                <div v-if="dropdownVisible[user.id]" class="dropdown-menu">
+                  <button @click="viewHistory(user)">View History</button>
+                  <button @click="editRole(user)">Edit Role</button>
+                  <button @click="deleteUser(user)">Delete User</button>
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 </template>
 
 <script>
 import { ref, reactive, onMounted } from 'vue';
-// import Modal from Modal; // Import the Modal component
-import Modal from '../sheets/modal.vue';
+import Modal from './modalRegisterAdmin.vue';
 
 export default {
   components: { Modal },
@@ -100,8 +106,32 @@ export default {
       users.value = users.value.filter(u => u.id !== user.id);
     };
 
-    const registerUser = () => {
-      users.value.push({ ...newUser, id: Date.now() });
+    // const registerUser = async () => {
+    //   users.value.push({ ...newUser, id: Date.now() });
+    //   // alert(newUser.email);
+
+    //   closeModal();
+    // };
+
+    const registerUser = async () => {
+      alert(newUser.password);
+      try {
+        const response = await axios.post('/api/admin/register', {
+          name: newUser.name,
+          email: newUser.email,
+          password: newUser.password,  // Include password in request
+          role: newUser.role,
+        });
+
+        console.log('User registered:', response.data);
+
+        // After a successful request, you can reset the form and close the modal
+        // newUser.value = { email: '', name: '', password: '', role: '' };
+        showModal.value = false;
+      } catch (error) {
+        console.error('Error registering user:', error.response.data);
+        // Handle validation or server errors here, e.g. show error messages
+      }
       closeModal();
     };
 
@@ -110,6 +140,7 @@ export default {
       newUser.email = '';
       newUser.name = '';
       newUser.role = '';
+      // alert(newUser.email);
     };
 
     onMounted(() => {
@@ -199,5 +230,16 @@ export default {
   margin-bottom: 20px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+.modalRegisterAdmin button {
+  width: auto;
+  /* background-color: rebeccapurple; */
+  margin: 10px 10px 10px 0px;
+}
+
+.modalRegisterAdmin label {
+  /* background-color: rebeccapurple */
+  width: 20%;
 }
 </style>
