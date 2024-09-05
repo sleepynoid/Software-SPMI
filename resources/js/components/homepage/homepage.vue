@@ -38,7 +38,7 @@ const validateMajorSelection = () => {
 
 watchEffect(async ()=> {
     loading.value = true;
-    let response = await fetch(`/api/getPeriode/${selectedMajor.value}`);
+    let response = await fetch(`/api/getPeriode/${selectedMajor.value}`,{});
     per.value = await response.json();
     loading.value = false;
 })

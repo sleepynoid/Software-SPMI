@@ -6,10 +6,14 @@ use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
 use App\Models\link;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use App\Models\Evaluasi;
 use Illuminate\Support\Facades\Log;
 
 class EvaluasiController extends Controller {
+    public function __construct() {
+        $this->middleware('auth:sanctum')->only('submitEval');
+    }
     //
     public function postComment(Request $request) {
         // Log::info('posting BuktiEvaluasi');

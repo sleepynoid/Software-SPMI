@@ -14,9 +14,13 @@ use App\Models\Sheet;
 use App\Models\Standar;
 use App\Models\Target;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 
 class SheetController extends Controller {
+    public function __construct() {
+        $this->middleware('auth:sanctum')->only('submitPelaksanaan');
+    }
     //
     public function indexSheet() {
         $data = Sheet::all();
@@ -128,6 +132,7 @@ class SheetController extends Controller {
                                 'pelaksanaan_rtl'  => $pelaksanaan_rtl,
                                 'idPeningkatan'    => $idPeningkatan,
                                 'komenPeningkatan' => $komenPeningkatan,
+                                'isUpdate'           => false,
                             ];
                             array_push($data['indicators'], $newIndicator);
                         }
@@ -149,9 +154,8 @@ class SheetController extends Controller {
     }
 
     public function submitPelaksanaan(Request $request){
-        $data = $request->input('data');
+        $item = $request->input('data');
 
-        foreach ($data as $item) {
             $idIndikator = $item['idIndikator'];
             $bukti = $item['bukti'];
             $idPelaksanaan = $item['idPelaksanaan'];
@@ -172,9 +176,8 @@ class SheetController extends Controller {
                     ]);
                 }
             }
-        }
 
-        return $this->sendRespons($data,'iki datane');
+        return response('all good');
     }
 
     public function downloadExcel(){

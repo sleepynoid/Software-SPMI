@@ -1,7 +1,6 @@
 <script setup>
 import {computed, onBeforeMount, ref, watch} from 'vue';
 import {useRoute, useRouter} from "vue-router";
-import { dotStream } from 'ldrs';
 import Pelaksanaan from "@/components/sheets/pelaksanaan.vue";
 import CustomSelect from "@/components/comp/custom-select.vue";
 import Pengendalian from "@/components/sheets/pengendalian.vue";
@@ -9,7 +8,6 @@ import data from "bootstrap/js/src/dom/data.js";
 import Evaluasi from "@/components/sheets/evaluasi.vue";
 import Peningkatan from "@/components/sheets/peningkatan.vue";
 
-dotStream.register();
 
 const standarData = ref([]);
 const loading = ref(false);
@@ -52,7 +50,12 @@ const submitData = (formData) => {
     } else if (role.value === 'Pengendalian'){
         apiEndpoint = '/api/submitPengendalian';
     }
-    axios.post(apiEndpoint, { data: formData })
+    const token = localStorage.getItem('token');
+    axios.post(apiEndpoint, { data: formData },{
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
         .then(response => {
             console.log('Data submitted successfully:', response.data);
             re.value++;
@@ -107,11 +110,8 @@ onBeforeMount(() => {
             <input type="radio" :id="t" :value="t" v-model="current">
             <label :for="t" style="margin-right: 0.5rem;">{{ t }}</label>
         </template>
-        <div v-if="loading">
-            <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
-        </div>
 
-        <div v-else-if="standarData === 'Null'">
+        <div v-if="standarData === 'Null'">
             Belum ada data :)
         </div>
 
