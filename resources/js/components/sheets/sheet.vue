@@ -1,13 +1,11 @@
 <script setup>
 import {computed, onBeforeMount, ref, watch} from 'vue';
 import {useRoute, useRouter} from "vue-router";
-import { dotStream } from 'ldrs';
 import Pelaksanaan from "@/components/sheets/pelaksanaan.vue";
 import Pengendalian from "@/components/sheets/pengendalian.vue";
 import data from "bootstrap/js/src/dom/data.js";
 import Evaluasi from "@/components/sheets/evaluasi.vue";
 
-dotStream.register();
 
 const standarData = ref([]);
 const loading = ref(false);
@@ -30,14 +28,14 @@ const search = ref('');
 let re = ref(0);
 
 if (role !== null){
-    watch([re, periode, jurusan, currentSheet, current], async () => {
+    watch(re, async () => {
         loading.value = true;
         let response = await fetch(`/api/getPenetapan/${jurusan.value}/${periode.value}/${currentSheet.value}/${current.value}`);
         standarData.value = await response.json();
         loading.value = false;
-        // console.log(standarData.value);
-    }, { immediate: true });
+    });
 }
+
 
 const submitData = (formData) => {
     let apiEndpoint = '';
@@ -49,8 +47,12 @@ const submitData = (formData) => {
     } else if (role === 'Pengendalian'){
         apiEndpoint = '/api/submitPengendalian';
     }
-
-    axios.post(apiEndpoint, { data: formData })
+    const token = localStorage.getItem('token');
+    axios.post(apiEndpoint, { data: formData } ,{
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
         .then(response => {
             console.log('Data submitted successfully:', response.data);
             re.value++;
@@ -103,14 +105,8 @@ onBeforeMount(() => {
             <input type="radio" :id="t" :value="t" v-model="current">
             <label :for="t" style="margin-right: 0.5rem;">{{ t }}</label>
         </template>
-<!--        <h2 v-if="role !== null" class="font-poppin" v-once>{{role}}</h2>-->
-<!--        <p v-else>Anda Belum <router-link  to="/login">Login</router-link> 🫨</p>-->
-        <!--        <custom-select :data="roleUser" :wid="10" @response="data => role = data"></custom-select>-->
-        <div v-if="loading">
-            <l-dot-stream size="60" speed="2.5" color="black"></l-dot-stream>
-        </div>
 
-        <div v-else-if="standarData === 'Null'">
+        <div v-if="standarData === 'Null'">
             Belum ada data :)
         </div>
 

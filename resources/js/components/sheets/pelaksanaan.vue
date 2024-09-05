@@ -1,6 +1,5 @@
 <script setup>
 import { defineAsyncComponent, ref } from "vue";
-import CustomButton from "@/components/comp/custom-button.vue";
 import {debounce} from "lodash";
 
 const Modal = defineAsyncComponent({
@@ -17,36 +16,42 @@ const emit = defineEmits(['submit-data', 'update']);
 const formData = ref([]);
 
 const save = debounce((idIndikator, bukti, idP, idBuk) => {
-    const newData = { idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
-    const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
-    if (index !== -1) {
-        if (bukti !== ''){
-            formData.value.splice(index, 1, newData);
-            return;
-        }
-        if (bukti === '' && idBuk !== ''){
-            formData.value.splice(index, 1, newData);
-            return;
-        }
-        formData.value.splice(index, 1);
-    } else {
-        formData.value.push(newData);
+  const newData = { idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
+  const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
+  if (index !== -1) {
+    if (bukti !== ''){
+      formData.value.splice(index, 1, newData);
+      return;
     }
-
-    if (formData.value.length > 0){
-        emit('update', true);
-    } else {
-        emit('update', false);
+    if (bukti === '' && idBuk !== ''){
+      formData.value.splice(index, 1, newData);
+      return;
     }
+    formData.value.splice(index, 1);
+  } else {
+    formData.value.push(newData);
+  }
 
-    console.log(formData.value)
+  if (formData.value.length > 0){
+    emit('update', true);
+  } else {
+    emit('update', false);
+  }
+
+  console.log(formData.value)
 
 }, 500);
 
+const submit = (idIndikator) => {
+    const send = ref([])
+    const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
+    send.value = { ...formData.value[index] };
+    formData.value.splice(index, 1);
 
-function submit(){
-    emit('submit-data', formData.value)
-}
+  console.log(formData.value)
+  console.log(send.value)
+    emit('submit-data', send.value)
+};
 
 const popupTriggers = ref(false);
 const selectedIndicator = ref(null);
@@ -61,22 +66,28 @@ const openPopup = (indicator, tipe) => {
     tipeLink.value = tipe;
     togglePopup();
 };
+
+  console.log(props.data);
+const isUpdate = (idBP, update, komen) => {
+  const index = props.data.findIndex(item => item.indicators === idBP);
+  console.log(index);
+}
 </script>
 
 <template>
     <br />
-    <custom-button v-once @click="submit">Save</custom-button>
     <div class="table">
         <table class="Pelaksanaan">
             <thead>
             <tr>
                 <th colspan="3"><h4 class="font-poppin">Penetapan</h4></th>
                 <th colspan="2"><h4 class="font-poppin">Pelaksanaan</h4></th>
+                <th rowspan="2" class="link">save</th>
             </tr>
             <tr>
                 <th><div class="font-poppin th">Standar</div></th>
                 <th><div class="font-poppin th">Indikator</div></th>
-                <th><div class="font-poppin">Target</div></th>
+                <th><div class="font-poppin link">Target</div></th>
                 <th><div class="xd">Komentar</div></th>
                 <th><div class="font-poppin link">Link Bukti</div></th>
             </tr>
@@ -91,7 +102,9 @@ const openPopup = (indicator, tipe) => {
                     <td>{{ data.target }}</td>
 
                     <td>
-                        <textarea class="tb" v-model="data.bukti" @input="save(data.id, data.bukti, data.idPelaksanaan, data.idBukti)"></textarea>
+                        <textarea class="tb"
+                            v-model="data.bukti"
+                            @input="data.isUpdate = true, save(data.id, data.bukti, data.idPelaksanaan, data.idBukti)"></textarea>
                     </td>
                     <td>
                         <button
@@ -100,6 +113,10 @@ const openPopup = (indicator, tipe) => {
                                 @click="openPopup(data.idBukti, 'Pelaksanaan')">
                             Link
                         </button>
+                    </td>
+                    <td>
+                      <button v-if="data.isUpdate" class="btnn" @click="submit(data.id)">save</button>
+                      <button v-else >save</button>
                     </td>
                 </tr>
             </template>
@@ -120,9 +137,8 @@ const openPopup = (indicator, tipe) => {
 .table {
     overflow-x: auto;
     padding-right: 2%;
+    padding-bottom: 2%;
 }
-
-
 
 .xd{
     width: 30rem;
@@ -132,9 +148,12 @@ const openPopup = (indicator, tipe) => {
     height: 7rem;
 }
 
+.btnn{
+  background: yellow;
+}
 
 .Pelaksanaan {
-    width: 92vw;
+    width: 100vw;
     margin-top: 1rem;
 }
 

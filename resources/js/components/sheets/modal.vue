@@ -53,12 +53,17 @@ const addLink = () => {
         alert("judul atau link bukti tidak boleh kosong :)")
         return;
     }
+    const token = localStorage.getItem('token');
     axios.post('/api/submitLink',
         {
             idBukti: props.idBukti,
             judul_link: judulLink.value,
             link: link.value,
             tipeLink: props.tipe,
+        },{
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         })
         .then(response => {
             console.log('Data submitted successfully:', response.data);
@@ -158,10 +163,10 @@ const openLink = (link) => {
 }
 
 .pe{
-    height: 100%;
+    height: 50%;
 }
 .peng{
-    height: 80%;
+    height: 70%;
     overflow-y: auto;
     padding-right: 2%;
 }
