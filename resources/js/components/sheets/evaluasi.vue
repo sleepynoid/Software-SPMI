@@ -18,7 +18,7 @@ const dataEval = ref([]);
 
 const adjusmentOptions = ['melampaui', 'mencapai', 'belum mencapai', 'menyimpang'];
 
-const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idE, idBE) => {
+const saveEval =(idBuktiPelaksanaan, komenEval, adjusment, idE) => {
 
     const newData = {
         idBuktiPelaksanaan: idBuktiPelaksanaan,
@@ -26,33 +26,32 @@ const saveEval = debounce((idBuktiPelaksanaan, komenEval, adjusment, idE, idBE) 
         adjusment: adjusment,
         idEvaluasi: idE,
     };
-    const index = dataEval.value.findIndex(item => item.idBuktiPelaksanaan === idBuktiPelaksanaan);
-    if (index !== -1) {
-        if (komenEval !== '' || adjusment !== ''){
-            dataEval.value.splice(index, 1, newData);
-            return;
-        }
-        if (komenEval !== '' || adjusment !== '' || idBE !== ''){
-            dataEval.value.splice(index, 1, newData);
-            return;
-        }
-        dataEval.value.splice(index, 1);
-    } else {
-        dataEval.value.push(newData);
-    }
+    // const index = dataEval.value.findIndex(item => item.idBuktiPelaksanaan === idBuktiPelaksanaan);
+    // if (index !== -1) {
+    //     if (komenEval !== '' || adjusment !== ''){
+    //         dataEval.value.splice(index, 1, newData);
+    //         return;
+    //     }
+    //     if (komenEval !== '' || adjusment !== '' || idBE !== ''){
+    //         dataEval.value.splice(index, 1, newData);
+    //         return;
+    //     }
+    //     dataEval.value.splice(index, 1);
+    // } else {
+    //     dataEval.value.push(newData);
+    // }
+    //
+    // if (dataEval.value.length > 0){
+    //     emit('update', true);
+    // } else {
+    //     emit('update', false);
+    // }
 
-    if (dataEval.value.length > 0){
-        emit('update', true);
-    } else {
-        emit('update', false);
-    }
-
-    console.log(dataEval.value);
-
-}, 500);
+    // console.log(dataEval.value);
+    emit('submit-data', newData)
+};
 
 function submit(){
-    emit('submit-data', dataEval.value)
 }
 
 const popupTriggers = ref(false);
@@ -72,7 +71,6 @@ const openPopup = (indicator, tipe) => {
 
 <template>
     <br />
-    <custom-button v-once @click="submit">Save</custom-button>
     <div class="table">
         <table :class="props.role">
             <thead>
@@ -80,6 +78,7 @@ const openPopup = (indicator, tipe) => {
                 <th colspan="3"><h4 class="font-poppin">Penetapan</h4></th>
                 <th colspan="2"><h4 class="font-poppin">Pelaksanaan</h4></th>
                 <th colspan="5"><h4 class="font-poppin">Evaluasi</h4></th>
+                <th rowspan="2" class="link">save</th>
             </tr>
             <tr>
                 <th><div class="th">Standar</div></th>
@@ -119,14 +118,14 @@ const openPopup = (indicator, tipe) => {
                                 class="ta"
                                 :disabled="data.bukti === ''"
                                 v-model="data.evaluasi"
-                                @input="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)"
+                                @input="data.isUpdate = true"
                             ></textarea>
                         </td>
                         <td colspan="2">
                             <select
                                 v-model="data.adjusment"
                                 :disabled="data.bukti === ''"
-                                @change="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)">
+                                @change="data.isUpdate = true">
                                 <option value=""></option>
                                 <option v-for="a in adjusmentOptions" :key="a">{{ a }}</option>
                             </select>
@@ -139,6 +138,10 @@ const openPopup = (indicator, tipe) => {
                             >
                                 Link
                             </button>
+                        </td>
+                        <td>
+                            <button v-if="data.isUpdate" class="btnn" @click="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)">save</button>
+                            <button v-else >save</button>
                         </td>
                 </tr>
             </template>
@@ -156,6 +159,11 @@ const openPopup = (indicator, tipe) => {
 </template>
 
 <style scoped>
+
+.btnn{
+    background: yellow;
+}
+
 .table {
     overflow-x: auto;
     padding-bottom: 2%;

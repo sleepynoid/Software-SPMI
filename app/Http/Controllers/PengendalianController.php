@@ -17,9 +17,8 @@ class PengendalianController extends Controller
 
     public function submitPengendalian(Request $request)
     {
-        $data = $request->input('data');
+        $item = $request->input('data');
 
-        foreach ($data as $item) {
             $idBuktiEvaluasi = $item['id_bukti_evaluasi'];
             $temuan = $item['temuan'];
             $akarMasalah = $item['akar_masalah'];
@@ -50,7 +49,6 @@ class PengendalianController extends Controller
                     'id_bukti_evaluasi' => $idBuktiEvaluasi,
                 ]);
             }
-        }
 
         return response()->json(['message' => 'Pengendalian berhasil diproses'], 200);
     }

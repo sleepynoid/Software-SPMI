@@ -28,7 +28,7 @@ const togglePopup = () => {
     popupTriggers.value = !popupTriggers.value;
 };
 
-const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
+const savePengendalian = (idBEval, temuan, akarMas, rtl, pelakRtl) => {
 
     const newData = {
         id_bukti_evaluasi: idBEval,
@@ -37,32 +37,30 @@ const savePengendalian = debounce((idBEval, temuan, akarMas, rtl, pelakRtl) => {
         rtl: rtl,
         pelaksanaan_rtl: pelakRtl
     };
-    const index = dataPengendalian.value.findIndex(item => item.id_bukti_evaluasi === idBEval);
-    if (index !== -1){
-        dataPengendalian.value.splice(index, 1, newData);
-    }else {
-        dataPengendalian.value.push(newData);
-    }
+    // const index = dataPengendalian.value.findIndex(item => item.id_bukti_evaluasi === idBEval);
+    // if (index !== -1){
+    //     dataPengendalian.value.splice(index, 1, newData);
+    // }else {
+    //     dataPengendalian.value.push(newData);
+    // }
+    //
+    // if (dataPengendalian.value.length > 0){
+    //     emit('update', true);
+    // } else {
+    //     emit('update', false);
+    // }
 
-    if (dataPengendalian.value.length > 0){
-        emit('update', true);
-    } else {
-        emit('update', false);
-    }
-
-    console.log(dataPengendalian.value)
-
-}, 500);
+    console.log(newData)
+    emit('submit-data', newData)
+};
 
 function submit(){
-    emit('submit-data', dataPengendalian.value)
 }
 
 </script>
 
 <template>
     <br>
-    <custom-button v-once @click="submit">Save</custom-button>
     <div class="bodi">
         <table class="tb">
         <thead>
@@ -71,6 +69,7 @@ function submit(){
             <th rowspan="2"><h4 class="font-poppin">Pelaksanaan</h4></th>
             <th rowspan="2"><h4 class="font-poppin">Evaluasi</h4></th>
             <th colspan="4"><h4 class="font-poppin">Pengendalian</h4></th>
+            <th rowspan="2" class="link">save</th>
         </tr>
         <tr>
             <th><div class="th">Standar</div></th>
@@ -110,35 +109,39 @@ function submit(){
                 </td>
                     <td>
                         <textarea
-                            :disabled="data.idBukti === ''"
+                            :disabled="data.idBuktiEval === ''"
                             class="ta"
                             v-model="data.temuan"
-                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                            @input="data.isUpdate = true"
                         ></textarea>
                     </td>
                     <td>
                         <textarea
-                            :disabled="data.idBukti === ''"
+                            :disabled="data.idBuktiEval === ''"
                             class="ta"
                             v-model="data.akar_masalah"
-                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                            @input="data.isUpdate = true"
                         ></textarea>
                     </td>
                     <td>
                         <textarea
-                            :disabled="data.idBukti === ''"
+                            :disabled="data.idBuktiEval === ''"
                             class="ta"
                             v-model="data.rtl"
-                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                            @input="data.isUpdate = true"
                         ></textarea>
                     </td>
                     <td>
                         <textarea
-                            :disabled="data.idBukti === ''"
+                            :disabled="data.idBuktiEval === ''"
                             class="ta"
                             v-model="data.pelaksanaan_rtl"
-                            @input="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)"
+                            @input="data.isUpdate = true"
                         ></textarea>
+                    </td>
+                    <td>
+                        <button v-if="data.isUpdate" class="btnn" @click="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)">save</button>
+                        <button v-else >save</button>
                     </td>
             </tr>
         </template>
@@ -156,6 +159,10 @@ function submit(){
 </template>
 
 <style scoped>
+
+.btnn{
+    background: yellow;
+}
 
 .bodi{
     overflow-x: auto;

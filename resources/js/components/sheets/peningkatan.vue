@@ -41,35 +41,34 @@ const togglePopup = () => {
     popupTriggers.value = !popupTriggers.value;
 };
 
-const savePeningkatan = debounce((id, komen) => {
+const savePeningkatan = (id, komen) => {
 
-    const newData = {idBP: id, komenPeningkatan: komen};
-    const index = dataPeningkatan.value.findIndex(item => item.idBP === id);
-    if (index !== -1){
-        dataPeningkatan.value.splice(index, 1, newData);
-    }else {
-        dataPeningkatan.value.push(newData);
-    }
+    const newData = {idBuktiPengendalian: id, komenPeningkatan: komen};
+    // const index = dataPeningkatan.value.findIndex(item => item.idBP === id);
+    // if (index !== -1){
+    //     dataPeningkatan.value.splice(index, 1, newData);
+    // }else {
+    //     dataPeningkatan.value.push(newData);
+    // }
+    //
+    // if (dataPeningkatan.value.length > 0){
+    //     emit('update', true);
+    // } else {
+    //     emit('update', false);
+    // }
 
-    if (dataPeningkatan.value.length > 0){
-        emit('update', true);
-    } else {
-        emit('update', false);
-    }
+    // console.log(dataPeningkatan.value)
 
-    console.log(dataPeningkatan.value)
-
-}, 500);
+    emit('submit-data', newData)
+};
 
 function submit(){
-    emit('submit-data', dataPengendalian.value)
 }
 
 </script>
 
 <template>
     <br>
-    <custom-button v-once @click="submit">Save</custom-button>
     <div class="bodi">
         <table class="tb">
             <thead>
@@ -78,7 +77,8 @@ function submit(){
                 <th rowspan="2"><h4 class="font-poppin">Pelaksanaan</h4></th>
                 <th rowspan="2"><h4 class="font-poppin">Evaluasi</h4></th>
                 <th rowspan="2"><h4 class="font-poppin">Pengendalian</h4></th>
-                <th colspan="4"><h4 class="font-poppin" style="width: 27rem;">Peningkatan</h4></th>
+                <th><h4 class="font-poppin" style="width: 27rem;">Peningkatan</h4></th>
+                <th rowspan="2" class="link">save</th>
             </tr>
             <tr>
                 <th><div class="th">Standar</div></th>
@@ -126,8 +126,12 @@ function submit(){
                             :disabled="data.idBPengendalian === ''"
                             class="ta"
                             v-model="data.komenPeningkatan"
-                            @input="savePeningkatan(data.idBPengendalian, data.komenPeningkatan)"
+                            @input="data.isUpdate=true"
                         ></textarea>
+                    </td>
+                    <td>
+                        <button v-if="data.isUpdate" class="btnn" @click="savePeningkatan(data.idBPengendalian, data.komenPeningkatan)">save</button>
+                        <button v-else >save</button>
                     </td>
                 </tr>
             </template>
@@ -154,6 +158,10 @@ function submit(){
 </template>
 
 <style scoped>
+
+.btnn{
+    background: yellow;
+}
 
 .bodi{
     overflow-x: auto;

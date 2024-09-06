@@ -54,9 +54,8 @@ class EvaluasiController extends Controller {
     }
 
     public function submitEval(Request $request){
-        $data = $request->input('data');
+        $item = $request->input('data');
 
-        foreach ($data as $item) {
             $idBP = $item['idBuktiPelaksanaan'];
             $adjusment = $item['adjusment'];
             $komentarEvaluasi = $item['komentarEvaluasi'];
@@ -77,9 +76,8 @@ class EvaluasiController extends Controller {
                     'id_evaluasi' => $idEvaluasi
                 ]);
             }
-        }
 
-        return $this->sendRespons($data,'iki datane');
+        return response()->json('all good');
     }
 
 

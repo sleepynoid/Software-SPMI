@@ -39,17 +39,9 @@ if (role !== null){
 
 
 const submitData = (formData) => {
-    let apiEndpoint = '';
 
-    if (role === 'Pelaksanaan'){
-        apiEndpoint = '/api/submitPelaksanaan';
-    } else if (role === 'Evaluasi'){
-        apiEndpoint = '/api/submitEvaluasi';
-    } else if (role === 'Pengendalian'){
-        apiEndpoint = '/api/submitPengendalian';
-    }
     const token = localStorage.getItem('token');
-    axios.post(apiEndpoint, { data: formData } ,{
+    axios.post(`/api/submit${role}`, { data: formData } ,{
         headers: {
             "Authorization": `Bearer ${token}`
         }
