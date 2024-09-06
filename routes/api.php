@@ -3,6 +3,7 @@
 //use Illuminate\Routing\Controller;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\PelaksanaanController;
+use App\Http\Controllers\PeningkatanController;
 use App\Http\Controllers\SheetController;
 use App\Http\Controllers\testcontroller;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,7 @@ Route::get('/getPeriode/{jurusan}', [SheetController::class, 'getPeriode']);
 Route::post('/submitPelaksanaan', [SheetController::class, 'submitPelaksanaan'])->middleware('auth:sanctum');
 Route::post('/submitEvaluasi', [EvaluasiController::class, 'submitEval'])->middleware('auth:sanctum');
 Route::post('/submitPengendalian', [PengendalianController::class, 'submitPengendalian'])->middleware('auth:sanctum');
+Route::post('/submitPeningkatan', [PeningkatanController::class, 'submitPeningkatan'])->middleware('auth:sanctum');
 
 Route::get('/buktipelaksanaan',[PelaksanaanController::class,'getComment']);
 Route::post('/buktipelaksanaan',[PelaksanaanController::class, 'postComment'])->middleware('auth:sanctum');

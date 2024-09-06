@@ -47,7 +47,7 @@ const login = async () => {
                     <strong style="text-align:center;">Login</strong>
                     <div>
                         <h6>Email</h6>
-                        <input type="text" v-model="email" required>
+                        <input type="email" v-model="email" required>
                     </div>
 
                     <div>
