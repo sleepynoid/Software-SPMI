@@ -172,14 +172,4 @@ textarea {
     text-overflow: ellipsis;
 }
 
-.edited{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    & p{
-        margin-bottom: -0.1rem;
-        font-size: 0.9rem;
-    }
-}
 </style>

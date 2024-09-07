@@ -68,6 +68,7 @@ class SheetController extends Controller {
                             $pelaksanaanEditor = '';
                             $eva = '';
                             $adj = '';
+                            $evalEditor = '';
                             $idE = '';
                             $idBE = '';
                             $idBPengendalian = '';
@@ -89,6 +90,7 @@ class SheetController extends Controller {
                                             $eva = $e->komentar;
                                             $adj = $e->adjustment;
                                             $idE = $e->id_evaluasi;
+                                            $evalEditor = $e->edited_by;
 
                                             foreach ($buktiPengendalian as $bp) {
                                                 if ($bp->id_bukti_evaluasi == $e->id){
@@ -125,6 +127,7 @@ class SheetController extends Controller {
                                 'idBuktiEval'      => $idBE,
                                 'evaluasi'         => $eva,
                                 'adjusment'        => $adj,
+                                'editorEval'       => $evalEditor,
                                 'idBPengendalian'  => $idBPengendalian,
                                 'temuan'           => $temuan,
                                 'akar_masalah'     => $akar_masalah,
