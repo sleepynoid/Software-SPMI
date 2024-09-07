@@ -12,11 +12,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['submit-data', 'update']);
-
+const username = localStorage.getItem('name');
 const formData = ref([]);
 
 const save = (idIndikator, bukti, idP, idBuk) => {
-  const newData = { idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP };
+  const newData = { idIndikator: idIndikator, bukti: bukti, idPelaksanaan: idP, userName: username };
   // const index = formData.value.findIndex(item => item.idIndikator === idIndikator);
   // if (index !== -1) {
   //   if (bukti !== ''){
@@ -101,9 +101,12 @@ const isUpdate = (idBP, update, komen) => {
                     <td>{{ data.target }}</td>
 
                     <td>
+                        <div class="edited">
+                        <p>Last edited by: {{data.editorPelaksanaan}}</p>
                         <textarea class="tb"
                             v-model="data.bukti"
                             @input="data.isUpdate = true"></textarea>
+                        </div>
                     </td>
                     <td>
                         <button
@@ -167,5 +170,16 @@ textarea {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.edited{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    & p{
+        margin-bottom: -0.1rem;
+        font-size: 0.9rem;
+    }
 }
 </style>
