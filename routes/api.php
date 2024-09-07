@@ -45,4 +45,4 @@ Route::post('/deleteComment',[PelaksanaanController::class,'delComment']);
 
 Route::get('/admin/listuser', [AccountController::class, 'listUser']);
 Route::post('/admin/register', [AccountController::class, 'register']);
-
+Route::post('/admin/edit/role', [AccountController::class, 'editUserRole']);
