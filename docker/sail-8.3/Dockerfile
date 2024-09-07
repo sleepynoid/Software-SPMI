@@ -7,7 +7,7 @@ ARG NODE_VERSION=20
 ARG MYSQL_CLIENT="mysql-client"
 ARG POSTGRES_VERSION=15
 
-WORKDIR /var/www/html
+WORKDIR /var/www/Software-SPMI
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=UTC
