@@ -65,6 +65,7 @@ class SheetController extends Controller {
 
                             $buk = '';
                             $idB = '';
+                            $pelaksanaanEditor = '';
                             $eva = '';
                             $adj = '';
                             $idE = '';
@@ -80,6 +81,7 @@ class SheetController extends Controller {
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
                                     $idB = $b->id;
+                                    $pelaksanaanEditor = $b->edited_by;
 
                                     foreach ($buktieval as $e) {
                                         if ($e->id_bukti_pelaksanaan == $b->id){
@@ -118,6 +120,7 @@ class SheetController extends Controller {
                                 'target'           => $tar->value,
                                 'idBukti'          => $idB,
                                 'bukti'            => $buk,
+                                'editorPelaksanaan'=> $pelaksanaanEditor,
                                 'idEvaluasi'       => $idE,
                                 'idBuktiEval'      => $idBE,
                                 'evaluasi'         => $eva,
@@ -156,12 +159,14 @@ class SheetController extends Controller {
             $idIndikator = $item['idIndikator'];
             $bukti = $item['bukti'];
             $idPelaksanaan = $item['idPelaksanaan'];
+            $userName = $item['userName'];
 
             $buktiPelaksanaan = BuktiPelaksanaan::where('id_indikator', $idIndikator)->first();
 
             if ($buktiPelaksanaan) {
                 if ($bukti !== null) {
                     $buktiPelaksanaan->komentar = $bukti;
+                    $buktiPelaksanaan->edited_by = $userName;
                     $buktiPelaksanaan->save();
                 }
             } else {
@@ -169,7 +174,8 @@ class SheetController extends Controller {
                     BuktiPelaksanaan::create([
                         'id_pelaksanaan' => $idPelaksanaan,
                         'id_indikator' => $idIndikator,
-                        'komentar' => $bukti
+                        'komentar' => $bukti,
+                        'edited_by' => $userName,
                     ]);
                 }
             }

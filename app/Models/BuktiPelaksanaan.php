@@ -13,6 +13,7 @@ class BuktiPelaksanaan extends Model
         'komentar',
         'id_indikator',
         'id_pelaksanaan',
+        'edited_by'
     ];
 
     public function pelaksanaan() {
