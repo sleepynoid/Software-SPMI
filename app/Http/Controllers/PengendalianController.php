@@ -25,6 +25,7 @@ class PengendalianController extends Controller
             $rtl = $item['rtl'];
             $pelaksanaanRtl = $item['pelaksanaan_rtl'];
 
+
             $isEvaluasiExist = BuktiEvaluasi::where('id', $idBuktiEvaluasi)->exists();
 
             if (!$isEvaluasiExist) {

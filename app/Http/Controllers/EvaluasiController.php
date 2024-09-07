@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
+use App\Models\Indikator;
 use App\Models\link;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -60,21 +61,33 @@ class EvaluasiController extends Controller {
             $adjusment = $item['adjusment'];
             $komentarEvaluasi = $item['komentarEvaluasi'];
             $idEvaluasi = $item['idEvaluasi'];
+            $userName = $item['userName'];
+            $idInd = $item['idInd'];
+            $indica = $item['indicator'];
 
             $isEval = BuktiEvaluasi::where('id_bukti_pelaksanaan', $idBP)->first();
 
             if ($isEval) {
                 $isEval->komentar = $komentarEvaluasi;
                 $isEval->adjustment = $adjusment;
+                $isEval->edited_by  = $userName;
 
                 $isEval->save();
             } else {
                 BuktiEvaluasi::create([
-                    'adjustment' => $adjusment,
-                    'komentar' => $komentarEvaluasi,
                     'id_bukti_pelaksanaan' => $idBP,
-                    'id_evaluasi' => $idEvaluasi
+                    'id_evaluasi' => $idEvaluasi,
+                    'komentar' => $komentarEvaluasi,
+                    'adjustment' => $adjusment,
+                    'edited_by' => $userName,
                 ]);
+            }
+
+            $indicator = Indikator::find($idInd);
+            if ($indicator->note != $indica){
+                $indicator->note = $indica;
+
+                $indicator->save();
             }
 
         return response()->json('all good');

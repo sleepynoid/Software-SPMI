@@ -13,6 +13,6 @@ class BuktiPengendalian extends Model
         'akar_masalah',
         'rtl',
         'pelaksanaan_rtl',
-        'id_bukti_evaluasi'
+        'id_bukti_evaluasi',
     ];
 }

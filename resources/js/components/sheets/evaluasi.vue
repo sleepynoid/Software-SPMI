@@ -15,16 +15,20 @@ const props = defineProps({
 const emit = defineEmits(['submit-data', 'update']);
 
 const dataEval = ref([]);
+const username = localStorage.getItem('name');
 
 const adjusmentOptions = ['melampaui', 'mencapai', 'belum mencapai', 'menyimpang'];
 
-const saveEval =(idBuktiPelaksanaan, komenEval, adjusment, idE) => {
+const saveEval =(idBuktiPelaksanaan, komenEval, adjusment, idE, idInd, indicator) => {
 
     const newData = {
         idBuktiPelaksanaan: idBuktiPelaksanaan,
         komentarEvaluasi: komenEval,
         adjusment: adjusment,
         idEvaluasi: idE,
+        userName: username,
+        idInd: idInd,
+        indicator: indicator,
     };
     // const index = dataEval.value.findIndex(item => item.idBuktiPelaksanaan === idBuktiPelaksanaan);
     // if (index !== -1) {
@@ -98,7 +102,9 @@ const openPopup = (indicator, tipe) => {
                 </tr>
                 <tr v-for="data in standar.indicators" :key="data.id">
 <!--                    <td>{{ data.indicator }}</td>-->
-                    <textarea v-model="data.indicator" ></textarea>
+                    <td>
+                        <textarea v-model="data.indicator" class="ta" ></textarea>
+                    </td>
                     <td>{{ data.target }}</td>
 
                     <td>
@@ -114,12 +120,15 @@ const openPopup = (indicator, tipe) => {
                     </td>
 
                         <td colspan="2">
+                            <div class="edited">
+                            <p>Last edited by: {{data.editorEval}}</p>
                             <textarea
                                 class="ta"
                                 :disabled="data.bukti === ''"
                                 v-model="data.evaluasi"
                                 @input="data.isUpdate = true"
                             ></textarea>
+                            </div>
                         </td>
                         <td colspan="2">
                             <select
@@ -140,7 +149,7 @@ const openPopup = (indicator, tipe) => {
                             </button>
                         </td>
                         <td>
-                            <button v-if="data.isUpdate" class="btnn" @click="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.idBuktiEval)">save</button>
+                            <button v-if="data.isUpdate" class="btnn" @click="saveEval(data.idBukti, data.evaluasi, data.adjusment, data.idPelaksanaan, data.id, data.indicator)">save</button>
                             <button v-else >save</button>
                         </td>
                 </tr>
@@ -194,4 +203,6 @@ textarea {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+
 </style>

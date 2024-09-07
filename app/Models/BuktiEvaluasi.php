@@ -11,8 +11,8 @@ class BuktiEvaluasi extends Model {
         'adjustment',
         'komentar',
         'id_evaluasi',
-        'id_bukti_pelaksanaan'
-        
+        'id_bukti_pelaksanaan',
+        'edited_by',
     ];
     public function evaluasi() {
         return $this->belongsTo(Evaluasi::class);
