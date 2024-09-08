@@ -134,6 +134,7 @@ onBeforeMount(() => {
             <peningkatan
                 v-else-if="role=== 'Peningkatan'"
                 :data="filtered"
+                :saving="loading"
                 @submit-data="submitData"
                 @update="(data) => update = data">
             </peningkatan>

@@ -10,6 +10,7 @@ class Peningkatan extends Model
     use HasFactory;
     protected $fillable = [
         'id_pengendalian',
-        'komentar'
+        'komentar',
+        'edited_by',
     ];
 }

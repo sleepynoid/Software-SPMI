@@ -79,6 +79,7 @@ class SheetController extends Controller {
                             $pengendalianEditor = '';
                             $idPeningkatan = '';
                             $komenPeningkatan='';
+                            $peningkatanEditor = '';
                             foreach ($bukti as $b){
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
@@ -106,6 +107,7 @@ class SheetController extends Controller {
                                                         if ($p->id_pengendalian == $bp->id){
                                                             $idPeningkatan = $p->id;
                                                             $komenPeningkatan = $p->komentar;
+                                                            $peningkatanEditor = $p->edited_by;
                                                         }
                                                     }
 
@@ -138,6 +140,7 @@ class SheetController extends Controller {
                                 'editorPengendali' => $pengendalianEditor,
                                 'idPeningkatan'    => $idPeningkatan,
                                 'komenPeningkatan' => $komenPeningkatan,
+                                'editorPeningkatan'=> $peningkatanEditor,
                                 'isUpdate'           => false,
                             ];
                             array_push($data['indicators'], $newIndicator);
