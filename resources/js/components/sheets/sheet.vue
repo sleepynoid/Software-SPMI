@@ -123,7 +123,12 @@ onBeforeMount(() => {
                 @submit-data="submitData"
                 @update="(data) => update = data">
             </pengendalian>
-
+            <peningkatan
+                v-else-if="role=== 'Peningkatan'"
+                :data="filtered"
+                @submit-data="submitData"
+                @update="(data) => update = data">
+            </peningkatan>
         </div>
     </div>
 </template>

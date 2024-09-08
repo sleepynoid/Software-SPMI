@@ -76,8 +76,10 @@ class SheetController extends Controller {
                             $akar_masalah = '';
                             $rtl = '';
                             $pelaksanaan_rtl = '';
+                            $pengendalianEditor = '';
                             $idPeningkatan = '';
                             $komenPeningkatan='';
+                            $peningkatanEditor = '';
                             foreach ($bukti as $b){
                                 if ($b->id_indikator == $i->id){
                                     $buk = $b->komentar;
@@ -99,11 +101,13 @@ class SheetController extends Controller {
                                                     $akar_masalah = $bp->akar_masalah;
                                                     $rtl = $bp->rtl;
                                                     $pelaksanaan_rtl = $bp->pelaksanaan_rtl;
+                                                    $pengendalianEditor = $bp->edited_by;
 
                                                     foreach ($buktiPeningkatan as $p){
                                                         if ($p->id_pengendalian == $bp->id){
                                                             $idPeningkatan = $p->id;
                                                             $komenPeningkatan = $p->komentar;
+                                                            $peningkatanEditor = $p->edited_by;
                                                         }
                                                     }
 
@@ -133,8 +137,10 @@ class SheetController extends Controller {
                                 'akar_masalah'     => $akar_masalah,
                                 'rtl'              => $rtl,
                                 'pelaksanaan_rtl'  => $pelaksanaan_rtl,
+                                'editorPengendali' => $pengendalianEditor,
                                 'idPeningkatan'    => $idPeningkatan,
                                 'komenPeningkatan' => $komenPeningkatan,
+                                'editorPeningkatan'=> $peningkatanEditor,
                                 'isUpdate'           => false,
                             ];
                             array_push($data['indicators'], $newIndicator);

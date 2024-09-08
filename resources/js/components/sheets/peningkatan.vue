@@ -7,6 +7,7 @@ import Modal from "@/components/sheets/modal.vue";
 
 const props = defineProps({
     data: Object,
+    saving: Boolean,
 });
 
 const emit = defineEmits(['submit-data', 'update']);
@@ -17,6 +18,8 @@ const popupTriggers2 = ref(false);
 const selectedIndicator = ref(null);
 const tipeLink = ref(null);
 const komentar = ref(null);
+
+const username = localStorage.getItem('name');
 
 const data = ref([]);
 const dataPeningkatan = ref([]);
@@ -30,7 +33,12 @@ const openPopup = (indicator, tipe, komen) => {
 
 const openPopup2 = (indicator, t, am, rtl, prtl ) => {
     selectedIndicator.value = indicator;
-    data.value = {temuan: t, akarMasala: am, rtl: rtl, pelakRtl: prtl}
+    data.value = {
+        temuan: t,
+        akarMasala: am,
+        rtl: rtl,
+        pelakRtl: prtl,
+    }
     togglePopup2();
 };
 
@@ -43,7 +51,7 @@ const togglePopup = () => {
 
 const savePeningkatan = (id, komen) => {
 
-    const newData = {idBuktiPengendalian: id, komenPeningkatan: komen};
+    const newData = {idBuktiPengendalian: id, komenPeningkatan: komen, userName: username,};
     // const index = dataPeningkatan.value.findIndex(item => item.idBP === id);
     // if (index !== -1){
     //     dataPeningkatan.value.splice(index, 1, newData);
@@ -78,6 +86,7 @@ function submit(){
                 <th rowspan="2"><h4 class="font-poppin">Evaluasi</h4></th>
                 <th rowspan="2"><h4 class="font-poppin">Pengendalian</h4></th>
                 <th><h4 class="font-poppin" style="width: 27rem;">Peningkatan</h4></th>
+                <th rowspan="2" class="link">Link</th>
                 <th rowspan="2" class="link">save</th>
             </tr>
             <tr>
@@ -122,16 +131,23 @@ function submit(){
                         </button>
                     </td>
                     <td>
+                        <div class="edited">
+                            <p>Last edited by: {{data.editorPeningkatan}}</p>
                         <textarea
                             :disabled="data.idBPengendalian === ''"
                             class="ta"
                             v-model="data.komenPeningkatan"
                             @input="data.isUpdate=true"
                         ></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <button>Link</button>
                     </td>
                     <td>
                         <button v-if="data.isUpdate" class="btnn" @click="savePeningkatan(data.idBPengendalian, data.komenPeningkatan)">save</button>
                         <button v-else >save</button>
+                        <p v-if="saving">Saving...</p>
                     </td>
                 </tr>
             </template>

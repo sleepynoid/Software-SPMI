@@ -14,6 +14,7 @@ class PeningkatanController extends Controller
 
         $idBuktiPengendalian = $item['idBuktiPengendalian'];
         $komen = $item['komenPeningkatan'];
+        $editor = $item['userName'];
 
         $isPengendalianiExist = BuktiPengendalian::where('id', $idBuktiPengendalian)->exists();
 
@@ -25,12 +26,14 @@ class PeningkatanController extends Controller
 
         if ($peningkatan) {
             $peningkatan->update([
-                'komentar' => $komen
+                'komentar' => $komen,
+                'edited_by' => $editor,
             ]);
         } else {
             Peningkatan::create([
                 'id_pengendalian' => $idBuktiPengendalian,
                 'komentar' => $komen,
+                'edited_by' => $editor,
             ]);
         }
 
