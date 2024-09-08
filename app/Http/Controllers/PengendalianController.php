@@ -24,6 +24,7 @@ class PengendalianController extends Controller
             $akarMasalah = $item['akar_masalah'];
             $rtl = $item['rtl'];
             $pelaksanaanRtl = $item['pelaksanaan_rtl'];
+            $userName = $item['userName'];
 
 
             $isEvaluasiExist = BuktiEvaluasi::where('id', $idBuktiEvaluasi)->exists();
@@ -40,6 +41,7 @@ class PengendalianController extends Controller
                     'akar_masalah' => $akarMasalah,
                     'rtl' => $rtl,
                     'pelaksanaan_rtl' => $pelaksanaanRtl,
+                    'edited_by' => $userName,
                 ]);
             } else {
                 BuktiPengendalian::create([
@@ -48,6 +50,7 @@ class PengendalianController extends Controller
                     'rtl' => $rtl,
                     'pelaksanaan_rtl' => $pelaksanaanRtl,
                     'id_bukti_evaluasi' => $idBuktiEvaluasi,
+                    'edited_by' => $userName,
                 ]);
             }
 

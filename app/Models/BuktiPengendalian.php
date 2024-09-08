@@ -14,5 +14,6 @@ class BuktiPengendalian extends Model
         'rtl',
         'pelaksanaan_rtl',
         'id_bukti_evaluasi',
+        'edited_by',
     ];
 }

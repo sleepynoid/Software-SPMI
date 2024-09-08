@@ -17,6 +17,7 @@ const tipeLink = ref(null);
 const komentar = ref(null);
 
 const dataPengendalian = ref([]);
+const username = localStorage.getItem('name');
 
 const openPopup = (indicator, tipe, komen) => {
     selectedIndicator.value = indicator;
@@ -35,7 +36,8 @@ const savePengendalian = (idBEval, temuan, akarMas, rtl, pelakRtl) => {
         temuan: temuan,
         akar_masalah: akarMas,
         rtl: rtl,
-        pelaksanaan_rtl: pelakRtl
+        pelaksanaan_rtl: pelakRtl,
+        userName: username
     };
     // const index = dataPengendalian.value.findIndex(item => item.id_bukti_evaluasi === idBEval);
     // if (index !== -1){
@@ -69,6 +71,7 @@ function submit(){
             <th rowspan="2"><h4 class="font-poppin">Pelaksanaan</h4></th>
             <th rowspan="2"><h4 class="font-poppin">Evaluasi</h4></th>
             <th colspan="4"><h4 class="font-poppin">Pengendalian</h4></th>
+            <th rowspan="2" class="link">Link Bukti Pelaksanaan RTL</th>
             <th rowspan="2" class="link">save</th>
         </tr>
         <tr>
@@ -108,12 +111,15 @@ function submit(){
                     </button>
                 </td>
                     <td>
-                        <textarea
-                            :disabled="data.idBuktiEval === ''"
-                            class="ta"
-                            v-model="data.temuan"
-                            @input="data.isUpdate = true"
-                        ></textarea>
+                        <div class="edited">
+                            <p>Last edited by: {{data.editorPengendali}}</p>
+                            <textarea
+                                :disabled="data.idBuktiEval === ''"
+                                class="ta"
+                                v-model="data.temuan"
+                                @input="data.isUpdate = true"
+                            ></textarea>
+                        </div>
                     </td>
                     <td>
                         <textarea
@@ -138,6 +144,10 @@ function submit(){
                             v-model="data.pelaksanaan_rtl"
                             @input="data.isUpdate = true"
                         ></textarea>
+                    </td>
+                    <td>
+<!--                        use teleport !!-->
+                        <button>Link</button>
                     </td>
                     <td>
                         <button v-if="data.isUpdate" class="btnn" @click="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)">save</button>
