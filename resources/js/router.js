@@ -79,7 +79,7 @@ const router = createRouter({
             },
         },
         {
-            path: '/admin',
+            path: '/admin/dashboard',
             component: HomeAdmin,
         },
     ],

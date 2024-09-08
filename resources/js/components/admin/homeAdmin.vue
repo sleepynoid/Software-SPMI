@@ -97,8 +97,17 @@ export default {
       alert(`Viewing history for: ${user.name}`);
     };
 
-    const editRole = (user) => {
+    const editRole = async (user) => {
       alert(`Editing role for: ${user.name}`);
+      try {
+        const response = await axios.post('/api/admin/edit/role', {
+          user_id: newUser.name,
+          new_role: newUser.email,
+        });
+        console.log('User registered:', response.data);
+      } catch (error) {
+
+      }
     };
 
     const deleteUser = (user) => {
@@ -122,7 +131,6 @@ export default {
           password: newUser.password,  // Include password in request
           role: newUser.role,
         });
-
         console.log('User registered:', response.data);
 
         // After a successful request, you can reset the form and close the modal

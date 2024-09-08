@@ -93,4 +93,24 @@ class AccountController extends Controller {
     public function listUser(): JsonResponse {
         return response()->json(User::all());
     }
+
+    public function editUserRole(Request $request): JsonResponse {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'new_role' => 'required|string|in:Pelaksanaan,Evaluasi,SuperUser,Pengendalian,Peningkatan', // adjust roles as needed
+        ]);
+    
+        $user = User::find($request->user_id);
+        $user->role = $request->new_role;
+        $user->save();
+    
+        return response()->json([
+            'message' => 'User role updated successfully',
+            'user' => $user
+        ], 200);
+    }
+
+    public function getUserHistory() {
+        
+    }
 }
