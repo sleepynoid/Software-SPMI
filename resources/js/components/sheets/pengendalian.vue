@@ -3,9 +3,11 @@ import {ref} from "vue";
 import Modal from "@/components/sheets/modal.vue";
 import {debounce} from "lodash";
 import CustomButton from "@/components/comp/custom-button.vue";
+import ModalLink from "@/components/modal/ModalLink.vue";
 
 const props = defineProps({
     data: Object,
+    role: String,
 });
 
 const emit = defineEmits(['submit-data', 'update']);
@@ -147,7 +149,11 @@ function submit(){
                     </td>
                     <td>
 <!--                        use teleport !!-->
-                        <button>Link</button>
+                        <ModalLink
+                            :idBukti = data.idBPengendalian
+                            :tipe="'Pengendalian'"
+                            :role="role"
+                        />
                     </td>
                     <td>
                         <button v-if="data.isUpdate" class="btnn" @click="savePengendalian(data.idBuktiEval, data.temuan, data.akar_masalah, data.rtl, data.pelaksanaan_rtl)">save</button>

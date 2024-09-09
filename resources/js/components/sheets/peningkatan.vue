@@ -4,10 +4,12 @@ import {debounce} from "lodash";
 import CustomButton from "@/components/comp/custom-button.vue";
 import ModalPeningkatan from "@/components/sheets/modalPeningkatan.vue";
 import Modal from "@/components/sheets/modal.vue";
+import ModalLink from "@/components/modal/ModalLink.vue";
 
 const props = defineProps({
     data: Object,
     saving: Boolean,
+    role: String,
 });
 
 const emit = defineEmits(['submit-data', 'update']);
@@ -86,7 +88,7 @@ function submit(){
                 <th rowspan="2"><h4 class="font-poppin">Evaluasi</h4></th>
                 <th rowspan="2"><h4 class="font-poppin">Pengendalian</h4></th>
                 <th><h4 class="font-poppin" style="width: 27rem;">Peningkatan</h4></th>
-                <th rowspan="2" class="link">Link</th>
+                <th rowspan="2" class="link">Link Peningkatan</th>
                 <th rowspan="2" class="link">save</th>
             </tr>
             <tr>
@@ -142,7 +144,11 @@ function submit(){
                         </div>
                     </td>
                     <td>
-                        <button>Link</button>
+                        <ModalLink
+                            :idBukti = data.idPeningkatan
+                            :tipe="'Peningkatan'"
+                            :role="role"
+                        />
                     </td>
                     <td>
                         <button v-if="data.isUpdate" class="btnn" @click="savePeningkatan(data.idBPengendalian, data.komenPeningkatan)">save</button>

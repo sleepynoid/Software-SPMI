@@ -120,6 +120,7 @@ onBeforeMount(() => {
             <pengendalian
                 v-else-if="role=== 'Pengendalian'"
                 :data="filtered"
+                :role="role"
                 @submit-data="submitData"
                 @update="(data) => update = data">
             </pengendalian>
