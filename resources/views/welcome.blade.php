@@ -18,6 +18,10 @@
     <br>
 </div>
 
+<div id="modal" class="Modal">
+
+</div>
+
     <style>
         body {
             width: 100vw;
