@@ -227,6 +227,7 @@ const isChanged = (data: any) => {
                       :idBukti = indicator.idBukti
                       :tipeLink="'Pelaksanaan'"
                       :comment="indicator.bukti"
+                      :editor="indicator.editorPelaksanaan"
                   />
               </div>
             </template>
@@ -247,6 +248,7 @@ const isChanged = (data: any) => {
                       :idBukti = indicator.idBuktiEvaluasi
                       :tipeLink="'Evaluasi'"
                       :comment="indicator.evaluasi"
+                      :editor="indicator.editorEval"
                   />
               </div>
             </template>

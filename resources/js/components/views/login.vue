@@ -172,10 +172,12 @@ const login = async (e) => {
 
             const userName = response.data.name
             const role = response.data.userRole
+            const idk = response.data.idk.toString()
 
-            const encryptedRole = CryptoJS.AES.encrypt(role, "XD").toString();
-            const encryptedName = CryptoJS.AES.encrypt(userName, "XD").toString();
+            const encryptedName = CryptoJS.AES.encrypt(userName, `asx${idk}`).toString();
+            const encryptedRole = CryptoJS.AES.encrypt(role, `ddx${idk}`).toString();
 
+            localStorage.setItem("date", idk);
             localStorage.setItem("name", encryptedName);
             localStorage.setItem("userRole", encryptedRole);
             localStorage.setItem(

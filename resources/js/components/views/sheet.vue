@@ -12,11 +12,9 @@ const role = getUserRole();
 const name = getUserName();
 const route = useRoute();
 
-const tipeSheet = ['pendidikan', 'penelitian', 'pengabdian'];
-const currentSheet = ref<string>(tipeSheet[0]);
-
 const periode = ref<string>(route.params.periode.toString());
 const jurusan = ref<string>(route.params.jurusan.toString());
+const tipe = ref<string>(route.params.tipe.toString());
 
 </script>
 
@@ -30,7 +28,7 @@ const jurusan = ref<string>(route.params.jurusan.toString());
                     v-if="role=== 'Pelaksanaan'"
                     :jurusan="jurusan"
                     :periode="periode"
-                    :tipeSheet="currentSheet"
+                    :tipeSheet="tipe"
                     :role="role"
                     :username="name"
                 />
@@ -39,7 +37,7 @@ const jurusan = ref<string>(route.params.jurusan.toString());
                     v-else-if="role=== 'Evaluasi'"
                     :jurusan="jurusan"
                     :periode="periode"
-                    :tipeSheet="currentSheet"
+                    :tipeSheet="tipe"
                     :role="role"
                     :username="name"
                 />
@@ -48,7 +46,7 @@ const jurusan = ref<string>(route.params.jurusan.toString());
                     v-else-if="role=== 'Pengendalian'"
                     :jurusan="jurusan"
                     :periode="periode"
-                    :tipeSheet="currentSheet"
+                    :tipeSheet="tipe"
                     :role="role"
                     :username="name"
                 />
@@ -56,7 +54,7 @@ const jurusan = ref<string>(route.params.jurusan.toString());
                     v-else-if="role=== 'Peningkatan'"
                     :jurusan="jurusan"
                     :periode="periode"
-                    :tipeSheet="currentSheet"
+                    :tipeSheet="tipe"
                     :role="role"
                     :username="name"
                     @isUpdate=""

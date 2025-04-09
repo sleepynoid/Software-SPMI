@@ -19,10 +19,6 @@ class PenetapanController extends Controller {
         $this->middleware('auth:sanctum');
     }
 
-    public function getPenetapan(Request $request) {
-
-    }
-
     public function import(Request $request) {
         try {
             $this->validateRequest($request);
@@ -75,35 +71,4 @@ class PenetapanController extends Controller {
         return response()->json(['success' => false, 'message' => 'Data gagal diimpor', 'errors' => $errorMessages]);
     }
 
-    public static function getAll($id_penetapan) {
-        $penetapan = Penetapan::find($id_penetapan);
-        if (!$penetapan) {
-            Log::info('id penetapan not found');
-        }
-        $standar = Standar::where('id_penetapan', $id_penetapan)->get();
-        $indikator[] = null;
-        $target[] = null;
-        Log::info($standar);
-        if ($standar) {
-            Log::warning('loop standar');
-            foreach ($standar as $stan) {
-                Log::info($stan['id']);
-                // $indikator = Indikator::where('id_standar', $stan->id)->get();
-                // Log::info(json_encode($indikator));
-            }
-        }
-        $bukti_pelaksanaan = null;
-        Log::warning(json_encode($indikator));
-        if ($indikator) {
-            Log::warning('loop indikator');
-            foreach ($indikator as $indika) {
-                Log::info($indika->id);
-                $target = Target::where('id_indikator', $indika->id)->get();
-                Log::info(json_encode($target));
-                $bukti_pelaksanaan = BuktiPelaksanaan::where('id_indikator', $indika->id)->get();
-                Log::info(json_encode($bukti_pelaksanaan));
-            }
-        }
-
-    }
 }

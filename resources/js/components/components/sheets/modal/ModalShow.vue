@@ -13,7 +13,8 @@ import AccordionContent from 'primevue/accordioncontent';
 const props = defineProps<{
     idBukti: string,
     tipeLink: string,
-    comment?: string,
+    comment: string,
+    editor: string,
     pengendalian?: any,
 }>();
 
@@ -21,7 +22,7 @@ const {escape} = useMagicKeys()
 const toast = useToast();
 const confirm = useConfirm();
 
-const { idBukti, tipeLink, comment, pengendalian } = toRefs(props);
+const { idBukti, tipeLink, comment, pengendalian, editor } = toRefs(props);
 const isModal = ref<boolean>(false);
 const loading = ref<boolean>(true);
 const modal = ref<any>(null);
@@ -80,7 +81,12 @@ onClickOutside(modal, () => (
 
                         <Accordion value="0" v-if="pengendalian" class="accordioncolor">
                             <AccordionPanel value="0">
-                                <AccordionHeader>Temuan</AccordionHeader>
+                                <AccordionHeader>
+                                    <span class="flex items-center gap-2 w-full">
+                                        <span class="font-bold whitespace-nowrap">Temuan</span>
+                                        <Badge :value="editor"/>
+                                    </span>
+                                </AccordionHeader>
                                 <AccordionContent>
                                     <ScrollPanel class="h-fit max-h-[140px] min-h-[30px]">
                                         <p class="m-0">{{pengendalian?.temuan!}}</p>
@@ -115,7 +121,12 @@ onClickOutside(modal, () => (
 
                         <Accordion value="0" v-else>
                             <AccordionPanel value="0">
-                                <AccordionHeader>Komentar</AccordionHeader>
+                                <AccordionHeader>
+                                    <span class="flex items-center gap-2 w-full">
+                                        <span class="font-bold whitespace-nowrap">Komentar</span>
+                                        <Badge :value="editor"/>
+                                    </span>
+                                </AccordionHeader>
                                 <AccordionContent>
                                     <ScrollPanel class="h-fit max-h-[140px]">
                                         <p class="m-0">{{comment}}</p>

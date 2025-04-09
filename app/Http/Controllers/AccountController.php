@@ -68,6 +68,7 @@ class AccountController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        $kiey = bin2hex(random_bytes(8));
         $user = Auth::user();
         $user->tokens()->delete();
         $token = $user->createToken('authToken')->plainTextToken;
@@ -87,6 +88,7 @@ class AccountController extends Controller
 
         return response()->json([
             'success' => true,
+            'idk' => $kiey,
             'userRole' => $user->role,
             'name' => $user->name,
             'message' => "User {$user->name} successfully logged in"

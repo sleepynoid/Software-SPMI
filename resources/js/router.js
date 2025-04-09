@@ -40,7 +40,7 @@ const router = createRouter({
             },
         },
         {
-            path: "/sheet/:jurusan/:periode",
+            path: "/sheet/:jurusan/:periode/:tipe",
             name: "Sheet",
             component: Sheet,
             beforeEnter: async (to, from, next) => {
@@ -57,7 +57,7 @@ const router = createRouter({
             },
         },
         {
-            path: "/superUser/:jurusan/:periode",
+            path: "/superUser/:jurusan/:periode/:tipe",
             name: "SuperUser",
             component: SuperUser,
             beforeEnter: async (to, from, next) => {

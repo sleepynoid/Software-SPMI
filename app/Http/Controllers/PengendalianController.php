@@ -17,12 +17,6 @@ use Illuminate\Support\Facades\Log;
 
 class PengendalianController extends Controller
 {
-    public function index()
-    {
-        $pengendalians = BuktiPengendalian::all();
-        return response()->json($pengendalians);
-    }
-
     public function getPengendalian($jurusan, $periode, $tipePendidikan, $tipe) {
         $sheets = Sheet::where('jurusan', '=', $jurusan)
             ->where('periode', '=', $periode)
@@ -141,9 +135,9 @@ class PengendalianController extends Controller
             $validatedData = $request->validate([
                 'data.idBuktiEvaluasi'   => 'required|exists:bukti_evaluasis,id',
                 'data.temuan'            => 'required|string',
-                'data.akarMasalah'       => 'required|string',
-                'data.rtl'               => 'required|string',
-                'data.pelaksanaanRtl'    => 'required|string',
+                'data.akarMasalah'       => 'nullable|string',
+                'data.rtl'               => 'nullable|string',
+                'data.pelaksanaanRtl'    => 'nullable|string',
                 'data.userName'          => 'required|string',
             ]);
 
@@ -178,10 +172,4 @@ class PengendalianController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        $pengendalian = BuktiPengendalian::findOrFail($id);
-        $pengendalian->delete();
-        return response()->json(null, 204);
-    }
 }

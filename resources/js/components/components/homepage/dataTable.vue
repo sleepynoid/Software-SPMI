@@ -14,6 +14,7 @@ const filters = ref({
 // Selected Row and Fields
 const selectedRow = ref(null);
 const selectedMajor = ref(null); // Selected major
+const selectedType = ref(null); // Selected major
 const periode = ref(null); // Selected period
 const loading = ref(true); // Loading state (initially true)
 const availableSheets = ref([]); // Stores available sheets fetched from the API
@@ -99,6 +100,7 @@ const clearFilter = () => {
 const onRowSelect = (event) => {
     selectedRow.value = event.data; // Set the selected row
     selectedMajor.value = event.data.jurusan; // Set the selected major
+    selectedType.value = event.data.tipe; // Set the selected major
     periode.value = event.data.periode;
     console.log(selectedMajor.value);
     console.log(periode.value);
@@ -109,6 +111,7 @@ const onRowSelect = (event) => {
         params: {
             jurusan: encodeURIComponent(selectedMajor.value),
             periode: encodeURIComponent(periode.value),
+            tipe: encodeURIComponent(selectedType.value),
         },
     });
     console.log("Navigating to Sheet:", event.data);
@@ -138,11 +141,6 @@ const navigateToSheet = () => {
     }
 };
 
-// Navigate to SuperUser (example)
-const navigateToSuperUser = () => {
-    console.log("Navigating to SuperUser page...");
-    // Add your SuperUser navigation logic here
-};
 </script>
 
 <template>

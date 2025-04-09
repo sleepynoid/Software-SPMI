@@ -46,6 +46,13 @@ const handleSubmitLink = async () => {
     payload.value.idBukti = props.idBukti.toString()
     payload.value.tipeLink = props.tipeLink
 
+    if (
+        !payload.value.link.toLowerCase().startsWith('https://') ||
+        !payload.value.link.toLowerCase().startsWith('http://')
+    ) {
+        payload.value.link = 'https://' + payload.value.link;
+    }
+
     const response = await submitLink(payload.value);
     list.value = await fetchLink(props.idBukti, props.tipeLink)
     handleInitial()
@@ -134,7 +141,7 @@ onClickOutside(modal, () => {
                         <h1 class="text-2xl font-bold">Bukti {{tipeLink}}</h1>
                         <div class="w-full flex flex-row gap-3 items-center" v-if="role === props.tipeLink">
                             <InputGroup class="max-w-[50%]">
-                                <InputGroupAddon>www</InputGroupAddon>
+                                <InputGroupAddon>https://</InputGroupAddon>
                                 <InputText
                                     v-model="payload.link"
                                     :invalid="!payload.link"
@@ -188,7 +195,7 @@ onClickOutside(modal, () => {
                                                 icon="pi pi-pen-to-square"
                                                 severity="info"
                                                 raised
-                                                :disabled="useLink.loading"
+                                                :disabled="useLink.loading || !props.role == props.tipeLink"
                                                 @click="handleInitial(data)"
                                             />
                                             <Button
@@ -196,7 +203,7 @@ onClickOutside(modal, () => {
                                                 icon="pi pi-trash"
                                                 severity="danger"
                                                 raised
-                                                :disabled="useLink.loading"
+                                                :disabled="useLink.loading || !props.role == props.tipeLink"
                                                 @click="handleDeleteLink($event, data?.id!)"
                                             />
                                         </ButtonGroup>

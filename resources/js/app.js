@@ -11,7 +11,7 @@ import { Form } from "@primevue/forms";
 import Aura from "@primeuix/themes/aura";
 import {
     AutoComplete,
-    Avatar,
+    Avatar, Badge,
     Button, ButtonGroup, Card,
     Column,
     ColumnGroup,
@@ -24,7 +24,7 @@ import {
     InputText,
     Menu,
     Menubar,
-    MultiSelect, Panel,
+    MultiSelect, OverlayBadge, Panel,
     Password,
     ProgressSpinner,
     Ripple,
@@ -55,6 +55,8 @@ appVue.component("Form", Form);
 appVue.component("Toast", Toast);
 appVue.component("Avatar", Avatar);
 appVue.component("Menubar", Menubar);
+appVue.component("Badge", Badge);
+appVue.component("OverlayBadge", OverlayBadge);
 appVue.component("Button", Button);
 appVue.component("ButtonGroup", ButtonGroup);
 appVue.component("Image", Image);

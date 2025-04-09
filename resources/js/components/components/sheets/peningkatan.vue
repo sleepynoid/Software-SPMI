@@ -210,6 +210,7 @@ const isChanged = (data: any) => {
                             :idBukti = indicator.idBukti
                             :tipeLink="'Pelaksanaan'"
                             :comment="indicator.bukti"
+                            :editor="indicator.editorPelaksanaan"
                         />
                     </div>
                 </template>
@@ -230,6 +231,7 @@ const isChanged = (data: any) => {
                             :idBukti = indicator.idBuktiEvaluasi
                             :tipeLink="'Evaluasi'"
                             :comment="indicator.evaluasi"
+                            :editor="indicator.editorEval"
                         />
                     </div>
                 </template>
@@ -249,6 +251,7 @@ const isChanged = (data: any) => {
                             v-if="indicator.idBuktiPengendalian"
                             :idBukti = indicator.idBuktiPengendalian
                             :tipeLink="'Pengendalian'"
+                            :editor="indicator.editorPengendali"
                             :pengendalian="{
                                 temuan: indicator.temuan,
                                 akarMasalah: indicator.akar_masalah,
