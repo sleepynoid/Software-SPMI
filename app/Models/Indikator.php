@@ -15,9 +15,12 @@ class Indikator extends Model
     ];
 
     public function standar() {
-        return $this->belongsTo(Standar::class);
+        return $this->belongsTo(Standar::class, 'id_standar');
     }
     public function target() {
-        return $this->hasMany(Target::class,'id_indikator');
+        return $this->hasOne(Target::class,'id_indikator');
+    }
+    public function buktiPelaksanaan() {
+        return $this->hasOne(BuktiPelaksanaan::class, 'id_indikator');
     }
 }

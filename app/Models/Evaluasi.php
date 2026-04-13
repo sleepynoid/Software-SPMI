@@ -11,8 +11,17 @@ class Evaluasi extends Model
 
     protected $fillable = [
         'id_sheet',
+        'status',
+        'submitted_at',
+        'submitted_by',
+        'catatan'
     ];
-    public function BuktiEvaluasi() {
-        $this->hasMany(BuktiEvaluasi::class,'id_evaluasi');
+
+    public function sheet() {
+        return $this->belongsTo(Sheet::class, 'id_sheet');
+    }
+
+    public function buktiEvaluasis() {
+        return $this->hasMany(BuktiEvaluasi::class,'id_evaluasi');
     }
 }

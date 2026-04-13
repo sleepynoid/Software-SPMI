@@ -17,9 +17,12 @@ class BuktiPelaksanaan extends Model
     ];
 
     public function pelaksanaan() {
-        return $this->belongsTo(Pelaksanaan::class);
+        return $this->belongsTo(Pelaksanaan::class, 'id_pelaksanaan');
     }
-    public function link() {
-        return $this->hasMany(link::class,'id_bukti_pelaksanaan');
+    public function links() {
+        return $this->morphMany(Link::class, 'linkable');
+    }
+    public function buktiEvaluasi() {
+        return $this->hasOne(BuktiEvaluasi::class, 'id_bukti_pelaksanaan');
     }
 }

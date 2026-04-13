@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('bukti_evaluasis', function (Blueprint $table) {
             $table->id();
             $table->enum('adjustment',['melampai','mencapai','belum mencapai','menyimpan']);
-            $table->string('komentar');
-            $table->string('edited_by');
+            $table->text('komentar');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('edited_by')->nullable();
             $table->unsignedBigInteger('id_evaluasi');
             $table->unsignedBigInteger('id_bukti_pelaksanaan');
             $table->timestamps();
 
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('id_evaluasi')->references('id')->on('evaluasis')->onDelete('cascade');
             $table->foreign('id_bukti_pelaksanaan')->references('id')->on('bukti_pelaksanaans')->onDelete('cascade');
         });

@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('penetapans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_sheet');
+            $table->string('status')->default('draft');
+            $table->timestamp('submitted_at')->nullable();
+            $table->string('submitted_by')->nullable();
+            $table->text('catatan')->nullable();
             $table->timestamps();
 
             $table->foreign('id_sheet')->references('id')->on('sheets')->onDelete('cascade');

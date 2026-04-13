@@ -16,12 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('judul_link');
             $table->string('link');
-            // $table->unsignedBigInteger('id_bukti_pelaksanaan');
-            $table->enum('tipe_link',['Pelaksanaan','Evaluasi']);
-            $table->unsignedBigInteger('id_bukti');
+            $table->morphs('linkable');
             $table->timestamps();
-
-            // $table->foreign('id_bukti_pelaksanaan')->references('id')->on('bukti_pelaksanaans')->onDelete('cascade');
         });
     }
 

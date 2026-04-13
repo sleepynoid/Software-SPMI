@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('standars', function (Blueprint $table) {
+        Schema::create('jurusans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_penetapan');
-            $table->string('note');
-            $table->enum('tipe', ['input','proses','output']);
+            $table->string('kode')->unique()->nullable();
+            $table->string('nama');
+            $table->string('jenjang')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
-
-            $table->foreign('id_penetapan')->references('id')->on('penetapans')->onDelete('cascade');
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('standars');
+        Schema::dropIfExists('jurusans');
     }
 };

@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('peningkatans', function (Blueprint $table) {
             $table->id();
-            $table->string('komentar');
+            $table->text('komentar');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('edited_by')->nullable();
             $table->unsignedBigInteger('id_pengendalian');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('id_pengendalian')->references('id')->on('bukti_pengendalians')->onDelete('cascade');
         });
     }
 

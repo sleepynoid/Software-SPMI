@@ -11,6 +11,11 @@ class Peningkatan extends Model
     protected $fillable = [
         'id_pengendalian',
         'komentar',
+        'user_id',
         'edited_by',
     ];
+
+    public function buktiPengendalian() {
+        return $this->belongsTo(BuktiPengendalian::class, 'id_pengendalian');
+    }
 }

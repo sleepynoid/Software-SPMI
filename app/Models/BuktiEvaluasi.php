@@ -15,9 +15,12 @@ class BuktiEvaluasi extends Model {
         'edited_by',
     ];
     public function evaluasi() {
-        return $this->belongsTo(Evaluasi::class);
+        return $this->belongsTo(Evaluasi::class, 'id_evaluasi');
     }
-    public function link() {
-        return $this->hasMany(link::class,'id_bukti_pelaksanaan');
+    public function links() {
+        return $this->morphMany(Link::class, 'linkable');
+    }
+    public function buktiPengendalian() {
+        return $this->hasOne(BuktiPengendalian::class, 'id_bukti_evaluasi');
     }
 }

@@ -13,7 +13,16 @@ class BuktiPengendalian extends Model
         'akar_masalah',
         'rtl',
         'pelaksanaan_rtl',
+        'user_id',
         'id_bukti_evaluasi',
         'edited_by',
     ];
+
+    public function buktiEvaluasi() {
+        return $this->belongsTo(BuktiEvaluasi::class, 'id_bukti_evaluasi');
+    }
+
+    public function peningkatan() {
+        return $this->hasOne(Peningkatan::class, 'id_pengendalian');
+    }
 }

@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('bukti_pelaksanaans', function (Blueprint $table) {
             $table->id();
             $table->longText('komentar');
-            $table->string('edited_by');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('edited_by')->nullable();
             $table->unsignedBigInteger('id_pelaksanaan');
             $table->unsignedBigInteger('id_indikator');
             $table->timestamps();
 
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('id_pelaksanaan')->references('id')->on('pelaksanaans')->onDelete('cascade');
             $table->foreign('id_indikator')->references('id')->on('indikators')->onDelete('cascade');
         });
