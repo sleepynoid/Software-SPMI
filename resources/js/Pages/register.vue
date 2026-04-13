@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "primevue/usetoast";
@@ -11,7 +11,7 @@ import Message from "primevue/message";
 import Select from "primevue/select";
 // import ProgressSpinner from "primevue/progressspinner";
 
-const router = useRouter();
+// const router = useRouter();
 const toast = useToast();
 const loading = ref(false);
 const roles = ref([

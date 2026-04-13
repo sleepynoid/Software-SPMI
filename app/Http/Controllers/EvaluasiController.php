@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 
 class EvaluasiController extends Controller {
 
-    public function getEvaluasi($jurusan, $periode, $tipePendidikan, $tipe) {
+    public function getEvaluasiData($jurusan, $periode, $tipePendidikan, $tipe) {
         $sheets = Sheet::with([
                 'penetapan.standars' => function($q) use ($tipe) {
                     $q->where('tipe', $tipe);
@@ -30,7 +30,7 @@ class EvaluasiController extends Controller {
             ->get();
 
         if ($sheets->isEmpty()) {
-            return response()->json("Null");
+            return [];
         }
 
         $respond = [];
@@ -71,56 +71,48 @@ class EvaluasiController extends Controller {
             }
         }
 
-        return response()->json($respond);
+        return $respond;
+    }
+
+    public function getEvaluasi($jurusan, $periode, $tipePendidikan, $tipe) {
+        $respond = $this->getEvaluasiData($jurusan, $periode, $tipePendidikan, $tipe);
+        return response()->json($respond ?: "Null");
     }
 
     public function submitEval(Request $request) {
-        try {
-            $validatedData = $request->validate([
-                'data.idBuktiPelaksanaan' => 'required|exists:bukti_pelaksanaans,id',
-                'data.idEvaluasi'         => 'required',
-                'data.komentarEvaluasi'   => 'required|string',
-                'data.adjusment'          => 'required|string',
-                'data.userName'           => 'required|string',
-                'data.idIndikator'        => 'required|exists:indikators,id',
-                'data.indicator'          => 'nullable|string',
-            ]);
+        $validatedData = $request->validate([
+            'data.idBuktiPelaksanaan' => 'required|exists:bukti_pelaksanaans,id',
+            'data.idEvaluasi'         => 'required',
+            'data.komentarEvaluasi'   => 'required|string',
+            'data.adjusment'          => 'required|string',
+            'data.userName'           => 'required|string',
+            'data.idIndikator'        => 'required|exists:indikators,id',
+            'data.indicator'          => 'nullable|string',
+        ]);
 
-            $idBP             = $validatedData['data']['idBuktiPelaksanaan'];
-            $idEvaluasi       = $validatedData['data']['idEvaluasi'];
-            $komentarEvaluasi = $validatedData['data']['komentarEvaluasi'];
-            $adjusment        = $validatedData['data']['adjusment'];
-            $userName         = $validatedData['data']['userName'];
-            $idInd            = $validatedData['data']['idIndikator'];
-            $indica           = $validatedData['data']['indicator'];
+        $idBP             = $validatedData['data']['idBuktiPelaksanaan'];
+        $idEvaluasi       = $validatedData['data']['idEvaluasi'];
+        $komentarEvaluasi = $validatedData['data']['komentarEvaluasi'];
+        $adjusment        = $validatedData['data']['adjusment'];
+        $userName         = $validatedData['data']['userName'];
+        $idInd            = $validatedData['data']['idIndikator'];
+        $indica           = $validatedData['data']['indicator'];
 
-            $buktiEvaluasi = BuktiEvaluasi::updateOrCreate(
-                ['id_bukti_pelaksanaan' => $idBP],
-                [
-                    'id_evaluasi'  => $idEvaluasi,
-                    'komentar'     => $komentarEvaluasi,
-                    'adjustment'   => $adjusment,
-                    'edited_by'    => $userName,
-                ]
-            );
+        BuktiEvaluasi::updateOrCreate(
+            ['id_bukti_pelaksanaan' => $idBP],
+            [
+                'id_evaluasi'  => $idEvaluasi,
+                'komentar'     => $komentarEvaluasi,
+                'adjustment'   => $adjusment,
+                'edited_by'    => $userName,
+            ]
+        );
 
-            $indicator = Indikator::find($idInd);
-            if ($indicator && !empty($indica) && $indicator->note !== $indica) {
-                $indicator->update(['note' => $indica]);
-            }
-
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data berhasil disimpan',
-                'data'    => $buktiEvaluasi
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error'   => $e->getMessage()
-            ], 500);
+        $indicator = Indikator::find($idInd);
+        if ($indicator && !empty($indica) && $indicator->note !== $indica) {
+            $indicator->update(['note' => $indica]);
         }
+
+        return back()->with('success', 'Data berhasil disimpan');
     }
 }

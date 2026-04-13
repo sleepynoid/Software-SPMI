@@ -2,12 +2,12 @@
 import XlsxRead from "../components/upload/XlsxRead.vue";
 import XlsxTable from "../components/upload/XlsxTable.vue";
 import XlsxSheets from "../components/upload/XlsxSheets.vue";
-import { useRouter } from "vue-router";
+import { router } from "@inertiajs/vue3";
 import { ref } from "vue";
 import axios from "axios";
 import { Button } from "primevue";
 
-const router = useRouter();
+// const router = useRouter();
 const file = ref(null);
 const selectedSheet = ref(null);
 const department = ref("");

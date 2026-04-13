@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class PelaksanaanController extends Controller {
 
-    public function getPelaksanaan($jurusan, $periode, $tipePendidikan, $tipe) {
+    public function getPelaksanaanData($jurusan, $periode, $tipePendidikan, $tipe) {
         $sheets = Sheet::with([
                 'penetapan.standars' => function($q) use ($tipe) {
                     $q->where('tipe', $tipe);
@@ -34,7 +34,7 @@ class PelaksanaanController extends Controller {
             ->get();
 
         if ($sheets->isEmpty()) {
-            return response()->json("Null");
+            return [];
         }
 
         $respond = [];
@@ -68,44 +68,37 @@ class PelaksanaanController extends Controller {
             }
         }
 
-        return response()->json($respond);
+        return $respond;
+    }
+
+    public function getPelaksanaan($jurusan, $periode, $tipePendidikan, $tipe) {
+        $respond = $this->getPelaksanaanData($jurusan, $periode, $tipePendidikan, $tipe);
+        return response()->json($respond ?: "Null");
     }
 
     public function submitPelaksanaan(Request $request) {
-        try {
-            $validatedData = $request->validate([
-                'data.idIndikator'         => 'required|exists:indikators,id',
-                'data.komentarPelaksanaan' => 'required|string',
-                'data.idPelaksanaan'       => 'required',
-                'data.userName'            => 'required|string',
-            ]);
+        $validatedData = $request->validate([
+            'data.idIndikator'         => 'required|exists:indikators,id',
+            'data.komentarPelaksanaan' => 'required|string',
+            'data.idPelaksanaan'       => 'required',
+            'data.userName'            => 'required|string',
+        ]);
 
-            $idIndikator   = $validatedData['data']['idIndikator'];
-            $bukti         = $validatedData['data']['komentarPelaksanaan'];
-            $idPelaksanaan = $validatedData['data']['idPelaksanaan'];
-            $userName      = $validatedData['data']['userName'];
+        $idIndikator   = $validatedData['data']['idIndikator'];
+        $bukti         = $validatedData['data']['komentarPelaksanaan'];
+        $idPelaksanaan = $validatedData['data']['idPelaksanaan'];
+        $userName      = $validatedData['data']['userName'];
 
-            $buktiPelaksanaan = BuktiPelaksanaan::updateOrCreate(
-                ['id_indikator' => $idIndikator],
-                [
-                    'id_pelaksanaan' => $idPelaksanaan,
-                    'komentar'       => $bukti,
-                    'edited_by'      => $userName,
-                ]
-            );
+        BuktiPelaksanaan::updateOrCreate(
+            ['id_indikator' => $idIndikator],
+            [
+                'id_pelaksanaan' => $idPelaksanaan,
+                'komentar'       => $bukti,
+                'edited_by'      => $userName,
+            ]
+        );
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data berhasil disimpan',
-                'data'    => $buktiPelaksanaan,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error'   => $e->getMessage()
-            ], 500);
-        }
+        return back()->with('success', 'Data berhasil disimpan');
     }
 
     public function getLink($idBukti, $tipeLink) {

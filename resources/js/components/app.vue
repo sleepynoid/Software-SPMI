@@ -1,6 +1,6 @@
 <script setup>
 import CustomMenubar from "./comp/CustomMenubar.vue";
-import { useRoute } from "vue-router";
+// No longer needed
 
 const route = useRoute();
 </script>

@@ -38,4 +38,30 @@ class SheetController extends Controller {
     public function downloadExcel() {
         return response()->download(storage_path('../dokumentasi/example.xlsx'));
     }
+
+    public function show($jurusan, $periode, $tipeSheet, $step = 'input') {
+        $role = \Illuminate\Support\Facades\Auth::user()->role;
+        $data = [];
+
+        if ($role === 'Pelaksanaan') {
+            $data = app(PelaksanaanController::class)->getPelaksanaanData($jurusan, $periode, $tipeSheet, $step);
+        } elseif ($role === 'Evaluasi') {
+            $data = app(EvaluasiController::class)->getEvaluasiData($jurusan, $periode, $tipeSheet, $step);
+        } elseif ($role === 'Pengendalian') {
+            $data = app(PengendalianController::class)->getPengendalianData($jurusan, $periode, $tipeSheet, $step);
+        } elseif ($role === 'Peningkatan') {
+            $data = app(PeningkatanController::class)->getPeningkatanData($jurusan, $periode, $tipeSheet, $step);
+        }
+
+        // Return Inertia request dengan prop `sheetData`
+        return \Inertia\Inertia::render('sheet', [
+            'jurusan' => $jurusan,
+            'periode' => $periode,
+            'tipeSheet' => $tipeSheet,
+            'currentStep' => $step,
+            'role' => $role,
+            'userName' => \Illuminate\Support\Facades\Auth::user()->name,
+            'sheetData' => $data
+        ]);
+    }
 }

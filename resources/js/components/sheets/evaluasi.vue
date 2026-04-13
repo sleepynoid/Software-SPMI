@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {defineAsyncComponent, toRefs, ref, watch} from "vue";
+import {defineAsyncComponent, toRefs, ref} from "vue";
 import {useToast} from "primevue";
-import {useEvaluasi, submitEvaluasi, fetchEvaluasi} from '../../stores/useEvaluasi'
 import {useConfirm} from "primevue/useconfirm";
 import ConfirmPopup from 'primevue/confirmpopup';
+import { router } from "@inertiajs/vue3";
+
 const ModalLink = defineAsyncComponent({
     loader: () => import('./modal/ModalLink.vue'),
 });
@@ -11,10 +12,12 @@ const props = defineProps<{
     jurusan: string,
     periode: string,
     tipeSheet: string,
+    currentStep: string,
     role: string,
     username: string,
+    sheetData: any[]
 }>();
-const { jurusan, periode, tipeSheet, role, username } = toRefs(props);
+const { jurusan, periode, tipeSheet, role, username, currentStep, sheetData } = toRefs(props);
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -24,19 +27,20 @@ const adjusmentOptions = ref<string[]>(['melampaui', 'mencapai', 'belum mencapai
 const oldVal = ref<string[]>(['','','']);
 const count = ref<number[]>([0,0,0]);
 
-const sheetTypes = ['input', 'proses', 'output'];
-const current = ref<string>(sheetTypes[0]);
+const navigateStep = (stepValue: string) => {
+    router.get(`/sheet/${jurusan.value}/${periode.value}/${tipeSheet.value}/${stepValue}`, {}, {
+        preserveScroll: true,
+        preserveState: true,
+        onStart: () => loading.value = true,
+        onFinish: () => {
+            loading.value = false;
+            count.value = [0,0,0];
+            oldVal.value = ['','',''];
+        }
+    });
+};
 
-watch([current, tipeSheet], async ()=> {
-    loading.value = true;
-    await fetchEvaluasi(props.jurusan, props.periode, props.tipeSheet, current.value);
-    loading.value = false;
-    oldVal.value = ['','',''];
-    count.value = [0,0,0];
-}, {immediate: true})
-
-
-const handleSubmitEvaluasi = async (data) => {
+const handleSubmitEvaluasi = (data: any) => {
     if (!data.adjusment){
         toast.add({ severity: 'warn', summary: 'Error Saving', detail: 'Please Fill the Adjusment', life: 3000 });
         return;
@@ -44,20 +48,34 @@ const handleSubmitEvaluasi = async (data) => {
         toast.add({ severity: 'warn', summary: 'Error Saving', detail: 'Please Fill the Evaluasi', life: 3000 });
         return;
     } else {
-        data.isUpdate = false;
-        useEvaluasi.initial(data)
-        useEvaluasi.setUserName(username.value);
-        const response = await submitEvaluasi()
-
-        if (response === 200){
-            await fetchEvaluasi(props.jurusan, props.periode, props.tipeSheet, current.value);
-            isEditing.value = false;
-            toast.add({ severity: 'success', summary: 'Success Saving', detail: 'Evaluasi Saved', life: 3000 });
-        }
+        loading.value = true;
+        router.post('/submitEvaluasi', {
+            data: {
+                idBuktiPelaksanaan: data.idBuktiPelaksanaan,
+                idEvaluasi: data.idEvaluasi,
+                komentarEvaluasi: data.komentarEvaluasi,
+                adjusment: data.adjusment,
+                userName: username.value,
+                idIndikator: data.idIndikator,
+                indicator: data.indicator,
+            }
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                isEditing.value = false;
+                data.isUpdate = false;
+                toast.add({ severity: 'success', summary: 'Success Saving', detail: 'Evaluasi Saved', life: 3000 });
+                loading.value = false;
+            },
+            onError: () => {
+                toast.add({ severity: 'error', summary: 'Error saving', detail: 'Validation or server error', life: 3000 });
+                loading.value = false;
+            }
+        });
     }
 };
 
-const handleReset = (event, data: any) => {
+const handleReset = (event: any, data: any) => {
     confirm.require({
         target: event.currentTarget,
         group: 'headless',
@@ -72,9 +90,7 @@ const handleReset = (event, data: any) => {
             count.value = [0,0,0];
             toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Changes discarded', life: 3000 });
         },
-        reject: () => {
-            // toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
+        reject: () => {}
     });
 };
 
@@ -113,29 +129,29 @@ const isChanged = (data: any) => {
             </template>
         </ConfirmPopup>
         <div class="w-full card flex justify-center">
-            <Stepper value="Input" class="p-stepper">
+            <Stepper :value="currentStep" class="p-stepper">
                 <StepList>
                     <Step
-                        value="Input"
+                        value="input"
                         :disabled="isEditing"
-                        @click="current = 'input'"
+                        @click="navigateStep('input')"
                     />
                     <Step
-                        value="Proses"
+                        value="proses"
                         :disabled="isEditing"
-                        @click="current = 'proses'"
+                        @click="navigateStep('proses')"
                     />
                     <Step
-                        value="Output"
+                        value="output"
                         :disabled="isEditing"
-                        @click="current = 'output'"
+                        @click="navigateStep('output')"
                     />
                 </StepList>
             </Stepper>
         </div>
 
         <DataTable
-            :value="useEvaluasi.list"
+            :value="sheetData"
             showGridlines
             tableStyle="min-width: 130vw"
             class="custom-table"

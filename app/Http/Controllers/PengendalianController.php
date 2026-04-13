@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class PengendalianController extends Controller
 {
-    public function getPengendalian($jurusan, $periode, $tipePendidikan, $tipe) {
+    public function getPengendalianData($jurusan, $periode, $tipePendidikan, $tipe) {
         $sheets = Sheet::with([
                 'penetapan.standars' => function($q) use ($tipe) {
                     $q->where('tipe', $tipe);
@@ -29,7 +29,7 @@ class PengendalianController extends Controller
             ->get();
 
         if ($sheets->isEmpty()) {
-            return response()->json("Null");
+            return [];
         }
 
         $respond = [];
@@ -78,48 +78,42 @@ class PengendalianController extends Controller
             }
         }
 
-        return response()->json($respond);
+        return $respond;
+    }
+
+    public function getPengendalian($jurusan, $periode, $tipePendidikan, $tipe) {
+        $respond = $this->getPengendalianData($jurusan, $periode, $tipePendidikan, $tipe);
+        return response()->json($respond ?: "Null");
     }
 
     public function submitPengendalian(Request $request) {
-        try {
-            $validatedData = $request->validate([
-                'data.idBuktiEvaluasi'   => 'required|exists:bukti_evaluasis,id',
-                'data.temuan'            => 'required|string',
-                'data.akarMasalah'       => 'nullable|string',
-                'data.rtl'               => 'nullable|string',
-                'data.pelaksanaanRtl'    => 'nullable|string',
-                'data.userName'          => 'required|string',
-            ]);
+        $validatedData = $request->validate([
+            'data.idBuktiEvaluasi'   => 'required|exists:bukti_evaluasis,id',
+            'data.temuan'            => 'required|string',
+            'data.akarMasalah'       => 'nullable|string',
+            'data.rtl'               => 'nullable|string',
+            'data.pelaksanaanRtl'    => 'nullable|string',
+            'data.userName'          => 'required|string',
+        ]);
 
-            $idBuktiEvaluasi = $validatedData['data']['idBuktiEvaluasi'];
-            $temuan          = $validatedData['data']['temuan'];
-            $akarMasalah     = $validatedData['data']['akarMasalah'];
-            $rtl             = $validatedData['data']['rtl'];
-            $pelaksanaanRtl  = $validatedData['data']['pelaksanaanRtl'];
-            $userName        = $validatedData['data']['userName'];
+        $idBuktiEvaluasi = $validatedData['data']['idBuktiEvaluasi'];
+        $temuan          = $validatedData['data']['temuan'];
+        $akarMasalah     = $validatedData['data']['akarMasalah'];
+        $rtl             = $validatedData['data']['rtl'];
+        $pelaksanaanRtl  = $validatedData['data']['pelaksanaanRtl'];
+        $userName        = $validatedData['data']['userName'];
 
-            $pengendalian = BuktiPengendalian::updateOrCreate(
-                ['id_bukti_evaluasi' => $idBuktiEvaluasi],
-                [
-                    'temuan'           => $temuan,
-                    'akar_masalah'     => $akarMasalah,
-                    'rtl'              => $rtl,
-                    'pelaksanaan_rtl'  => $pelaksanaanRtl,
-                    'edited_by'        => $userName,
-                ]
-            );
+        BuktiPengendalian::updateOrCreate(
+            ['id_bukti_evaluasi' => $idBuktiEvaluasi],
+            [
+                'temuan'           => $temuan,
+                'akar_masalah'     => $akarMasalah,
+                'rtl'              => $rtl,
+                'pelaksanaan_rtl'  => $pelaksanaanRtl,
+                'edited_by'        => $userName,
+            ]
+        );
 
-            return response()->json([
-                'message' => 'Pengendalian berhasil diproses',
-                'data'    => $pengendalian
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat memproses data',
-                'error'   => $e->getMessage()
-            ], 500);
-        }
+        return back()->with('success', 'Pengendalian berhasil diproses');
     }
 }

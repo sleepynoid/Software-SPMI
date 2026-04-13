@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {defineAsyncComponent, ref, toRefs, watch} from "vue";
-import {usePelaksanaan, submitPelaksanaan, fetchPelaksanaan} from '../../stores/usePelaksanaan.js'
+import {defineAsyncComponent, ref, toRefs} from "vue";
+import { router } from "@inertiajs/vue3";
 import {useToast} from "primevue";
 import ConfirmPopup from "primevue/confirmpopup";
 import {useConfirm} from "primevue/useconfirm";
@@ -12,11 +12,13 @@ const props = defineProps<{
     jurusan: string,
     periode: string,
     tipeSheet: string,
+    currentStep: string,
     role: string,
     username: string,
+    sheetData: any[]
 }>();
 
-const { jurusan, periode, tipeSheet, role, username } = toRefs(props);
+const { jurusan, periode, tipeSheet, role, username, currentStep, sheetData } = toRefs(props);
 const toast = useToast();
 const confirm = useConfirm();
 const loading = ref<boolean>(false);
@@ -24,32 +26,44 @@ const isEditing = ref<boolean>(false);
 const oldVal = ref<string>('');
 const count = ref<number>(0);
 
-const sheetTypes = ['input', 'proses', 'output'];
-const current = ref<string>(sheetTypes[0]);
-
-watch([current, tipeSheet], async ()=> {
-    loading.value = true;
-    await fetchPelaksanaan(props.jurusan, props.periode, props.tipeSheet, current.value);
-    loading.value = false;
-    count.value = 0;
-    oldVal.value = '';
-}, {immediate: true})
-
-const handleSumbitPelaksanaan = async (data) => {
-    data.isUpdate = false;
-    usePelaksanaan.initial(data)
-    usePelaksanaan.setUserName(username.value)
-    const response = await submitPelaksanaan()
-
-    if (response === 200){
-        await fetchPelaksanaan(props.jurusan, props.periode, props.tipeSheet, current.value);
-        isEditing.value = false;
-        toast.add({ severity: 'success', summary: 'Success Saving', detail: 'Evaluasi Saved', life: 3000 });
-    }
-
+const navigateStep = (stepValue: string) => {
+    router.get(`/sheet/${jurusan.value}/${periode.value}/${tipeSheet.value}/${stepValue}`, {}, {
+        preserveScroll: true,
+        preserveState: true,
+        onStart: () => loading.value = true,
+        onFinish: () => {
+            loading.value = false;
+            count.value = 0;
+            oldVal.value = '';
+        }
+    });
 };
 
-const handleReset = (event, data: any) => {
+const handleSumbitPelaksanaan = (data: any) => {
+    loading.value = true;
+    router.post('/submitPelaksanaan', {
+        data: {
+            idIndikator: data.idIndikator,
+            komentarPelaksanaan: data.komentarPelaksanaan,
+            idPelaksanaan: data.idPelaksanaan,
+            userName: username.value
+        }
+    }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            isEditing.value = false;
+            data.isUpdate = false;
+            toast.add({ severity: 'success', summary: 'Success Saving', detail: 'Pelaksanaan Saved', life: 3000 });
+            loading.value = false;
+        },
+        onError: () => {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Validation or server error', life: 3000 });
+            loading.value = false;
+        }
+    });
+};
+
+const handleReset = (event: any, data: any) => {
     confirm.require({
         target: event.currentTarget,
         group: 'headless',
@@ -103,29 +117,29 @@ const isChanged = (data: any) => {
             </template>
         </ConfirmPopup>
         <div class="w-full card flex justify-center">
-            <Stepper value="Input" class="p-stepper">
+            <Stepper :value="currentStep" class="p-stepper">
                 <StepList>
                     <Step
-                        value="Input"
+                        value="input"
                         :disabled="isEditing"
-                        @click="current = 'input'"
+                        @click="navigateStep('input')"
                     />
                     <Step
-                        value="Proses"
+                        value="proses"
                         :disabled="isEditing"
-                        @click="current = 'proses'"
+                        @click="navigateStep('proses')"
                     />
                     <Step
-                        value="Output"
+                        value="output"
                         :disabled="isEditing"
-                        @click="current = 'output'"
+                        @click="navigateStep('output')"
                     />
                 </StepList>
             </Stepper>
         </div>
 
         <DataTable
-            :value="usePelaksanaan.list"
+            :value="sheetData"
             showGridlines
             tableStyle="min-width: 100%"
             class="custom-table"

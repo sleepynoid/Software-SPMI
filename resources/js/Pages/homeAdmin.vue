@@ -186,7 +186,7 @@ import { onMounted, watch } from "vue";
 import { useUserManagement } from "@/composables/useUserManagement";
 import { useUserActions } from "@/composables/useUserActions";
 import { Toast, useToast } from "primevue";
-import ModalHistoryUser from "../admin/modalHistoryUser.vue";
+import ModalHistoryUser from "../components/admin/modalHistoryUser.vue";
 
 const toast = useToast();
 const {

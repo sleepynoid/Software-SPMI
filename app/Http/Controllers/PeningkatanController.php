@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class PeningkatanController extends Controller
 {
-    public function getPeningkatan($jurusan, $periode, $tipePendidikan, $tipe) {
+    public function getPeningkatanData($jurusan, $periode, $tipePendidikan, $tipe) {
         $sheets = Sheet::with([
                 'penetapan.standars' => function($q) use ($tipe) {
                     $q->where('tipe', $tipe);
@@ -28,7 +28,7 @@ class PeningkatanController extends Controller
             ->get();
 
         if ($sheets->isEmpty()) {
-            return response()->json("Null");
+            return [];
         }
 
         $respond = [];
@@ -83,36 +83,31 @@ class PeningkatanController extends Controller
             }
         }
 
-        return response()->json($respond);
+        return $respond;
+    }
+
+    public function getPeningkatan($jurusan, $periode, $tipePendidikan, $tipe) {
+        $respond = $this->getPeningkatanData($jurusan, $periode, $tipePendidikan, $tipe);
+        return response()->json($respond ?: "Null");
     }
 
     public function submitPeningkatan(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'data.idBuktiPengendalian' => 'required|exists:bukti_pengendalians,id',
-                'data.komenPeningkatan' => 'required|string',
-                'data.userName' => 'required|string',
-            ]);
+        $validatedData = $request->validate([
+            'data.idBuktiPengendalian' => 'required|exists:bukti_pengendalians,id',
+            'data.komenPeningkatan' => 'required|string',
+            'data.userName' => 'required|string',
+        ]);
 
-            $idBuktiPengendalian = $validatedData['data']['idBuktiPengendalian'];
-            $komen = $validatedData['data']['komenPeningkatan'];
-            $editor = $validatedData['data']['userName'];
+        $idBuktiPengendalian = $validatedData['data']['idBuktiPengendalian'];
+        $komen = $validatedData['data']['komenPeningkatan'];
+        $editor = $validatedData['data']['userName'];
 
-            $peningkatan = Peningkatan::updateOrCreate(
-                ['id_pengendalian' => $idBuktiPengendalian],
-                ['komentar' => $komen, 'edited_by' => $editor]
-            );
+        Peningkatan::updateOrCreate(
+            ['id_pengendalian' => $idBuktiPengendalian],
+            ['komentar' => $komen, 'edited_by' => $editor]
+        );
 
-            return response()->json([
-                'message' => 'Peningkatan berhasil diproses',
-                'data' => $peningkatan
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat memproses data',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        return back()->with('success', 'Peningkatan berhasil diproses');
     }
 }

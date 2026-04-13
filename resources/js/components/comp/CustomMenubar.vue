@@ -26,13 +26,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { router } from "@inertiajs/vue3";
 import { Avatar, Menubar } from "primevue";
 import CryptoJS from "crypto-js";
 import {getUserName, getUserRole} from "../stores/commonStore.js";
 import axios from "axios";
 
-const router = useRouter();
+// const router = useRouter();
 const user = getUserName();
 const role = getUserRole();
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {ref, toRefs, watch, defineAsyncComponent} from "vue";
+import {ref, toRefs, defineAsyncComponent} from "vue";
 import ConfirmPopup from 'primevue/confirmpopup';
 import {useToast} from "primevue";
 import { useConfirm } from "primevue/useconfirm";
-import {fetchPeningkatan, submitPeningkatan, usePeningkatan} from "../../stores/usePeningkatan";
+import { router } from "@inertiajs/vue3";
 
 const ModalShow = defineAsyncComponent({
     loader: () => import('./modal/ModalShow.vue'),
@@ -15,10 +15,12 @@ const props = defineProps<{
     jurusan: string,
     periode: string,
     tipeSheet: string,
+    currentStep: string,
     role: string,
     username: string,
+    sheetData: any[]
 }>();
-const { jurusan, periode, tipeSheet, role, username } = toRefs(props);
+const { jurusan, periode, tipeSheet, role, username, currentStep, sheetData } = toRefs(props);
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -27,31 +29,43 @@ const isEditing = ref<boolean>(false);
 const oldVal = ref<string>('');
 const count = ref<number>(0);
 
-const sheetTypes = ['input', 'proses', 'output'];
-const current = ref<string>(sheetTypes[0]);
-
-watch([current, tipeSheet], async ()=> {
-    loading.value = true;
-    await fetchPeningkatan(props.jurusan, props.periode, props.tipeSheet, current.value);
-    loading.value = false;
-    count.value = 0;
-    oldVal.value = '';
-}, {immediate: true})
-
-const handleSubmitPeningkatan = async (data) => {
-    data.isUpdate = false;
-    usePeningkatan.initial(data)
-    usePeningkatan.setUserName(username.value)
-    const response = await submitPeningkatan()
-
-    if (response === 200){
-        await fetchPeningkatan(props.jurusan, props.periode, props.tipeSheet, current.value);
-        isEditing.value = false;
-        toast.add({ severity: 'success', summary: 'Success Saving', detail: 'Evaluasi Saved', life: 3000 });
-    }
+const navigateStep = (stepValue: string) => {
+    router.get(`/sheet/${jurusan.value}/${periode.value}/${tipeSheet.value}/${stepValue}`, {}, {
+        preserveScroll: true,
+        preserveState: true,
+        onStart: () => loading.value = true,
+        onFinish: () => {
+            loading.value = false;
+            count.value = 0;
+            oldVal.value = '';
+        }
+    });
 };
 
-const handleReset = (event, data: any) => {
+const handleSubmitPeningkatan = (data: any) => {
+    loading.value = true;
+    router.post('/submitPeningkatan', {
+        data: {
+            idBuktiPengendalian: data.idBuktiPengendalian,
+            komenPeningkatan: data.komenPeningkatan,
+            userName: username.value
+        }
+    }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            isEditing.value = false;
+            data.isUpdate = false;
+            toast.add({ severity: 'success', summary: 'Success Saving', detail: 'Peningkatan Saved', life: 3000 });
+            loading.value = false;
+        },
+        onError: () => {
+            toast.add({ severity: 'error', summary: 'Error saving', detail: 'Validation or server error', life: 3000 });
+            loading.value = false;
+        }
+    });
+};
+
+const handleReset = (event: any, data: any) => {
     confirm.require({
         target: event.currentTarget,
         group: 'headless',
@@ -64,11 +78,10 @@ const handleReset = (event, data: any) => {
             oldVal.value = '';
             toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Changes discarded', life: 3000 });
         },
-        reject: () => {
-            // toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
+        reject: () => {}
     });
 };
+
 const handleBlur = () => {
     if (!isEditing.value) {
         oldVal.value = ''
@@ -103,28 +116,28 @@ const isChanged = (data: any) => {
             </template>
         </ConfirmPopup>
         <div class="w-full card flex justify-center">
-            <Stepper value="Input" class="p-stepper">
+            <Stepper :value="currentStep" class="p-stepper">
                 <StepList>
                     <Step
-                        value="Input"
+                        value="input"
                         :disabled="isEditing"
-                        @click="current = 'input'"
+                        @click="navigateStep('input')"
                     />
                     <Step
-                        value="Proses"
+                        value="proses"
                         :disabled="isEditing"
-                        @click="current = 'proses'"
+                        @click="navigateStep('proses')"
                     />
                     <Step
-                        value="Output"
+                        value="output"
                         :disabled="isEditing"
-                        @click="current = 'output'"
+                        @click="navigateStep('output')"
                     />
                 </StepList>
             </Stepper>
         </div>
         <DataTable
-            :value="usePeningkatan.list"
+            :value="sheetData"
             showGridlines
             tableStyle="min-width: 110vw"
             class="custom-table"

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import {useRoute} from "vue-router";
+import { router } from "@inertiajs/vue3";
 import Pelaksanaan from "../components/sheets/pelaksanaan.vue";
 import Pengendalian from "../components/sheets/pengendalian.vue";
 import Evaluasi from "../components/sheets/evaluasi.vue";
 import Peningkatan from "../components/sheets/peningkatan.vue";
-import {getUserName, getUserRole} from "../stores/commonStore.js";
+import {getUserName} from "../stores/commonStore.js";
 
 
-const role = getUserRole();
+// const role = getUserRole();
 const name = getUserName();
 const route = useRoute();
 
@@ -16,13 +16,17 @@ const periode = ref<string>(route.params.periode.toString());
 const jurusan = ref<string>(route.params.jurusan.toString());
 const tipe = ref<string>(route.params.tipe.toString());
 
+
+const roleUser = ['Pelaksanaan','Evaluasi', 'Pengendalian', 'Peningkatan'];
+const role = ref<string>(roleUser[0]);
+
 </script>
 
 <template>
     <div class="max-h-full h-full w-full">
         <Toast />
+        <Select v-model="role" :options="roleUser" placeholder="Select a City" class="w-full md:w-50 h-10 mb-3" />
         <Panel class="w-full overflow-x-hidden">
-
             <div class="pb-[3%]">
                 <Pelaksanaan
                     v-if="role=== 'Pelaksanaan'"
@@ -66,9 +70,5 @@ const tipe = ref<string>(route.params.tipe.toString());
 </template>
 
 <style scoped>
-
-
-
-
 
 </style>

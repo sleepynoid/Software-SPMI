@@ -57,7 +57,12 @@ class AccountController extends Controller
         ]);
     }
 
-    public function login(Request $request): JsonResponse
+    public function loginForm()
+    {
+        return \Inertia\Inertia::render('login');
+    }
+
+    public function login(Request $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -65,55 +70,24 @@ class AccountController extends Controller
         ]);
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return back()->withErrors([
+                'email' => 'Email atau Password Salah.',
+            ])->onlyInput('email');
         }
 
-        $kiey = bin2hex(random_bytes(8));
-        $user = Auth::user();
-        $user->tokens()->delete();
-        $token = $user->createToken('authToken')->plainTextToken;
+        $request->session()->regenerate();
 
-        // Pastikan domain cookie sesuai dengan frontend dan backend
-        $cookie = cookie(
-            'auth_token',
-            $token,
-            60 * 24,
-            '/',
-            null,
-            request()->secure(),
-            true,
-            false,
-            'lax'
-        );
-
-        return response()->json([
-            'success' => true,
-            'idk' => $kiey,
-            'userRole' => $user->role,
-            'name' => $user->name,
-            'message' => "User {$user->name} successfully logged in"
-        ])->withCookie($cookie);
+        return redirect()->intended('/');
     }
-    public function logout(Request $request): JsonResponse
-    {
-        // Hapus token Sanctum
-        if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
-        }
 
-        // Hapus session Laravel
+    public function logout(Request $request)
+    {
         Auth::guard('web')->logout();
 
-        // Hapus semua sesi yang tersimpan
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        $cookie = cookie()->forget('auth_token');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Berhasil logout'
-        ])->withCookie($cookie);
+        return redirect('/login');
     }
 
     public function listUser(): JsonResponse

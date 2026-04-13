@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { router } from "@inertiajs/vue3";
 import { FilterMatchMode } from "@primevue/core";
 
-const router = useRouter();
+// const router = useRouter();
 // Filters
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -106,38 +106,16 @@ const onRowSelect = (event) => {
     console.log(periode.value);
 
     // Directly navigate to the sheet route
-    router.push({
-        name: "Sheet",
-        params: {
-            jurusan: encodeURIComponent(selectedMajor.value),
-            periode: encodeURIComponent(periode.value),
-            tipe: encodeURIComponent(selectedType.value),
-        },
-    });
+    router.get(`/sheet/${encodeURIComponent(selectedMajor.value)}/${encodeURIComponent(periode.value)}/${encodeURIComponent(selectedType.value)}`);
     console.log("Navigating to Sheet:", event.data);
 };
 
 // Navigate to Sheet
 const navigateToSheet = () => {
-    if (selectedMajor.value && periode.value) {
-        const faculty = sheetData.value.find(
-            (row) => row.major === selectedMajor.value
-        )?.faculty;
-
-        if (faculty) {
-            router.push({
-                name: "Sheet",
-                params: {
-                    faculty: encodeURIComponent(faculty),
-                    jurusan: encodeURIComponent(selectedMajor.value),
-                    periode: encodeURIComponent(periode.value),
-                },
-            });
-        } else {
-            console.error("Faculty not found for the selected major.");
-        }
+    if (selectedMajor.value && periode.value && selectedType.value) {
+        router.get(`/sheet/${encodeURIComponent(selectedMajor.value)}/${encodeURIComponent(periode.value)}/${encodeURIComponent(selectedType.value)}`);
     } else {
-        console.error("No major or period selected.");
+        console.error("No major, period, or type selected.");
     }
 };
 
