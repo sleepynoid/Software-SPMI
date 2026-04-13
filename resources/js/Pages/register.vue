@@ -1,129 +1,88 @@
 <script setup>
-import { ref } from "vue";
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import { zodResolver } from "@primevue/forms/resolvers/zod";
 import { z } from "zod";
-import { useToast } from "primevue/usetoast";
-import Toast from "primevue/toast";
 import { Form } from "@primevue/forms";
+import Image from "primevue/image";
+import InputText from "primevue/inputtext";
+import Password from "primevue/password";
 import Button from "primevue/button";
 import Message from "primevue/message";
 import Select from "primevue/select";
-// import ProgressSpinner from "primevue/progressspinner";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
 
-// const router = useRouter();
 const toast = useToast();
-const loading = ref(false);
-const roles = ref([
+
+const roles = [
     { name: "Pelaksanaan", value: "Pelaksanaan" },
     { name: "Evaluasi", value: "Evaluasi" },
-    { name: "Peningkatan", value: "Peningkatan" },
     { name: "Pengendalian", value: "Pengendalian" },
-]);
-const initialValues = ref({
+    { name: "Peningkatan", value: "Peningkatan" },
+];
+
+const initialValues = {
+    name: "",
+    email: "",
+    password: "",
+    role: "",
+};
+
+const resolver = zodResolver(
+    z.object({
+        name: z.string().min(1, { message: "Nama harus diisi." }),
+        email: z.string().email({ message: "Format email tidak valid." }),
+        password: z.string().min(6, { message: "Password harus minimal 6 karakter." }),
+        role: z.string().min(1, { message: "Silahkan pilih role terlebih dahulu." }),
+    })
+);
+
+const form = useForm({
     name: "",
     email: "",
     password: "",
     role: "",
 });
 
-const resolver = zodResolver(
-    z.object({
-        name: z.string().min(1, { message: "Nama harus diisi." }),
-        email: z.string().email({ message: "Format email tidak valid." }),
-        password: z
-            .string()
-            .min(6, { message: "Password harus minimal 6 karakter." }),
-        role: z
-            .string()
-            .min(1, { message: "Silahkan pilih role terlebih dahulu." }),
-    })
-);
+const register = (e) => {
+    if (!e.valid) return;
 
-const register = async (e) => {
-    if (e.valid) {
-        try {
-            loading.value = true;
+    form.name     = e.values.name;
+    form.email    = e.values.email;
+    form.password = e.values.password;
+    form.role     = e.values.role;
 
-            const response = await axios.post("/api/register", {
-                name: e.values.name,
-                email: e.values.email,
-                password: e.values.password,
-                role: e.values.role,
-            });
-
-            loading.value = false;
-
-            localStorage.setItem("toastMessage", "Registrasi Berhasil!");
-            localStorage.setItem("toastSeverity", "success");
-
-            await router.push("/login");
-        } catch (error) {
-            loading.value = false;
-
-            let errorMessages = "";
-            const errors = error.response.data.errors;
-
-            if (typeof errors === "object" && errors !== null) {
-                errorMessages = Object.values(errors).flat().join(", ");
-            } else {
-                errorMessages = "Terjadi kesalahan, silakan coba lagi.";
-            }
-
+    form.post('/register', {
+        preserveScroll: true,
+        onError: (errors) => {
+            const messages = Object.values(errors).join(', ');
             toast.add({
-                severity: "error",
-                summary: `Registrasi Gagal: ${errorMessages}`,
+                severity: 'error',
+                summary: 'Registrasi Gagal',
+                detail: messages,
                 life: 5000,
             });
-        }
-    }
+        },
+    });
 };
 </script>
 
 <template>
+    <Head title="Register" />
+    <Toast />
     <div class="h-screen w-screen flex">
-        <div
-            :class="[
-                { hidden: !loading },
-                'absolute',
-                'z-50',
-                'inset-0',
-                'w-full',
-                'h-full',
-                'bg-black/50',
-                'flex',
-                'items-center',
-                'justify-center',
-            ]"
-        >
-            <ProgressSpinner v-if="loading" aria-label="Loading" />
-        </div>
-        <Toast />
-
         <!-- Bagian Kiri: Gambar -->
-        <div
-            class="flex flex-col items-center justify-center w-1/2 bg-blue-400"
-        >
+        <div class="flex flex-col items-center justify-center w-1/2 bg-blue-400">
             <div class="items-center justify-center">
-                <Image
-                    src="/image/logo-white-itats-full.webp"
-                    alt="Login Image"
-                    class="w-80"
-                />
-                <span class="text-2xl text-white text-center font-bold"
-                    >LPMI - Lembaga Penjaminan Mutu Internal</span
-                >
+                <Image src="/image/logo-white-itats-full.webp" alt="Login Image" class="w-80" />
+                <span class="text-2xl text-white text-center font-bold">LPMI - Lembaga Penjaminan Mutu Internal</span>
             </div>
         </div>
 
         <!-- Bagian Kanan: Form Register -->
-        <div
-            class="w-full md:w-1/2 flex items-center justify-center p-10 bg-gray-100"
-        >
+        <div class="w-full md:w-1/2 flex items-center justify-center p-10 bg-gray-100">
             <div class="w-full max-w-md">
-                <h2 class="text-4xl font-bold text-gray-700 text-center">
-                    Register
-                </h2>
+                <h2 class="text-4xl font-bold text-gray-700 text-center">Register</h2>
                 <p class="text-center text-gray-500 text-sm mb-8">
                     Isi form di bawah ini untuk mendaftar.
                 </p>
@@ -143,13 +102,11 @@ const register = async (e) => {
                             placeholder="Masukkan nama"
                             class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <Message
-                            v-if="$form.name?.invalid"
-                            severity="error"
-                            size="small"
-                            variant="simple"
-                        >
+                        <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">
                             {{ $form.name.error.message }}
+                        </Message>
+                        <Message v-if="form.errors.name" severity="error" size="small" variant="simple">
+                            {{ form.errors.name }}
                         </Message>
                     </div>
 
@@ -161,20 +118,16 @@ const register = async (e) => {
                             placeholder="Masukkan email"
                             class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <Message
-                            v-if="$form.email?.invalid"
-                            severity="error"
-                            size="small"
-                            variant="simple"
-                        >
+                        <Message v-if="$form.email?.invalid" severity="error" size="small" variant="simple">
                             {{ $form.email.error.message }}
+                        </Message>
+                        <Message v-if="form.errors.email" severity="error" size="small" variant="simple">
+                            {{ form.errors.email }}
                         </Message>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="text-gray-600 font-semibold"
-                            >Password</label
-                        >
+                        <label class="text-gray-600 font-semibold">Password</label>
                         <Password
                             name="password"
                             placeholder="Masukkan password"
@@ -182,12 +135,7 @@ const register = async (e) => {
                             toggleMask
                             fluid
                         />
-                        <Message
-                            v-if="$form.password?.invalid"
-                            severity="error"
-                            size="small"
-                            variant="simple"
-                        >
+                        <Message v-if="$form.password?.invalid" severity="error" size="small" variant="simple">
                             {{ $form.password.error.message }}
                         </Message>
                     </div>
@@ -202,18 +150,15 @@ const register = async (e) => {
                             placeholder="Pilih role"
                             fluid
                         />
-                        <Message
-                            v-if="$form.role?.invalid"
-                            severity="error"
-                            size="small"
-                            variant="simple"
-                            >{{ $form.role.error.message }}</Message
-                        >
+                        <Message v-if="$form.role?.invalid" severity="error" size="small" variant="simple">
+                            {{ $form.role.error.message }}
+                        </Message>
                     </div>
 
                     <Button
                         type="submit"
                         label="Register"
+                        :loading="form.processing"
                         style="width: auto"
                         severity="info"
                         raised
@@ -221,11 +166,7 @@ const register = async (e) => {
                     <div class="-mt-3">
                         <p class="text-gray-500 text-sm">
                             Sudah punya akun?
-                            <router-link to="/login"
-                                ><span class="font-semibold text-sky-500"
-                                    >Silahkan login</span
-                                ></router-link
-                            >
+                            <Link href="/login"><span class="font-semibold text-sky-500">Silahkan login</span></Link>
                         </p>
                     </div>
                 </Form>
@@ -235,5 +176,4 @@ const register = async (e) => {
 </template>
 
 <style scoped>
-/* Styles remain unchanged */
 </style>

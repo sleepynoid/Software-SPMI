@@ -6,6 +6,8 @@ use App\Http\Controllers\AccountController;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AccountController::class, 'loginForm'])->name('login');
     Route::post('/login', [AccountController::class, 'login']);
+    Route::get('/register', [AccountController::class, 'registerForm'])->name('register');
+    Route::post('/register', [AccountController::class, 'register'])->name('register.store');
 });
 
 Route::middleware('auth')->group(function () {

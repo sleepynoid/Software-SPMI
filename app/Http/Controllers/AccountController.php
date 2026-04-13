@@ -45,21 +45,23 @@ class AccountController extends Controller
         $input = $request->all();
 
         User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'role' => $input['role'],
+            'name'     => $input['name'],
+            'email'    => $input['email'],
+            'role'     => $input['role'],
             'password' => bcrypt($input['password'])
         ]);
 
-        return response()->json([
-            'success' => 'true',
-            'message' => 'Registrasi berhasil. Silahkan login!'
-        ]);
+        return redirect()->route('login')->with('success', 'Registrasi berhasil. Silahkan login!');
     }
 
     public function loginForm()
     {
         return \Inertia\Inertia::render('login');
+    }
+
+    public function registerForm()
+    {
+        return \Inertia\Inertia::render('register');
     }
 
     public function login(Request $request)

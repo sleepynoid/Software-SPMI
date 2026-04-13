@@ -2,16 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Standar;
+use App\Models\Sheet;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class IndikatorFactory extends Factory
+class PelaksanaanFactory extends Factory
 {
     public function definition(): array
     {
         return [
-            'id_standar' => Standar::factory(),
-            'note'       => $this->faker->sentence(),
+            'id_sheet' => Sheet::factory(),
         ];
     }
 }

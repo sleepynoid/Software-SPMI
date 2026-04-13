@@ -1,87 +1,195 @@
 # Software-SPMI
 
+> Sistem Penjaminan Mutu Internal (SPMI) — Monolith Web App berbasis Laravel 11 + Inertia.js + Vue 3
+
+---
+
 ## Deskripsi Proyek
-Proyek ini adalah aplikasi yang dibangun menggunakan framework Laravel dan Vue.js, dirancang untuk memudahkan pengelolaan data dan laporan.
+
+Software-SPMI adalah aplikasi web untuk mengelola siklus PPEPP (**P**enetapan, **P**elaksanaan, **E**valuasi, **P**engendalian, **P**eningkatan) dalam proses Penjaminan Mutu Internal perguruan tinggi.
+
+Arsitektur menggunakan **Laravel Monolith + Inertia.js** — tidak ada REST API terpisah. Data dirender langsung dari server ke komponen Vue melalui Inertia props, sehingga navigasi terasa seperti SPA tanpa overhead manajemen token.
+
+---
+
+## Tech Stack
+
+| Layer | Teknologi |
+|---|---|
+| Backend | Laravel 11, PHP 8.4 |
+| Frontend | Vue 3 (Composition API), Inertia.js v3 |
+| UI Library | PrimeVue, Tailwind CSS |
+| Package Manager | **Bun** (pengganti npm/pnpm) |
+| Build Tool | Vite 5 |
+| Database | MySQL (production) / SQLite (testing) |
+| Testing | PHPUnit 11 |
+
+---
+
+## Roles & Akses
+
+| Role | Halaman Sheet | Keterangan |
+|---|---|---|
+| `Pelaksanaan` | ✅ Input bukti pelaksanaan | Tahap pertama PPEPP |
+| `Evaluasi` | ✅ Input evaluasi & adjusment | Berdasarkan bukti pelaksanaan |
+| `Pengendalian` | ✅ Input temuan, akar masalah, RTL | Berdasarkan hasil evaluasi |
+| `Peningkatan` | ✅ Input komentar peningkatan | Tahap akhir PPEPP |
+| `Admin` | ✅ Manajemen user & role | Dashboard admin |
+| `SuperUser` | ✅ Akses semua sheet | Read-only lintas jurusan |
+
+---
 
 ## Persyaratan
-- PHP versi 8.2 atau lebih tinggi (https://www.php.net/downloads)
-- Composer untuk manajemen dependensi PHP (https://getcomposer.org/download/)
-- Node.js dan npm untuk manajemen dependensi JavaScript (https://nodejs.org/en/download/)
 
-## Langkah Awal
-ikuti langkah-langkah berikut:
+- **PHP 8.4+** — [Download](https://www.php.net/downloads)
+- **Composer** — [Download](https://getcomposer.org/download/)
+- **Bun** — [Download](https://bun.sh) *(pengganti npm/pnpm)*
+- **MySQL 8+** atau MariaDB
 
-1. **Clone Repository**:
-   Gunakan perintah berikut untuk meng-clone repository:
-   ```bash
-   git clone https://github.com/Burzess/Software-SPMI.git
-   ```
+---
 
-2. **Masuk ke Direktori Proyek**:
-   ```bash
-   cd Software-SPMI
-   ```
+## Langkah Setup
 
-3. **Salin File `.env`**:
-   Jika file `.env` belum ada, salin file contoh `.env.example` menjadi `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+### 1. Clone Repository
 
-4. **Instal Dependensi PHP**:
-   Jalankan perintah berikut untuk menginstal dependensi PHP:
-   ```bash
-   composer install
-   ```
+```bash
+git clone https://github.com/Burzess/Software-SPMI.git
+cd Software-SPMI
+```
 
-5. **Instal Dependensi JavaScript**:
-   Setelah menginstal dependensi PHP, jalankan:
-   ```bash
-   npm install
-   ```
+### 2. Salin File `.env`
 
-6. **Generate Kunci Aplikasi**:
-   Jalankan perintah berikut untuk menghasilkan kunci aplikasi:
-   ```bash
-   php artisan key:generate
-   ```
+```bash
+cp .env.example .env
+```
 
-7. **Konfigurasi Database**:
-   Edit file `.env` untuk mengonfigurasi pengaturan database sesuai kebutuhan proyek Anda. Berikut adalah contoh pengaturan untuk menggunakan MySQL:
+### 3. Install Dependensi PHP
 
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=nama_database
-   DB_USERNAME=nama_pengguna
-   DB_PASSWORD=kata_sandi
-   ```
+```bash
+composer install
+```
 
-   Gantilah `nama_database`, `nama_pengguna`, dan `kata_sandi` dengan informasi yang sesuai untuk database Anda.
+### 4. Install Dependensi JavaScript
 
-8. **Migrasi Database**:
-   Jalankan perintah berikut untuk melakukan migrasi database:
-   ```bash
-   php artisan migrate
-   ```
+```bash
+bun install
+```
 
-9. **Menjalankan Seeder User**:
-   Untuk mengisi database dengan data pengguna awal, jalankan perintah berikut:
-   ```bash
-   php artisan db:seed --class=UserSeeder
-   ```
+### 5. Generate Kunci Aplikasi
+
+```bash
+php artisan key:generate
+```
+
+### 6. Konfigurasi Database
+
+Edit `.env` sesuai database Anda:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=spmi_db
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+### 7. Jalankan Migrasi Database
+
+```bash
+php artisan migrate
+```
+
+### 8. Jalankan Seeder (Opsional — Data Awal)
+
+```bash
+php artisan db:seed --class=UserSeeder
+```
+
+---
 
 ## Menjalankan Aplikasi
 
-1. **Menjalankan Server Laravel**:
-   ```bash
-   php artisan serve
-   ```
+### Server Laravel (Backend)
 
-2. **Menjalankan Server Pengembangan Vite**:
-   ```bash
-   npm run dev
-   ```
+```bash
+php artisan serve
+```
 
-## Catatan
+Server berjalan di `http://127.0.0.1:8000`.  
+Jika port `8000` sudah dipakai, Laravel otomatis beralih ke `8001`.
+
+### Server Pengembangan Vite (Frontend)
+
+```bash
+bun dev
+```
+
+---
+
+## Menjalankan Tests
+
+### Jalankan Semua Test
+
+```bash
+php artisan test
+```
+
+### Jalankan Test Spesifik
+
+```bash
+# Hanya test autentikasi
+php artisan test --filter=AuthTest
+
+# Hanya test submit pelaksanaan
+php artisan test --filter=PelaksanaanSubmitTest
+
+# Hanya test halaman sheet
+php artisan test --filter=SheetPageTest
+```
+
+### Struktur Test
+
+```
+tests/
+├── Feature/
+│   ├── Auth/
+│   │   └── AuthTest.php           # Login, logout, redirect
+│   ├── Sheet/
+│   │   └── SheetPageTest.php      # Akses halaman sheet, role-based data
+│   ├── Pelaksanaan/
+│   │   └── PelaksanaanSubmitTest.php
+│   ├── Evaluasi/
+│   │   └── EvaluasiSubmitTest.php
+│   ├── Pengendalian/
+│   │   └── PengendalianSubmitTest.php
+│   └── Peningkatan/
+│       └── PeningkatanSubmitTest.php
+└── Unit/                          # (reserved untuk unit test murni)
+```
+
+> Test menggunakan **SQLite in-memory** dengan trait `RefreshDatabase` — tidak mempengaruhi database development Anda.
+
+---
+
+## Arsitektur
+
+```
+Browser → [GET /sheet/TI/2024/pendidikan]
+    → Laravel Router → Auth Middleware
+    → SheetController::show()
+        → (berdasarkan role) PelaksanaanController::getPelaksanaanData()
+    → Inertia::render('sheet', ['sheetData' => $data])
+    → Blade app.blade.php (mounting point)
+    → Vue app.js → Pages/sheet.vue menerima props
+```
+
+Semua submit data menggunakan `router.post()` dari `@inertiajs/vue3`, dan controller merespons dengan `back()->with('success', ...)`.
+
+---
+
+## Catatan Keamanan
+
+- **Axios `1.14.1` dan `0.30.4` diblokir permanen** via `overrides` di `package.json` (versi yang terkompromasi pada insiden supply chain Maret 2026).
+- Versi axios yang digunakan: `^1.15.0` (patch CVE-2025-27152, CVE-2025-58754, CVE-2025-62718).
+- Autentikasi menggunakan **Cookie Session Laravel** — tidak ada token API yang exposed ke localStorage.

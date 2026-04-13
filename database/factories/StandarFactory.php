@@ -2,24 +2,17 @@
 
 namespace Database\Factories;
 
+use App\Models\Penetapan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Standar>
- */
 class StandarFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'id_penetapan' => $this->faker->randomNumber(),
-            'note' => $this->faker->sentence,
-            'tipe' => $this->faker->randomElement(['input', 'proses', 'output']),
+            'id_penetapan' => Penetapan::factory(),
+            'note'         => $this->faker->sentence(),
+            'tipe'         => $this->faker->randomElement(['input', 'proses', 'output']),
         ];
     }
 }
