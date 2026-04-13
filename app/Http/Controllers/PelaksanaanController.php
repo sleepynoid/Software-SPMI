@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BuktiEvaluasi;
 use App\Models\BuktiPelaksanaan;
 use App\Models\Indikator;
-use App\Models\link;
+use App\Models\Link;
 use App\Models\Penetapan;
 use App\Models\Sheet;
 use App\Models\Standar;
@@ -16,7 +15,20 @@ use Illuminate\Support\Facades\Log;
 class PelaksanaanController extends Controller {
 
     public function getPelaksanaan($jurusan, $periode, $tipePendidikan, $tipe) {
-        $sheets = Sheet::where('jurusan', '=', $jurusan)
+        $sheets = Sheet::with([
+                'penetapan.standars' => function($q) use ($tipe) {
+                    $q->where('tipe', $tipe);
+                },
+                'penetapan.standars.indikator.target',
+                'penetapan.standars.indikator.buktiPelaksanaan',
+            ])
+            ->whereHas('jurusan', function($q) use ($jurusan) {
+                if (is_numeric($jurusan)) {
+                    $q->where('id', $jurusan);
+                } else {
+                    $q->where('nama', $jurusan)->orWhere('kode', $jurusan);
+                }
+            })
             ->where('periode', '=', $periode)
             ->where('tipe_sheet', '=', $tipePendidikan)
             ->get();
@@ -27,54 +39,31 @@ class PelaksanaanController extends Controller {
 
         $respond = [];
         foreach ($sheets as $shiit) {
-            $penetapan = Penetapan::where('id_sheet', '=', $shiit->id)->first();
+            $penetapan = $shiit->penetapan;
             if ($penetapan) {
-                $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', $tipe)->get();
-                $indikator = Indikator::all();
-                $target = Target::all();
-                $bukti = BuktiPelaksanaan::all();
-
-                foreach ($standars as $s) {
+                foreach ($penetapan->standars as $s) {
                     $data = [
                         'standar' => $s->note,
                         'indicators' => []
                     ];
 
-                    foreach ($indikator as $i) {
-                        if ($i->id_standar == $s->id) {
-                            $tar = null;
-                            foreach ($target as $t) {
-                                if ($t->id_indikator == $i->id) {
-                                    $tar = $t;
-                                }
-                            }
+                    foreach ($s->indikator as $i) {
+                        $tar = $i->target;
+                        $buk = $i->buktiPelaksanaan;
 
-                            $buk = '';
-                            $idB = '';
-                            $pelaksanaanEditor = '';
-                            foreach ($bukti as $b) {
-                                if ($b->id_indikator == $i->id) {
-                                    $buk = $b->komentar;
-                                    $idB = $b->id;
-                                    $pelaksanaanEditor = $b->edited_by;
-                                }
-                            }
-
-                            $newIndicator = [
-                                'idBuktiPelaksanaan' => $idB,
-                                'idPelaksanaan' => $shiit->id,
-                                'idIndikator' => $i->id,
-                                'indicator' => $i->note,
-                                'target' => $tar->value,
-                                'komentarPelaksanaan' => $buk,
-                                'editorPelaksanaan' => $pelaksanaanEditor,
-                                'isUpdate' => false,
-                            ];
-                            array_push($data['indicators'], $newIndicator);
-                        }
+                        $newIndicator = [
+                            'idBuktiPelaksanaan' => $buk ? $buk->id : '',
+                            'idPelaksanaan' => $shiit->id,
+                            'idIndikator' => $i->id,
+                            'indicator' => $i->note,
+                            'target' => $tar ? $tar->value : null,
+                            'komentarPelaksanaan' => $buk ? $buk->komentar : '',
+                            'editorPelaksanaan' => $buk ? $buk->edited_by : '',
+                            'isUpdate' => false,
+                        ];
+                        $data['indicators'][] = $newIndicator;
                     }
-
-                    array_push($respond, $data);
+                    $respond[] = $data;
                 }
             }
         }
@@ -82,8 +71,7 @@ class PelaksanaanController extends Controller {
         return response()->json($respond);
     }
 
-    public function submitPelaksanaan(Request $request)
-    {
+    public function submitPelaksanaan(Request $request) {
         try {
             $validatedData = $request->validate([
                 'data.idIndikator'         => 'required|exists:indikators,id',
@@ -121,14 +109,15 @@ class PelaksanaanController extends Controller {
     }
 
     public function getLink($idBukti, $tipeLink) {
-        $data = link::where('id_bukti', $idBukti)->where('tipe_link', $tipeLink)->get();
+        $type = $tipeLink === 'Pelaksanaan' ? \App\Models\BuktiPelaksanaan::class : \App\Models\BuktiEvaluasi::class;
+        $data = Link::where('linkable_id', $idBukti)->where('linkable_type', $type)->get();
 
         return response()->json($data);
     }
 
     public function deleteLink(Request $request) {
         $id = $request->input('idLink');
-        $link = link::find($id);
+        $link = Link::find($id);
 
         if ($link) {
             $link->delete();
@@ -136,12 +125,12 @@ class PelaksanaanController extends Controller {
 
         return response()->json("deleted");
     }
-    public function postLink(Request $request)
-    {
+
+    public function postLink(Request $request) {
         try {
             $validatedData = $request->validate([
-                'data.id' => 'nullable|string',
-                'data.idBukti' => 'required|string',
+                'data.id' => 'nullable',
+                'data.idBukti' => 'required',
                 'data.judul_link' => 'required|string',
                 'data.link' => 'required|url',
                 'data.tipeLink' => 'required|string',
@@ -150,44 +139,33 @@ class PelaksanaanController extends Controller {
             $id = $validatedData['data']['id'] ?? null;
             $idBukti = $validatedData['data']['idBukti'];
             $judulLink = $validatedData['data']['judul_link'];
-            $link = $validatedData['data']['link'];
+            $linkUrl = $validatedData['data']['link'];
             $tipeLink = $validatedData['data']['tipeLink'];
+            $type = $tipeLink === 'Pelaksanaan' ? \App\Models\BuktiPelaksanaan::class : \App\Models\BuktiEvaluasi::class;
 
             if ($id) {
                 $linkData = Link::find($id);
                 if ($linkData) {
                     $linkData->update([
-//                        'id_bukti' => $idBukti,
-//                        'tipe_link' => $tipeLink,
-                        'link' => $link,
+                        'link' => $linkUrl,
                         'judul_link' => $judulLink,
                     ]);
                 } else {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Data tidak ditemukan untuk diperbarui'
-                    ], 404);
+                    return response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan'], 404);
                 }
             } else {
                 Link::create([
-                    'id_bukti' => $idBukti,
-                    'tipe_link' => $tipeLink,
-                    'link' => $link,
+                    'linkable_id' => $idBukti,
+                    'linkable_type' => $type,
+                    'link' => $linkUrl,
                     'judul_link' => $judulLink,
                 ]);
             }
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Link berhasil disimpan'
-            ], 200);
+            return response()->json(['status' => 'success', 'message' => 'Link berhasil disimpan'], 200);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Terjadi kesalahan saat menyimpan link',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
 }

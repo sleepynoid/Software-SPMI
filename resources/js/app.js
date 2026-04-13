@@ -36,7 +36,11 @@ import {
     Toolbar, Tooltip,
 } from "primevue";
 
+import { createPinia } from 'pinia';
+
 const appVue = createApp(app);
+const pinia = createPinia();
+appVue.use(pinia);
 appVue.use(router);
 appVue.use(PrimeVue, {
     theme: {
@@ -91,5 +95,9 @@ appVue.component("StepItem", StepItem);
 appVue.component("Step", Step);
 appVue.component("StepPanel", StepPanel);
 appVue.directive("ripple", Ripple);
+
+if (import.meta.env.DEV) {
+    appVue.config.devtools = true;
+}
 
 appVue.mount("#app");

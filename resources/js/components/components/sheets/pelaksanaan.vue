@@ -5,7 +5,7 @@ import {useToast} from "primevue";
 import ConfirmPopup from "primevue/confirmpopup";
 import {useConfirm} from "primevue/useconfirm";
 const ModalLink = defineAsyncComponent({
-    loader: () => import('./modal/modalLink.vue'),
+    loader: () => import('./modal/ModalLink.vue'),
 });
 
 const props = defineProps<{

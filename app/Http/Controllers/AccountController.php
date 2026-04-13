@@ -96,6 +96,11 @@ class AccountController extends Controller
     }
     public function logout(Request $request): JsonResponse
     {
+        // Hapus token Sanctum
+        if ($request->user()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
         // Hapus session Laravel
         Auth::guard('web')->logout();
 
@@ -103,10 +108,12 @@ class AccountController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        $cookie = cookie()->forget('auth_token');
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil logout'
-        ]);
+        ])->withCookie($cookie);
     }
 
     public function listUser(): JsonResponse

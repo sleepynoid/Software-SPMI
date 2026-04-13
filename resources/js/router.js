@@ -9,15 +9,14 @@ import Login from "./components/views/login.vue";
 import NotFound from "./components/notFound.vue";
 import HomeAdmin from "./components/views/homeAdmin.vue";
 
+import { useAuthStore } from "./stores/auth.js";
+
 const isAuthenticated = async () => {
-    try {
-        const response = await axios.get("/api/user", {
-            withCredentials: true,
-        });
-        return response.data;
-    } catch (error) {
-        return false;
+    const authStore = useAuthStore();
+    if (!authStore.isLoaded) {
+        await authStore.fetchUser();
     }
+    return authStore.user;
 };
 
 const router = createRouter({

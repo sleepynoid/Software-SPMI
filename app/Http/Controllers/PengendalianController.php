@@ -2,23 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BuktiPelaksanaan;
 use App\Models\BuktiPengendalian;
-use App\Models\BuktiEvaluasi;
-use App\Models\Evaluasi;
-use App\Models\Indikator;
-use App\Models\Penetapan;
-use App\Models\Peningkatan;
 use App\Models\Sheet;
-use App\Models\Standar;
-use App\Models\Target;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PengendalianController extends Controller
 {
     public function getPengendalian($jurusan, $periode, $tipePendidikan, $tipe) {
-        $sheets = Sheet::where('jurusan', '=', $jurusan)
+        $sheets = Sheet::with([
+                'penetapan.standars' => function($q) use ($tipe) {
+                    $q->where('tipe', $tipe);
+                },
+                'penetapan.standars.indikator.target',
+                'penetapan.standars.indikator.buktiPelaksanaan.buktiEvaluasi.buktiPengendalian',
+            ])
+            ->whereHas('jurusan', function($q) use ($jurusan) {
+                if (is_numeric($jurusan)) {
+                    $q->where('id', $jurusan);
+                } else {
+                    $q->where('nama', $jurusan)->orWhere('kode', $jurusan);
+                }
+            })
             ->where('periode', '=', $periode)
             ->where('tipe_sheet', '=', $tipePendidikan)
             ->get();
@@ -29,99 +34,46 @@ class PengendalianController extends Controller
 
         $respond = [];
         foreach ($sheets as $shiit) {
-            $penetapan = Penetapan::where('id_sheet', '=', $shiit->id)->first();
+            $penetapan = $shiit->penetapan;
             if ($penetapan) {
-                $standars = Standar::where('id_penetapan', $penetapan->id)->where('tipe', '=', $tipe)->get();
-                $indikator = Indikator::all();
-                $target = Target::all();
-                $bukti = BuktiPelaksanaan::all();
-                $buktieval = BuktiEvaluasi::all();
-                $buktiPengendalian = BuktiPengendalian::all();
-
-                foreach ($standars as $s) {
+                foreach ($penetapan->standars as $s) {
                     $data = [
                         'standar' => $s->note,
                         'indicators' => []
                     ];
 
-                    foreach ($indikator as $i) {
-                        if ($i->id_standar == $s->id) {
-                            $tar = null;
-                            foreach ($target as $t) {
-                                if ($t->id_indikator == $i->id) {
-                                    $tar = $t;
-                                }
-                            }
+                    foreach ($s->indikator as $i) {
+                        $tar = $i->target;
+                        $b = $i->buktiPelaksanaan;
+                        $e = $b ? $b->buktiEvaluasi : null;
+                        $bp = $e ? $e->buktiPengendalian : null;
 
-                            $buk = '';
-                            $idB = '';
-                            $pelaksanaanEditor = '';
-                            $eva = '';
-                            $adj = '';
-                            $evalEditor = '';
-                            $idE = '';
-                            $idBE = '';
-                            $idBPengendalian = '';
-                            $temuan = '';
-                            $akar_masalah = '';
-                            $rtl = '';
-                            $pelaksanaan_rtl = '';
-                            $pengendalianEditor = '';
-                            foreach ($bukti as $b) {
-                                if ($b->id_indikator == $i->id) {
-                                    $buk = $b->komentar;
-                                    $idB = $b->id;
-                                    $pelaksanaanEditor = $b->edited_by;
+                        $newIndicator = [
+                            'idPelaksanaan' => $shiit->id,
+                            'id' => $i->id,
+                            'indicator' => $i->note,
+                            'target' => $tar ? $tar->value : null,
+                            'idBukti' => $b ? $b->id : '',
+                            'bukti' => $b ? $b->komentar : '',
+                            'editorPelaksanaan' => $b ? $b->edited_by : '',
 
-                                    foreach ($buktieval as $e) {
-                                        if ($e->id_bukti_pelaksanaan == $b->id) {
-                                            $idBE = $e->id;
-                                            $eva = $e->komentar;
-                                            $adj = $e->adjustment;
-                                            $idE = $e->id_evaluasi;
-                                            $evalEditor = $e->edited_by;
+                            'idEvaluasi' => $shiit->id,
+                            'idBuktiEvaluasi' => $e ? $e->id : '',
+                            'evaluasi' => $e ? $e->komentar : '',
+                            'adjusment' => $e ? $e->adjustment : '',
+                            'editorEval' => $e ? $e->edited_by : '',
 
-                                            foreach ($buktiPengendalian as $bp) {
-                                                if ($bp->id_bukti_evaluasi == $e->id) {
-                                                    $idBPengendalian = $bp->id;
-                                                    $temuan = $bp->temuan;
-                                                    $akar_masalah = $bp->akar_masalah;
-                                                    $rtl = $bp->rtl;
-                                                    $pelaksanaan_rtl = $bp->pelaksanaan_rtl;
-                                                    $pengendalianEditor = $bp->edited_by;
-                                                }
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-
-                            $newIndicator = [
-                                'idPelaksanaan' => $shiit->id,
-                                'id' => $i->id,
-                                'indicator' => $i->note,
-                                'target' => $tar->value,
-                                'idBukti' => $idB,
-                                'bukti' => $buk,
-                                'editorPelaksanaan' => $pelaksanaanEditor,
-                                'idEvaluasi' => $idE,
-                                'idBuktiEvaluasi' => $idBE,
-                                'evaluasi' => $eva,
-                                'adjusment' => $adj,
-                                'editorEval' => $evalEditor,
-                                'idBPengendalian' => $idBPengendalian,
-                                'temuan' => $temuan,
-                                'akarMasalah' => $akar_masalah,
-                                'rtl' => $rtl,
-                                'pelaksanaanRtl' => $pelaksanaan_rtl,
-                                'editorPengendali' => $pengendalianEditor,
-                            ];
-                            array_push($data['indicators'], $newIndicator);
-                        }
+                            'idBPengendalian' => $bp ? $bp->id : '',
+                            'temuan' => $bp ? $bp->temuan : '',
+                            'akarMasalah' => $bp ? $bp->akar_masalah : '',
+                            'rtl' => $bp ? $bp->rtl : '',
+                            'pelaksanaanRtl' => $bp ? $bp->pelaksanaan_rtl : '',
+                            'editorPengendali' => $bp ? $bp->edited_by : '',
+                        ];
+                        $data['indicators'][] = $newIndicator;
                     }
 
-                    array_push($respond, $data);
+                    $respond[] = $data;
                 }
             }
         }
@@ -129,8 +81,7 @@ class PengendalianController extends Controller
         return response()->json($respond);
     }
 
-    public function submitPengendalian(Request $request)
-    {
+    public function submitPengendalian(Request $request) {
         try {
             $validatedData = $request->validate([
                 'data.idBuktiEvaluasi'   => 'required|exists:bukti_evaluasis,id',
@@ -171,5 +122,4 @@ class PengendalianController extends Controller
             ], 500);
         }
     }
-
 }

@@ -6,10 +6,10 @@ import { useConfirm } from "primevue/useconfirm";
 import {fetchPeningkatan, submitPeningkatan, usePeningkatan} from "../../stores/usePeningkatan";
 
 const ModalShow = defineAsyncComponent({
-    loader: () => import('./modal/modalShow.vue'),
+    loader: () => import('./modal/ModalShow.vue'),
 });
 const ModalLink = defineAsyncComponent({
-    loader: () => import('./modal/modalLink.vue'),
+    loader: () => import('./modal/ModalLink.vue'),
 });
 const props = defineProps<{
     jurusan: string,

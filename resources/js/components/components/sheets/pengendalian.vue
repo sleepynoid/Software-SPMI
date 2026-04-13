@@ -6,10 +6,10 @@ import {useConfirm} from "primevue/useconfirm";
 import ConfirmPopup from "primevue/confirmpopup";
 
 const ModalLink = defineAsyncComponent({
-    loader: () => import('./modal/modalLink.vue'),
+    loader: () => import('./modal/ModalLink.vue'),
 });
 const ModalShow = defineAsyncComponent({
-    loader: () => import('./modal/modalShow.vue'),
+    loader: () => import('./modal/ModalShow.vue'),
 });
 const props = defineProps<{
     jurusan: string,
