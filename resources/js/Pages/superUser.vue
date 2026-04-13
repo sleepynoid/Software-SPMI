@@ -1,74 +1,40 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from "@inertiajs/vue3";
-import Pelaksanaan from "../components/sheets/pelaksanaan.vue";
-import Pengendalian from "../components/sheets/pengendalian.vue";
-import Evaluasi from "../components/sheets/evaluasi.vue";
-import Peningkatan from "../components/sheets/peningkatan.vue";
-import {getUserName} from "../stores/commonStore.js";
+import { ref, computed } from 'vue';
+import { router, usePage } from "@inertiajs/vue3";
 
+const page = usePage();
+const auth = computed(() => (page.props.auth as any));
+const name = computed(() => auth.value?.user?.name ?? '');
 
-// const role = getUserRole();
-const name = getUserName();
-const route = useRoute();
-
-const periode = ref<string>(route.params.periode.toString());
-const jurusan = ref<string>(route.params.jurusan.toString());
-const tipe = ref<string>(route.params.tipe.toString());
-
+const props = defineProps<{
+    jurusan: string,
+    periode: string,
+    tipeSheet: string,
+}>();
 
 const roleUser = ['Pelaksanaan','Evaluasi', 'Pengendalian', 'Peningkatan'];
 const role = ref<string>(roleUser[0]);
-
 </script>
 
 <template>
     <div class="max-h-full h-full w-full">
         <Toast />
-        <Select v-model="role" :options="roleUser" placeholder="Select a City" class="w-full md:w-50 h-10 mb-3" />
+        <Select v-model="role" :options="roleUser" placeholder="Select a Role" class="w-full md:w-50 h-10 mb-3" />
         <Panel class="w-full overflow-x-hidden">
             <div class="pb-[3%]">
-                <Pelaksanaan
-                    v-if="role=== 'Pelaksanaan'"
+                <p class="text-gray-500 text-sm mb-2">Viewing as: <strong>{{ name }}</strong></p>
+                <component
+                    :is="role"
                     :jurusan="jurusan"
                     :periode="periode"
-                    :tipeSheet="tipe"
+                    :tipeSheet="tipeSheet"
                     :role="role"
                     :username="name"
                 />
-
-                <Evaluasi
-                    v-else-if="role=== 'Evaluasi'"
-                    :jurusan="jurusan"
-                    :periode="periode"
-                    :tipeSheet="tipe"
-                    :role="role"
-                    :username="name"
-                />
-
-                <Pengendalian
-                    v-else-if="role=== 'Pengendalian'"
-                    :jurusan="jurusan"
-                    :periode="periode"
-                    :tipeSheet="tipe"
-                    :role="role"
-                    :username="name"
-                />
-                <Peningkatan
-                    v-else-if="role=== 'Peningkatan'"
-                    :jurusan="jurusan"
-                    :periode="periode"
-                    :tipeSheet="tipe"
-                    :role="role"
-                    :username="name"
-                    @isUpdate=""
-                />
-
             </div>
         </Panel>
     </div>
 </template>
 
 <style scoped>
-
 </style>

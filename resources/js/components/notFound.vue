@@ -1,12 +1,12 @@
 <script setup>
-
+import { Link } from '@inertiajs/vue3'
 </script>
 
 <template>
     <div class="not-found">
         <h1>404</h1>
         <p>Oops! Halaman yang kamu cari tidak ditemukan ea</p>
-        <router-link to="/">Mbalek mbalek 🗿🗿</router-link>
+        <Link href="/">Mbalek mbalek 🗿🗿</Link>
     </div>
 </template>
 

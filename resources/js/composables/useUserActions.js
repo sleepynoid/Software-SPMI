@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 export function useUserActions(setShowEditModal, setSelectedUser, showResetModal, setShowHistoryModal) {
   const menuItems = ref([
@@ -37,15 +38,11 @@ export function useUserActions(setShowEditModal, setSelectedUser, showResetModal
     setShowEditModal(true);
   };
 
-  const deleteUser = async (user) => {
+  const deleteUser = (user) => {
     if (confirm(`Are you sure you want to delete ${user.name}?`)) {
-      try {
-        await axios.delete(`/api/admin/delete/${user.id}`);
-        return true;
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        return false;
-      }
+      router.delete(`/admin/users/${user.id}`, {
+        preserveScroll: true,
+      });
     }
   };
 
@@ -54,11 +51,5 @@ export function useUserActions(setShowEditModal, setSelectedUser, showResetModal
     menuItems.value.forEach(item => item.instance = user);
   };
 
-  return {
-    menuItems,
-    toggleMenu,
-    viewHistory,
-    editRole,
-    deleteUser,
-  };
+  return { menuItems, toggleMenu, viewHistory, editRole, deleteUser };
 }

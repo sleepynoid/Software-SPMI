@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { router } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
 import { FilterMatchMode } from "@primevue/core";
 
-// const router = useRouter();
-// Filters
+// Data sheets dikirim dari HomeController sebagai Inertia prop
+const page = usePage();
+const availableSheets = computed(() => page.props.sheets ?? []);
+const loading = ref(false);
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     jurusan: { value: null, matchMode: FilterMatchMode.IN },
@@ -16,8 +18,7 @@ const selectedRow = ref(null);
 const selectedMajor = ref(null); // Selected major
 const selectedType = ref(null); // Selected major
 const periode = ref(null); // Selected period
-const loading = ref(true); // Loading state (initially true)
-const availableSheets = ref([]); // Stores available sheets fetched from the API
+
 
 // Variabel for filter options
 const jurusanOptions = computed(() =>
@@ -29,28 +30,6 @@ const tipeOptions = computed(() =>
 const periodeOptions = computed(() =>
     Array.from(new Set(availableSheets.value.map((sheet) => sheet.periode)))
 );
-
-// Role (for conditional rendering)
-const role = ref("User"); // Change this to "SuperUser" to test the SuperUser button
-
-// Fetch data on component mount
-onMounted(async () => {
-    try {
-        loading.value = true;
-        // await new Promise(resolve => setTimeout(resolve, 10000)); // Simulate a delay of 10 seconds
-        const response = await fetch("/api/getAllSheet");
-        if (response.status === 200) {
-            const data = await response.json();
-            availableSheets.value = data; // Update available sheets with fetched data
-        } else {
-            console.error("Error fetching sheet data:", response.statusText);
-        }
-    } catch (error) {
-        console.error("Error fetching sheet data:", error);
-    } finally {
-        loading.value = false; // Set loading to false after fetch completes
-    }
-});
 
 // Filtered Data
 const filteredData = computed(() => {

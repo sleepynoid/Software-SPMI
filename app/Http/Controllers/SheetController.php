@@ -35,6 +35,18 @@ class SheetController extends Controller {
         return response()->json($responseData, 200);
     }
 
+    public function getAllSheetForInertia(): array {
+        return Sheet::with('jurusan')
+            ->get()
+            ->map(fn ($s) => [
+                'id'      => $s->id,
+                'jurusan' => $s->jurusan?->nama ?? $s->jurusan?->kode ?? '-',
+                'tipe'    => $s->tipe_sheet,
+                'periode' => $s->periode,
+            ])
+            ->toArray();
+    }
+
     public function downloadExcel() {
         return response()->download(storage_path('../dokumentasi/example.xlsx'));
     }

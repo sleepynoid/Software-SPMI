@@ -1,4 +1,5 @@
 import { ref, reactive } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
 import { useToast } from 'primevue';
 
 export function useUserManagement() {
@@ -20,7 +21,7 @@ export function useUserManagement() {
     { name: 'Pelaksanaan', value: 'Pelaksanaan' },
     { name: 'Peningkatan', value: 'Peningkatan' },
     { name: 'Pengendalian', value: 'Pengendalian' },
-    { name: 'Admin', value: 'Admin' }
+    { name: 'Admin', value: 'Admin' },
   ];
 
   const showEditModal = ref(false);
@@ -31,7 +32,6 @@ export function useUserManagement() {
   const newPassword = ref('');
   const resetSubmitted = ref(false);
 
-  // User history related states
   const showHistoryModal = ref(false);
   const userHistory = ref([]);
   const isLoadingHistory = ref(false);
@@ -39,48 +39,38 @@ export function useUserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/admin/listuser');
-      const data = await response.json();
-      users.value = data;
+      const response = await fetch('/admin/users', {
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin',
+      });
+      users.value = await response.json();
     } catch (error) {
       console.error('Failed to fetch users:', error);
     }
   };
 
-  const registerUser = async () => {
+  const registerUser = () => {
     submitted.value = true;
+    if (!newUser.email || !newUser.name || !newUser.role || !newUser.password) return;
 
-    if (newUser.email && newUser.name && newUser.role && newUser.password) {
-      try {
-        const response = await axios.post('/api/admin/registerUser', {
-          name: newUser.name,
-          email: newUser.email,
-          password: newUser.password,
-          role: newUser.role,
-        });
-        toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'User registered successfully',
-          life: 3000,
-        });
+    router.post('/admin/users', { ...newUser }, {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.add({ severity: 'success', summary: 'Success', detail: 'User registered successfully', life: 3000 });
         showModal.value = false;
-        await fetchUsers();
+        fetchUsers();
         resetForm();
-      } catch (error) {
-        console.error('Error registering user:', error.response.data);
-      }
-    }
+      },
+      onError: (errors) => {
+        const msg = Object.values(errors).join(', ');
+        toast.add({ severity: 'error', summary: 'Error', detail: msg, life: 5000 });
+      },
+    });
   };
 
   const resetForm = () => {
     submitted.value = false;
-    Object.assign(newUser, {
-      email: '',
-      name: '',
-      role: '',
-      password: '',
-    });
+    Object.assign(newUser, { email: '', name: '', role: '', password: '' });
   };
 
   const closeModal = () => {
@@ -88,83 +78,69 @@ export function useUserManagement() {
     resetForm();
   };
 
-  const updateUserRole = async () => {
+  const updateUserRole = () => {
     editSubmitted.value = true;
+    if (!selectedUser.value?.role) return;
 
-    if (selectedUser.value && selectedUser.value.role) {
-      try {
-        const response = await axios.post('/api/admin/edit/role', {
-          user_id: selectedUser.value.id,
-          new_role: selectedUser.value.role
-        });
-        toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Role updated successfully',
-          life: 3000,
-        });
+    router.post('/admin/users/role', {
+      user_id: selectedUser.value.id,
+      new_role: selectedUser.value.role,
+    }, {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Role updated successfully', life: 3000 });
         showEditModal.value = false;
-        await fetchUsers();
+        fetchUsers();
         editSubmitted.value = false;
-      } catch (error) {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update role',
-          life: 3000,
-        });
-      }
-    }
+      },
+      onError: () => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update role', life: 3000 });
+      },
+    });
   };
 
-  const resetUserPassword = async () => {
+  const resetUserPassword = () => {
     resetSubmitted.value = true;
+    if (!selectedUser.value || !newPassword.value) return;
 
-    if (selectedUser.value && newPassword.value) {
-      try {
-        const response = await axios.post('/api/admin/reset-password', {
-          user_id: selectedUser.value.id,
-          new_password: newPassword.value
-        });
-
-        toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Password reset successfully',
-          life: 3000,
-        });
+    router.post('/admin/users/password', {
+      user_id: selectedUser.value.id,
+      new_password: newPassword.value,
+    }, {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Password reset successfully', life: 3000 });
         showResetModal.value = false;
         newPassword.value = '';
         resetSubmitted.value = false;
-      } catch (error) {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to reset password',
-          life: 3000,
-        });
-      }
-    }
+      },
+      onError: () => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to reset password', life: 3000 });
+      },
+    });
   };
 
   const fetchUserHistory = async () => {
+    if (!selectedUser.value) return;
     isLoadingHistory.value = true;
     historyError.value = null;
     try {
-      const response = await axios.post('/api/api-logs-user', {
-        username: selectedUser.value.name
+      const response = await fetch('/admin/api-logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ username: selectedUser.value.name }),
       });
-      // console.log(response.data.data)
-      userHistory.value = await response.data.data;
+      const json = await response.json();
+      userHistory.value = json.data ?? [];
     } catch (error) {
-      console.error('Error getting user history:', error);
-      historyError.value = error.response?.data?.message || 'Failed to fetch user history';
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to fetch user history',
-        life: 3000,
-      });
+      historyError.value = 'Failed to fetch user history';
+      toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch user history', life: 3000 });
     } finally {
       isLoadingHistory.value = false;
     }
@@ -172,35 +148,16 @@ export function useUserManagement() {
 
   const viewUserHistory = async (user) => {
     selectedUser.value = user;
-    await fetchUserHistory(user);
+    await fetchUserHistory();
     showHistoryModal.value = true;
   };
 
   return {
-    users,
-    showModal,
-    submitted,
-    menu,
-    newUser,
-    roles,
-    fetchUsers,
-    registerUser,
-    closeModal,
-    resetForm,
-    showEditModal,
-    selectedUser,
-    editSubmitted,
-    updateUserRole,
-    showResetModal,
-    newPassword,
-    resetSubmitted,
-    resetUserPassword,
-    // User history related returns
-    showHistoryModal,
-    userHistory,
-    isLoadingHistory,
-    historyError,
-    viewUserHistory,
-    fetchUserHistory
+    users, showModal, submitted, menu, newUser, roles,
+    fetchUsers, registerUser, closeModal, resetForm,
+    showEditModal, selectedUser, editSubmitted, updateUserRole,
+    showResetModal, newPassword, resetSubmitted, resetUserPassword,
+    showHistoryModal, userHistory, isLoadingHistory, historyError,
+    viewUserHistory, fetchUserHistory,
   };
 }

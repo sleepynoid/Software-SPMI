@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {ref, toRefs, watch, watchEffect} from "vue";
+import {ref, toRefs, watch} from "vue";
 import {onClickOutside, useMagicKeys} from "@vueuse/core";
-import {deleteLink, fetchLink, LinkPayload, submitLink, useLink} from "../../../stores/useLink";
 import {useToast} from "primevue";
 import {useConfirm} from "primevue/useconfirm";
 import ConfirmPopup from "primevue/confirmpopup";
+
 const {escape} = useMagicKeys()
 
 const props = defineProps<{
@@ -17,51 +17,60 @@ const confirm = useConfirm();
 
 const { role, idBukti, tipeLink } = toRefs(props);
 const isModal = ref<boolean>(false);
-const loading = ref<boolean>(true);
+const linkLoading = ref<boolean>(false);
 const modal = ref<any>(null);
 const list = ref<any[]>([]);
-const payload = ref<LinkPayload>(
-    {
-        id: '',
-        idBukti: '',
-        judul_link: '',
-        link: '',
-        tipeLink: '',
-    }
-)
+const payload = ref({
+    id: '',
+    idBukti: '',
+    judul_link: '',
+    link: '',
+    tipeLink: '',
+});
 
-watch(escape, (v) => {
-    if (v) {
-        isModal.value = false;
-        handleInitial()
-    }
-})
-watch(isModal, async ()=> {
-    if (isModal){
-        list.value = await fetchLink(props.idBukti, props.tipeLink)
-    }
-})
+const csrfToken = (): string =>
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 
-const handleSubmitLink = async () => {
-    payload.value.idBukti = props.idBukti.toString()
-    payload.value.tipeLink = props.tipeLink
+const fetchLinks = async () => {
+    if (!props.idBukti) return;
+    try {
+        const resp = await fetch(`/api/getLink/${props.idBukti}/${props.tipeLink}`, {
+            credentials: 'same-origin',
+        });
+        list.value = resp.ok ? await resp.json() : [];
+    } catch {
+        list.value = [];
+    }
+};
 
-    if (
-        !payload.value.link.toLowerCase().startsWith('https://') ||
-        !payload.value.link.toLowerCase().startsWith('http://')
-    ) {
+const submitLink = async () => {
+    payload.value.idBukti  = props.idBukti.toString();
+    payload.value.tipeLink = props.tipeLink;
+
+    if (!payload.value.link.toLowerCase().startsWith('https://') && !payload.value.link.toLowerCase().startsWith('http://')) {
         payload.value.link = 'https://' + payload.value.link;
     }
 
-    const response = await submitLink(payload.value);
-    list.value = await fetchLink(props.idBukti, props.tipeLink)
-    handleInitial()
-    if (response == 200){
-        toast.add({ severity: 'success', summary: 'Success saving link', detail: 'Link saved', life: 3000 });
-    } else {
-        toast.add({ severity: 'danger', summary: 'Something went wrong', detail: 'Error submiting link', life: 3000 });
+    linkLoading.value = true;
+    try {
+        const resp = await fetch('/api/submitLink', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
+            body: JSON.stringify({ data: payload.value }),
+        });
+        const status = resp.status;
+        await fetchLinks();
+        handleInitial();
+        if (status === 200) {
+            toast.add({ severity: 'success', summary: 'Tersimpan', detail: 'Link disimpan', life: 3000 });
+        } else {
+            toast.add({ severity: 'error', summary: 'Gagal', detail: 'Error menyimpan link', life: 3000 });
+        }
+    } finally {
+        linkLoading.value = false;
     }
-}
+};
 
 const handleDeleteLink = async (event, idLink: string) => {
     confirm.require({
@@ -69,47 +78,38 @@ const handleDeleteLink = async (event, idLink: string) => {
         group: 'headless',
         message: 'Delete link?',
         accept: async () => {
-            await deleteLink(idLink)
-            list.value = await fetchLink(props.idBukti, props.tipeLink)
+            await fetch('/api/deleteLink', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
+                body: JSON.stringify({ idLink }),
+            });
+            await fetchLinks();
             toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Link deleted!', life: 3000 });
         },
-        reject: () => {
-            // toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-        }
+        reject: () => {},
     });
-
-}
+};
 
 const handleInitial = (data?: any) => {
-    if (data){
+    if (data) {
         payload.value = {
             id: data.id.toString(),
             idBukti: data.id_bukti,
             judul_link: data.judul_link,
             link: data.link,
             tipeLink: data.tipe_link,
-        }
-    }else {
-        id: '',
-        payload.value = {
-            idBukti: '',
-            judul_link: '',
-            link: '',
-            tipeLink: '',
-        }
+        };
+    } else {
+        payload.value = { id: '', idBukti: '', judul_link: '', link: '', tipeLink: '' };
     }
+};
 
-}
+const openLink = (link) => { window.open(link, "_blank"); };
 
-const openLink = (link) => {
-    window.open(link, "_blank")
-}
-
-onClickOutside(modal, () => {
-    isModal.value = false;
-    handleInitial();
-});
-
+watch(escape, (v) => { if (v) { isModal.value = false; handleInitial(); } });
+watch(isModal, async () => { if (isModal.value) await fetchLinks(); });
+onClickOutside(modal, () => { isModal.value = false; handleInitial(); });
 </script>
 
 <template>
@@ -155,10 +155,10 @@ onClickOutside(modal, () => {
                                 class="w-[50%]"
                             />
                             <Button
-                                @click="handleSubmitLink"
+                                @click="submitLink"
                                 icon="pi pi-save"
                                 severity="info"
-                                :disabled="payload.judul_link && payload.link && useLink.loading"
+                                :disabled="!payload.judul_link || !payload.link || linkLoading"
                                 class="w-[20rem]"
                                 raised
                             />
@@ -195,7 +195,7 @@ onClickOutside(modal, () => {
                                                 icon="pi pi-pen-to-square"
                                                 severity="info"
                                                 raised
-                                                :disabled="useLink.loading || !props.role == props.tipeLink"
+                                                :disabled="linkLoading || props.role !== props.tipeLink"
                                                 @click="handleInitial(data)"
                                             />
                                             <Button
@@ -203,7 +203,7 @@ onClickOutside(modal, () => {
                                                 icon="pi pi-trash"
                                                 severity="danger"
                                                 raised
-                                                :disabled="useLink.loading || !props.role == props.tipeLink"
+                                                :disabled="linkLoading || props.role !== props.tipeLink"
                                                 @click="handleDeleteLink($event, data?.id!)"
                                             />
                                         </ButtonGroup>

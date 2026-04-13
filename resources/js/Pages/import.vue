@@ -4,10 +4,10 @@ import XlsxTable from "../components/upload/XlsxTable.vue";
 import XlsxSheets from "../components/upload/XlsxSheets.vue";
 import { router } from "@inertiajs/vue3";
 import { ref } from "vue";
-import axios from "axios";
 import { Button } from "primevue";
 
-// const router = useRouter();
+const csrfToken = () =>
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 const file = ref(null);
 const selectedSheet = ref(null);
 const department = ref("");
@@ -62,18 +62,18 @@ const submitData = async () => {
     formData.append("note", note.value);
 
     try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post("api/penetapan/import", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch("/api/penetapan/import", {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'X-CSRF-TOKEN': csrfToken() },
+            body: formData,
         });
-        if (response.data.success) {
-            alert(response.data.message);
-            router.push("/");
+        const data = await response.json();
+        if (data.success) {
+            alert(data.message);
+            router.visit("/");
         } else {
-            alert("Error: " + response.data.message);
+            alert("Error: " + data.message);
         }
     } catch (error) {
         console.error("Error mengirim file:", error);
@@ -93,21 +93,19 @@ function generateYearRange() {
 
 const downloadFile = async () => {
     try {
-        const response = await axios({
-            url: "/api/downloadSheet",
-            method: "GET",
-            responseType: "blob",
+        const response = await fetch("/api/downloadSheet", {
+            credentials: 'same-origin',
         });
-
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "TemplatePenetapan.xlsx"); // Nama file saat diunduh
+        link.setAttribute("download", "TemplatePenetapan.xlsx");
         document.body.appendChild(link);
         link.click();
         link.remove();
     } catch (error) {
-        console.error("Download failed:", error.response.data);
+        console.error("Download failed:", error);
     }
 };
 </script>

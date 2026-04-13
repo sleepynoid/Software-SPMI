@@ -186,7 +186,7 @@ import { onMounted, watch } from "vue";
 import { useUserManagement } from "@/composables/useUserManagement";
 import { useUserActions } from "@/composables/useUserActions";
 import { Toast, useToast } from "primevue";
-import ModalHistoryUser from "../components/admin/modalHistoryUser.vue";
+import { usePage } from "@inertiajs/vue3";
 
 const toast = useToast();
 const {
@@ -228,21 +228,10 @@ const { menuItems, toggleMenu } = useUserActions(
 
 
 onMounted(() => {
-    const toastMessage = localStorage.getItem("toastMessage");
-    const toastSeverity = localStorage.getItem("toastSeverity");
-
-    if (toastMessage) {
-        toast.add({
-            severity: toastSeverity || "success",
-            summary: "Success",
-            detail: toastMessage,
-            life: 3000,
-        });
-
-        localStorage.removeItem("toastMessage");
-        localStorage.removeItem("toastSeverity");
+    const flash = usePage().props.flash;
+    if (flash && flash.success) {
+        toast.add({ severity: 'success', summary: 'Success', detail: flash.success, life: 3000 });
     }
-
     fetchUsers();
 });
 

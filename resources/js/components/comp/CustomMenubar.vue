@@ -26,18 +26,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { Avatar, Menubar } from "primevue";
-import CryptoJS from "crypto-js";
-import {getUserName, getUserRole} from "../stores/commonStore.js";
-import axios from "axios";
 
-// const router = useRouter();
-const user = getUserName();
-const role = getUserRole();
+const page = usePage();
+const user = computed(() => (page.props.auth as any)?.user?.name ?? '');
+const role = computed(() => (page.props.auth as any)?.user?.role ?? '');
 
-
-const loading = ref(false);
 const menu = ref(null);
 
 const toggleMenu = (e) => {
@@ -46,7 +41,7 @@ const toggleMenu = (e) => {
 
 const profileMenu = computed(() => [
     {
-        label: `${user} (${role})`,
+        label: `${user.value} (${role.value})`,
         icon: "pi pi-user",
         disabled: true,
     },
@@ -57,28 +52,8 @@ const profileMenu = computed(() => [
     },
 ]);
 
-const logout = async () => {
-    try {
-        loading.value = true;
-        const response = await axios.post(
-            "/api/logout",
-            {},
-            {
-                withCredentials: true,
-            }
-        );
-        loading.value = false;
-
-        if (response.data.success) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("userRole");
-            router.push("/login");
-        } else {
-            console.error("Logout failed");
-        }
-    } catch (error) {
-        console.error("Error during logout:", error);
-    }
+const logout = () => {
+    router.post('/logout');
 };
 
 const items = computed(() => {
@@ -86,23 +61,23 @@ const items = computed(() => {
         {
             label: "Home",
             icon: "pi pi-home",
-            command: () => router.push("/"),
+            command: () => router.visit("/"),
         },
     ];
 
-    if (role === "Evaluasi") {
+    if (role.value === "Evaluasi") {
         baseItems.splice(1, 0, {
             label: "Upload",
             icon: "pi pi-cloud-upload",
-            command: () => router.push("/import"),
+            command: () => router.visit("/import"),
         });
     }
 
-    if (role === "Admin") {
+    if (role.value === "Admin") {
         baseItems.splice(0, 1, {
             label: "User Management",
             icon: "pi pi-user-edit",
-            command: () => router.push("/admin/dashboard"),
+            command: () => router.visit("/admin/dashboard"),
         });
     }
 

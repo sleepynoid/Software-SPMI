@@ -36,9 +36,15 @@ import {
     Toolbar, Tooltip,
 } from "primevue";
 
+import Layout from "./components/app.vue";
+
 createInertiaApp({
     title: (title) => `${title} - SPMI`,
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    resolve: async (name) => {
+        const page = await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue'));
+        page.default.layout = page.default.layout === undefined ? Layout : page.default.layout;
+        return page;
+    },
     setup({ el, App, props, plugin }) {
         const appVue = createApp({ render: () => h(App, props) });
         

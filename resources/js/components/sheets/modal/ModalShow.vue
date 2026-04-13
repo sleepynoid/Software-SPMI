@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {ref, toRefs, watch} from "vue";
 import {onClickOutside, useMagicKeys} from "@vueuse/core";
-import {deleteLink, fetchLink, LinkPayload, submitLink, useLink} from "../../../stores/useLink";
 import {useToast} from "primevue";
 import {useConfirm} from "primevue/useconfirm";
 import ConfirmPopup from "primevue/confirmpopup";
@@ -24,30 +23,26 @@ const confirm = useConfirm();
 
 const { idBukti, tipeLink, comment, pengendalian, editor } = toRefs(props);
 const isModal = ref<boolean>(false);
-const loading = ref<boolean>(true);
 const modal = ref<any>(null);
 const list = ref<any[]>([]);
 
-
-watch(escape, (v) => {
-    if (v) {
-        isModal.value = false;
+const fetchLinks = async () => {
+    if (!props.idBukti) return;
+    try {
+        const resp = await fetch(`/api/getLink/${props.idBukti}/${props.tipeLink}`, {
+            credentials: 'same-origin',
+        });
+        list.value = resp.ok ? await resp.json() : [];
+    } catch {
+        list.value = [];
     }
-})
-watch(isModal, async ()=> {
-    if (isModal){
-        list.value = await fetchLink(props.idBukti, props.tipeLink)
-    }
-})
+};
 
-const openLink = (link) => {
-    window.open(link, "_blank")
-}
+const openLink = (link) => { window.open(link, "_blank"); };
 
-onClickOutside(modal, () => (
-    isModal.value = false
-));
-
+watch(escape, (v) => { if (v) isModal.value = false; });
+watch(isModal, async () => { if (isModal.value) await fetchLinks(); });
+onClickOutside(modal, () => { isModal.value = false; });
 </script>
 
 <template>

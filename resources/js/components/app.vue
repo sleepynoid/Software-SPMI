@@ -1,16 +1,16 @@
 <script setup>
 import CustomMenubar from "./comp/CustomMenubar.vue";
-// No longer needed
+import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
-const route = useRoute();
+const page = usePage();
+const showMenubar = computed(() => !page.component.startsWith('login') && !page.component.startsWith('register'));
 </script>
 
 <template>
   <div class="w-screen h-screen bg-gray-100 flex flex-col items-center px-[5%] overflow-x-hidden app">
-        <CustomMenubar v-if="route.meta.showMenubar !== false" />
-        <RouterView v-slot="{ Component, route }">
-            <component :is="Component" />
-        </RouterView>
+        <CustomMenubar v-if="showMenubar" />
+        <slot />
     </div>
 </template>
 

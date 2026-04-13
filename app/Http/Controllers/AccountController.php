@@ -24,25 +24,14 @@ class AccountController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function register(Request $request): JsonResponse
+    public function register(Request $request)
     {
-        //
-        $validator = Validator::make($request->all(), [
+        $input = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
             'role' => 'required|string',
         ]);
-
-        if ($validator->fails()) {
-            // return error($validator->errors());
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $input = $request->all();
 
         User::create([
             'name'     => $input['name'],
@@ -112,6 +101,14 @@ class AccountController extends Controller
             'message' => 'User role updated successfully',
             'user' => $user
         ], 200);
+    }
+
+    public function deleteUser(int $id): JsonResponse
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
     }
 
     public function getUserHistory()

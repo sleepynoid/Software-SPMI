@@ -1,38 +1,32 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import Homepage from "../components/homepage/homepage.vue";
 import Toast from "primevue/toast";
-import Import from "./import.vue";
 import { useToast } from "primevue";
+import { usePage } from "@inertiajs/vue3";
 
 const toast = useToast();
-const page = ref("home");
+const page = usePage();
 
-onMounted(() => {
-    const toastMessage = localStorage.getItem("toastMessage");
-    const toastSeverity = localStorage.getItem("toastSeverity");
-
-    if (toastMessage) {
-        toast.add({
-            severity: toastSeverity || "success",
-            summary: "Success",
-            detail: toastMessage,
-            life: 3000,
-        });
-
-        localStorage.removeItem("toastMessage");
-        localStorage.removeItem("toastSeverity");
-    }
-});
+// Tampilkan flash message dari Inertia (misal setelah redirect)
+watch(
+    () => page.props.flash,
+    (flash: any) => {
+        if (flash?.success) {
+            toast.add({ severity: 'success', summary: 'Sukses', detail: flash.success, life: 3000 });
+        }
+        if (flash?.error) {
+            toast.add({ severity: 'error', summary: 'Error', detail: flash.error, life: 4000 });
+        }
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
     <div class="max-h-full h-full w-full">
         <Toast />
-        <div>
-            <Homepage v-if="page === 'home'" />
-            <Import v-if="page === 'import'" />
-        </div>
+        <Homepage />
     </div>
 </template>
 
