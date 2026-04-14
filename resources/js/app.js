@@ -109,4 +109,8 @@ createInertiaApp({
 
         appVue.mount(el);
     },
+    progress: {
+        color: '#29d',
+        showSpinner: true,
+    },
 });

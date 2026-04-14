@@ -93,6 +93,9 @@ class PeningkatanController extends Controller
 
     public function submitPeningkatan(Request $request)
     {
+        if (strtolower(auth()->user()->role) !== 'peningkatan') {
+            return back()->with('error', 'Unauthorized action');
+        }
         $validatedData = $request->validate([
             'data.idBuktiPengendalian' => 'required|exists:bukti_pengendalians,id',
             'data.komenPeningkatan' => 'required|string',

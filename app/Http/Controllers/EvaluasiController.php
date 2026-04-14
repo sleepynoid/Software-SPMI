@@ -80,6 +80,9 @@ class EvaluasiController extends Controller {
     }
 
     public function submitEval(Request $request) {
+        if (strtolower(auth()->user()->role) !== 'evaluasi') {
+            return back()->with('error', 'Unauthorized action');
+        }
         $validatedData = $request->validate([
             'data.idBuktiPelaksanaan' => 'required|exists:bukti_pelaksanaans,id',
             'data.idEvaluasi'         => 'required',

@@ -87,6 +87,9 @@ class PengendalianController extends Controller
     }
 
     public function submitPengendalian(Request $request) {
+        if (strtolower(auth()->user()->role) !== 'pengendalian') {
+            return back()->with('error', 'Unauthorized action');
+        }
         $validatedData = $request->validate([
             'data.idBuktiEvaluasi'   => 'required|exists:bukti_evaluasis,id',
             'data.temuan'            => 'required|string',

@@ -77,6 +77,9 @@ class PelaksanaanController extends Controller {
     }
 
     public function submitPelaksanaan(Request $request) {
+        if (strtolower(auth()->user()->role) !== 'pelaksanaan') {
+            return back()->with('error', 'Unauthorized action');
+        }
         $validatedData = $request->validate([
             'data.idIndikator'         => 'required|exists:indikators,id',
             'data.komentarPelaksanaan' => 'required|string',
@@ -113,6 +116,10 @@ class PelaksanaanController extends Controller {
         $link = Link::find($id);
 
         if ($link) {
+            $expectedRole = $link->linkable_type === \App\Models\BuktiPelaksanaan::class ? 'pelaksanaan' : 'evaluasi';
+            if (strtolower(auth()->user()->role) !== $expectedRole) {
+                return response()->json("Unauthorized action", 403);
+            }
             $link->delete();
         }
 
@@ -120,6 +127,10 @@ class PelaksanaanController extends Controller {
     }
 
     public function postLink(Request $request) {
+        if (strtolower(auth()->user()->role) !== strtolower($request->input('data.tipeLink'))) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized action'], 403);
+        }
+
         try {
             $validatedData = $request->validate([
                 'data.id' => 'nullable',
