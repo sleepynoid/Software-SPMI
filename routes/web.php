@@ -20,6 +20,18 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sheet/{jurusan}/{periode}/{tipeSheet}/{step?}', [App\Http\Controllers\SheetController::class, 'show'])->name('sheet.show');
 
+    Route::get('/import', function () {
+        return \Inertia\Inertia::render('import');
+    })->name('import');
+
+    Route::post('/import', [\App\Http\Controllers\PenetapanController::class, 'import'])->name('import.store');
+    Route::get('/downloadSheet', [\App\Http\Controllers\SheetController::class, 'downloadExcel'])->name('sheet.download');
+
+    // API endpoints merged into web routes for session context
+    Route::get('/getLink/{idBukti}/{tipeLink}', [\App\Http\Controllers\PelaksanaanController::class, 'getLink'])->name('link.get');
+    Route::post('/submitLink', [\App\Http\Controllers\PelaksanaanController::class, 'postLink'])->name('link.submit');
+    Route::post('/deleteLink', [\App\Http\Controllers\PelaksanaanController::class, 'deleteLink'])->name('link.delete');
+
     Route::post('/submitPelaksanaan', [\App\Http\Controllers\PelaksanaanController::class, 'submitPelaksanaan']);
     Route::post('/submitEvaluasi', [\App\Http\Controllers\EvaluasiController::class, 'submitEval']);
     Route::post('/submitPengendalian', [\App\Http\Controllers\PengendalianController::class, 'submitPengendalian']);

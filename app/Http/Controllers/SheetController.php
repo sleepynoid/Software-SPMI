@@ -48,7 +48,9 @@ class SheetController extends Controller {
     }
 
     public function downloadExcel() {
-        return response()->download(storage_path('../dokumentasi/example.xlsx'));
+        $path = base_path('dokumentasi/example.xlsx');
+        abort_unless(file_exists($path), 404, 'Template tidak ditemukan.');
+        return response()->download($path, 'TemplatePenetapan.xlsx');
     }
 
     public function show($jurusan, $periode, $tipeSheet, $step = 'input') {

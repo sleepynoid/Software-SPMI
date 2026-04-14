@@ -8,6 +8,7 @@ import Accordion from 'primevue/accordion';
 import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
+import axios from 'axios';
 
 const props = defineProps<{
     idBukti: string,
@@ -29,10 +30,8 @@ const list = ref<any[]>([]);
 const fetchLinks = async () => {
     if (!props.idBukti) return;
     try {
-        const resp = await fetch(`/api/getLink/${props.idBukti}/${props.tipeLink}`, {
-            credentials: 'same-origin',
-        });
-        list.value = resp.ok ? await resp.json() : [];
+        const resp = await axios.get(`/getLink/${props.idBukti}/${props.tipeLink}`);
+        list.value = resp.data || [];
     } catch {
         list.value = [];
     }

@@ -15,12 +15,8 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-            $token = $user->createToken('remember_token')->plainTextToken;
-
             return redirect()->route('login.response')->with([
-                'success' => 'User login successfully.',
-                'token' => $token,
+                'success' => 'User login successfully.'
             ]);
         } else {
             return redirect()->route('login.response')->with('error', 'Unauthorized.');

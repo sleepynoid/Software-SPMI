@@ -4,6 +4,7 @@ import {onClickOutside, useMagicKeys} from "@vueuse/core";
 import {useToast} from "primevue";
 import {useConfirm} from "primevue/useconfirm";
 import ConfirmPopup from "primevue/confirmpopup";
+import axios from "axios";
 
 const {escape} = useMagicKeys()
 
@@ -28,16 +29,11 @@ const payload = ref({
     tipeLink: '',
 });
 
-const csrfToken = (): string =>
-    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
-
 const fetchLinks = async () => {
     if (!props.idBukti) return;
     try {
-        const resp = await fetch(`/api/getLink/${props.idBukti}/${props.tipeLink}`, {
-            credentials: 'same-origin',
-        });
-        list.value = resp.ok ? await resp.json() : [];
+        const resp = await axios.get(`/getLink/${props.idBukti}/${props.tipeLink}`);
+        list.value = resp.data || [];
     } catch {
         list.value = [];
     }
@@ -53,20 +49,17 @@ const submitLink = async () => {
 
     linkLoading.value = true;
     try {
-        const resp = await fetch('/api/submitLink', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-            body: JSON.stringify({ data: payload.value }),
-        });
+        const resp = await axios.post('/submitLink', { data: payload.value });
         const status = resp.status;
         await fetchLinks();
         handleInitial();
-        if (status === 200) {
+        if (status === 200 || status === 201) {
             toast.add({ severity: 'success', summary: 'Tersimpan', detail: 'Link disimpan', life: 3000 });
         } else {
             toast.add({ severity: 'error', summary: 'Gagal', detail: 'Error menyimpan link', life: 3000 });
         }
+    } catch (e) {
+        toast.add({ severity: 'error', summary: 'Gagal', detail: 'Error menyimpan link', life: 3000 });
     } finally {
         linkLoading.value = false;
     }
@@ -78,14 +71,13 @@ const handleDeleteLink = async (event, idLink: string) => {
         group: 'headless',
         message: 'Delete link?',
         accept: async () => {
-            await fetch('/api/deleteLink', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                body: JSON.stringify({ idLink }),
-            });
-            await fetchLinks();
-            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Link deleted!', life: 3000 });
+            try {
+                await axios.post('/deleteLink', { idLink });
+                await fetchLinks();
+                toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Link deleted!', life: 3000 });
+            } catch (e) {
+                toast.add({ severity: 'error', summary: 'Gagal', detail: 'Error menghapus link', life: 3000 });
+            }
         },
         reject: () => {},
     });

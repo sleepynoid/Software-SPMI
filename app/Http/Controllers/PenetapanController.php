@@ -15,14 +15,14 @@ use Maatwebsite\Excel\Validators\ValidationException;
 use Illuminate\Routing\Controller;
 
 class PenetapanController extends Controller {
-    public function __construct() {
-        $this->middleware('auth:sanctum');
-    }
 
     public function import(Request $request) {
         try {
             $this->validateRequest($request);
-
+            // Ensure only Evaluasi users can import
+            if (strtolower(auth()->user()->role) !== 'evaluasi') {
+                return response()->json(['success' => false, 'message' => 'Hanya pengguna dengan role Evaluasi yang dapat melakukan import data.'], 403);
+            }
             $sheet = $this->prepareSheetData($request);
             $fileName = $this->createFileName($request);
 

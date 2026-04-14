@@ -5,9 +5,8 @@ import XlsxSheets from "../components/upload/XlsxSheets.vue";
 import { router } from "@inertiajs/vue3";
 import { ref } from "vue";
 import { Button } from "primevue";
+import axios from "axios";
 
-const csrfToken = () =>
-    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 const file = ref(null);
 const selectedSheet = ref(null);
 const department = ref("");
@@ -49,10 +48,15 @@ const validateMajorSelection = () => {
 };
 
 const handleFileChange = (event) => {
-    file.value = event.target.files ? event.target.files[0] : null;
+    const selected = event.target.files?.[0] ?? null;
+    file.value = selected;
 };
 
 const submitData = async () => {
+    if (!file.value) {
+        alert('Pilih file terlebih dahulu.');
+        return;
+    }
     loading.value = true;
     const formData = new FormData();
     formData.append("file", file.value);
@@ -62,21 +66,20 @@ const submitData = async () => {
     formData.append("note", note.value);
 
     try {
-        const response = await fetch("/api/penetapan/import", {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { 'X-CSRF-TOKEN': csrfToken() },
-            body: formData,
-        });
-        const data = await response.json();
+        const response = await axios.post("/import", formData);
+        const data = response.data;
         if (data.success) {
             alert(data.message);
             router.visit("/");
         } else {
-            alert("Error: " + data.message);
+            const errMsg = data.errors
+                ? data.errors.join('\n')
+                : (data.message ?? 'Terjadi kesalahan.');
+            alert("Error: " + errMsg);
         }
     } catch (error) {
         console.error("Error mengirim file:", error);
+        alert("Gagal mengirim file. Periksa koneksi atau coba lagi.");
     } finally {
         loading.value = false;
     }
@@ -93,10 +96,10 @@ function generateYearRange() {
 
 const downloadFile = async () => {
     try {
-        const response = await fetch("/api/downloadSheet", {
-            credentials: 'same-origin',
+        const response = await axios.get("/downloadSheet", {
+            responseType: 'blob'
         });
-        const blob = await response.blob();
+        const blob = response.data;
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -104,8 +107,10 @@ const downloadFile = async () => {
         document.body.appendChild(link);
         link.click();
         link.remove();
+        window.URL.revokeObjectURL(url);
     } catch (error) {
         console.error("Download failed:", error);
+        alert("Gagal mengunduh template.");
     }
 };
 </script>

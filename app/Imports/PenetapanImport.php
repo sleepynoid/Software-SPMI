@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\{BuktiPelaksanaan, Evaluasi, link, Pelaksanaan, Penetapan, Sheet, Standar, Indikator, Target};
+use App\Models\{BuktiPelaksanaan, Evaluasi, link, Jurusan, Pelaksanaan, Penetapan, Sheet, Standar, Indikator, Target};
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\{ToCollection, WithHeadingRow, WithCustomCsvSettings, SkipsEmptyRows};
 use Illuminate\Support\Collection;
@@ -17,11 +17,18 @@ class PenetapanImport implements ToCollection, SkipsEmptyRows, WithHeadingRow, W
     
     public function collection(Collection $rows)
     {
+        // Resolve nama jurusan → id_jurusan (FK)
+        $jurusan = Jurusan::firstOrCreate(
+            ['nama' => $this->sheet['jurusan']],
+            ['nama' => $this->sheet['jurusan'], 'is_active' => true]
+        );
+
         $sheet = Sheet::firstOrCreate([
-            'jurusan' => $this->sheet['jurusan'],
-            'periode' => $this->sheet['periode'],
+            'id_jurusan' => $jurusan->id,
+            'periode'    => $this->sheet['periode'],
+            'tipe_sheet' => $this->sheet['tipe_sheet'],
+        ], [
             'note' => $this->sheet['note'],
-            'tipe_sheet' => $this->sheet['tipe_sheet']
         ]);
         
         $penetapan = Penetapan::create(['id_sheet' => $sheet->id]);
