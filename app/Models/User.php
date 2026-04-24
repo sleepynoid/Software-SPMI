@@ -17,11 +17,44 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nama_lengkap',
+        'nidn',
+        'jenis_user',
+        'role_id',
+        'unit_kerja_id',
         'email',
         'password',
-        'role',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function unitKerja()
+    {
+        return $this->belongsTo(UnitKerja::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role?->nama_role === 'Admin/LPM';
+    }
+
+    public function isAuditor()
+    {
+        return $this->role?->nama_role === 'Auditor';
+    }
+
+    public function isAuditee()
+    {
+        return $this->role?->nama_role === 'Auditee';
+    }
+
+    public function isPimpinan()
+    {
+        return $this->role?->nama_role === 'Pimpinan';
+    }
 
     /**
      * The attributes that should be hidden for serialization.

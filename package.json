@@ -6,6 +6,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@primevue/auto-import-resolver": "^4.5.5",
         "@vitejs/plugin-vue": "^5.0.5",
         "axios": "^1.15.0",
         "laravel-vite-plugin": "^1.0",

@@ -2,46 +2,61 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Master;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AccountController::class, 'loginForm'])->name('login');
     Route::post('/login', [AccountController::class, 'login']);
-    Route::get('/register', [AccountController::class, 'registerForm'])->name('register');
-    Route::post('/register', [AccountController::class, 'register'])->name('register.store');
 });
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AccountController::class, 'logout'])->name('logout');
     
-    Route::get('/', function () {
-        $sheets = app(\App\Http\Controllers\SheetController::class)->getAllSheetForInertia();
-        return \Inertia\Inertia::render('home', ['sheets' => $sheets]);
-    })->name('home');
+    Route::get('/', function() { return redirect('/dashboard'); });
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    Route::get('/sheet/{jurusan}/{periode}/{tipeSheet}/{step?}', [App\Http\Controllers\SheetController::class, 'show'])->name('sheet.show');
+    // Master Data (Admin/LPM only)
+    Route::middleware('role:Admin/LPM')->prefix('master')->name('master.')->group(function () {
+        Route::resource('users', Master\UserController::class);
+        Route::resource('unit-kerja', Master\UnitKerjaController::class);
+        Route::resource('kategori-standar', Master\KategoriStandarController::class);
+    });
 
-    Route::get('/import', function () {
-        return \Inertia\Inertia::render('import');
-    })->name('import');
+    // Penetapan (Admin/LPM only)
+    Route::middleware('role:Admin/LPM')->prefix('penetapan')->name('penetapan.')->group(function () {
+        Route::resource('periode', App\Http\Controllers\Penetapan\PeriodeController::class);
+        Route::resource('standar', App\Http\Controllers\Penetapan\StandarController::class);
+        Route::resource('indikator', App\Http\Controllers\Penetapan\IndikatorMutuController::class);
+        
+        Route::get('/distribusi-target', [App\Http\Controllers\Penetapan\DistribusiTargetController::class, 'index'])->name('distribusi-target.index');
+        Route::post('/distribusi-target', [App\Http\Controllers\Penetapan\DistribusiTargetController::class, 'store'])->name('distribusi-target.store');
+    });
 
-    Route::post('/import', [\App\Http\Controllers\PenetapanController::class, 'import'])->name('import.store');
-    Route::get('/downloadSheet', [\App\Http\Controllers\SheetController::class, 'downloadExcel'])->name('sheet.download');
+    // Pelaksanaan (Auditee only)
+    Route::middleware('role:Auditee')->prefix('pelaksanaan')->name('pelaksanaan.')->group(function () {
+        Route::get('/evaluasi-diri', [App\Http\Controllers\Pelaksanaan\EvaluasiDiriController::class, 'index'])->name('evaluasi-diri.index');
+        Route::post('/evaluasi-diri/{targetUnit}', [App\Http\Controllers\Pelaksanaan\EvaluasiDiriController::class, 'store'])->name('evaluasi-diri.store');
+    });
 
-    // API endpoints merged into web routes for session context
-    Route::get('/getLink/{idBukti}/{tipeLink}', [\App\Http\Controllers\PelaksanaanController::class, 'getLink'])->name('link.get');
-    Route::post('/submitLink', [\App\Http\Controllers\PelaksanaanController::class, 'postLink'])->name('link.submit');
-    Route::post('/deleteLink', [\App\Http\Controllers\PelaksanaanController::class, 'deleteLink'])->name('link.delete');
+    // Evaluasi / AMI (Auditor only)
+    Route::middleware('role:Auditor')->prefix('evaluasi')->name('evaluasi.')->group(function () {
+        Route::get('/jadwal-audit', [App\Http\Controllers\Evaluasi\JadwalAuditController::class, 'index'])->name('jadwal-audit.index');
+        Route::get('/kka/{unit}', [App\Http\Controllers\Evaluasi\KKAController::class, 'show'])->name('kka.show');
+        Route::post('/kka/{capaian}', [App\Http\Controllers\Evaluasi\KKAController::class, 'store'])->name('kka.store');
+    });
 
-    Route::post('/submitPelaksanaan', [\App\Http\Controllers\PelaksanaanController::class, 'submitPelaksanaan']);
-    Route::post('/submitEvaluasi', [\App\Http\Controllers\EvaluasiController::class, 'submitEval']);
-    Route::post('/submitPengendalian', [\App\Http\Controllers\PengendalianController::class, 'submitPengendalian']);
-    Route::post('/submitPeningkatan', [\App\Http\Controllers\PeningkatanController::class, 'submitPeningkatan']);
+    // Pengendalian / RTL (Auditee only)
+    Route::middleware('role:Auditee')->prefix('pengendalian')->name('pengendalian.')->group(function () {
+        Route::get('/isi-rtl', [App\Http\Controllers\Pengendalian\RtlController::class, 'index'])->name('isi-rtl.index');
+        Route::post('/isi-rtl/{kka}', [App\Http\Controllers\Pengendalian\RtlController::class, 'store'])->name('isi-rtl.store');
+    });
 
-    // Admin routes
-    Route::get('/admin/users', [\App\Http\Controllers\AccountController::class, 'listUser'])->name('admin.users');
-    Route::post('/admin/users', [\App\Http\Controllers\AccountController::class, 'register'])->name('admin.users.store');
-    Route::post('/admin/users/role', [\App\Http\Controllers\AccountController::class, 'editUserRole'])->name('admin.users.role');
-    Route::post('/admin/users/password', [\App\Http\Controllers\AccountController::class, 'resetPassword'])->name('admin.users.password');
-    Route::delete('/admin/users/{id}', [\App\Http\Controllers\AccountController::class, 'deleteUser'])->name('admin.users.delete');
-    Route::post('/admin/api-logs', [\App\Http\Controllers\ApiLogController::class, 'getUserHistory'])->name('admin.logs');
+    // Peningkatan / RTM (Pimpinan only)
+    Route::middleware('role:Pimpinan')->prefix('peningkatan')->name('peningkatan.')->group(function () {
+        Route::get('/risalah', [App\Http\Controllers\Peningkatan\RisalahRtmController::class, 'index'])->name('risalah.index');
+        Route::post('/risalah', [App\Http\Controllers\Peningkatan\RisalahRtmController::class, 'store'])->name('risalah.store');
+        Route::put('/risalah/{risalah}', [App\Http\Controllers\Peningkatan\RisalahRtmController::class, 'update'])->name('risalah.update');
+        Route::delete('/risalah/{risalah}', [App\Http\Controllers\Peningkatan\RisalahRtmController::class, 'destroy'])->name('risalah.destroy');
+    });
 });

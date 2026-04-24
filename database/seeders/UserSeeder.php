@@ -14,32 +14,54 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $adminRole = \App\Models\Role::where('nama_role', 'Admin/LPM')->first()->id;
+        $pimpinanRole = \App\Models\Role::where('nama_role', 'Pimpinan')->first()->id;
+        $auditorRole = \App\Models\Role::where('nama_role', 'Auditor')->first()->id;
+        $auditeeRole = \App\Models\Role::where('nama_role', 'Auditee')->first()->id;
+
+        $lpmUnit = \App\Models\UnitKerja::where('nama_unit', 'LIKE', '%LPM%')->first()->id;
+        $prodiUnit = \App\Models\UnitKerja::where('nama_unit', 'Prodi Informatika')->first()->id;
+
+        // Admin
         User::create([
-            'name' => 'user peningkatan',
-            'email' => 'peningkatan@gmail.com',
-            'password' => Hash::make('123'),
-            'role' => 'Peningkatan',
+            'nama_lengkap' => 'Administrator LPM',
+            'email' => 'admin@spmi.ac.id',
+            'password' => bcrypt('password'),
+            'role_id' => $adminRole,
+            'unit_kerja_id' => $lpmUnit,
+            'jenis_user' => 'Tenaga Kependidikan',
         ]);
 
+        // Pimpinan
         User::create([
-            'name' => 'user evaluasi',
-            'email' => 'evaluasi@gmail.com',
-            'password' => Hash::make('123'),
-            'role' => 'Evaluasi',
+            'nama_lengkap' => 'Rektor Pelaksana',
+            'email' => 'rektor@spmi.ac.id',
+            'password' => bcrypt('password'),
+            'role_id' => $pimpinanRole,
+            'unit_kerja_id' => null,
+            'jenis_user' => 'Dosen',
+            'nidn' => '1234567890',
         ]);
 
+        // Auditor
         User::create([
-            'name' => 'user pelaksanaan',
-            'email' => 'pelaksanaan@gmail.com',
-            'password' => Hash::make('123'),
-            'role' => 'Pelaksanaan',
+            'nama_lengkap' => 'Auditor Internal 1',
+            'email' => 'auditor@spmi.ac.id',
+            'password' => bcrypt('password'),
+            'role_id' => $auditorRole,
+            'unit_kerja_id' => $lpmUnit,
+            'jenis_user' => 'Dosen',
         ]);
 
+        // Auditee
         User::create([
-            'name' => 'user pengendalian',
-            'email' => 'pengendalian@gmail.com',
-            'password' => Hash::make('123'),
-            'role' => 'Pengendalian',
+            'nama_lengkap' => 'Kaprodi Informatika',
+            'email' => 'auditee@spmi.ac.id',
+            'password' => bcrypt('password'),
+            'role_id' => $auditeeRole,
+            'unit_kerja_id' => $prodiUnit,
+            'jenis_user' => 'Dosen',
+            'nidn' => '0987654321',
         ]);
     }
 }
