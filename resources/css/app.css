@@ -1,6 +1,22 @@
 @import "tailwindcss";
 @import "tailwindcss-primeui";
 
+@theme {
+    --color-primary-50: #eef6ff;
+    --color-primary-100: #d9eaff;
+    --color-primary-200: #bbdbff;
+    --color-primary-300: #8dc1ff;
+    --color-primary-400: #589eff;
+    --color-primary-500: #00479b; /* ITATS Blue */
+    --color-primary-600: #003a80;
+    --color-primary-700: #002e66;
+    --color-primary-800: #00224d;
+    --color-primary-900: #001c3d;
+    --color-primary-950: #001126;
+
+    --color-accent-500: #f36f21; /* ITATS Orange */
+}
+
 
 .th{
     width: 15rem;

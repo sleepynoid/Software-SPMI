@@ -22,7 +22,7 @@ class KertasKerjaAudit extends Model
         return $this->belongsTo(User::class, 'auditor_id');
     }
 
-    public function tindakLanjutPtk()
+    public function tindakLanjut()
     {
         return $this->hasOne(TindakLanjutPtk::class, 'kka_id');
     }

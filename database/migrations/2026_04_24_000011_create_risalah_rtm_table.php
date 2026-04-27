@@ -12,9 +12,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('periode_id');
             $table->unsignedBigInteger('unit_kerja_id');
-            $table->date('tanggal_rapat');
-            $table->text('hasil_pembahasan');
-            $table->text('rekomendasi_standar')->nullable();
+            $table->date('tgl_rtm');
+            $table->string('pimpinan_rapat');
+            $table->text('isi_risalah');
+            $table->text('keputusan_peningkatan');
             $table->timestamps();
 
             $table->foreign('periode_id')->references('id')->on('periode_ami')->onDelete('cascade');

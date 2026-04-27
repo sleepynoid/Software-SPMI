@@ -19,9 +19,11 @@ const submit = () => {
         
         <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
             <div class="bg-primary-600 p-8 text-white text-center relative overflow-hidden">
-                <div class="relative z-10">
-                    <h1 class="text-3xl font-bold mb-2">SPMI Online</h1>
-                    <p class="text-primary-100">Sistem Penjaminan Mutu Internal</p>
+                <div class="relative z-10 flex flex-col items-center">
+                    <img :src="'/images/itats-icon.png'" alt="ITATS Icon" class="h-16 mb-4 object-contain" />
+                    <h1 class="text-3xl font-bold mb-1 tracking-tight">SPMI ONLINE</h1>
+                    <p class="text-primary-100 text-sm opacity-90">SISTEM PENJAMINAN MUTU INTERNAL</p>
+                    <p class="text-[10px] text-primary-200 mt-2 tracking-widest uppercase">Institut Teknologi Adhi Tama Surabaya</p>
                 </div>
                 <!-- Subtle background decoration -->
                 <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
@@ -84,7 +86,7 @@ const submit = () => {
 
                 <div class="mt-10 pt-6 border-t border-slate-100 text-center">
                     <p class="text-sm text-slate-500">
-                        Butuh bantuan login? <a href="#" class="text-primary-600 font-medium">Hubungi Admin LPM</a>
+                        Butuh bantuan login? <a href="#" class="text-accent-500 font-bold hover:underline">Hubungi Admin LPM</a>
                     </p>
                 </div>
             </div>

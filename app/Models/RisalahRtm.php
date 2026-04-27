@@ -10,7 +10,7 @@ class RisalahRtm extends Model
     use HasFactory;
 
     protected $table = 'risalah_rtm';
-    protected $fillable = ['periode_id', 'unit_kerja_id', 'tanggal_rapat', 'hasil_pembahasan', 'rekomendasi_standar'];
+    protected $fillable = ['periode_id', 'unit_kerja_id', 'tgl_rtm', 'pimpinan_rapat', 'isi_risalah', 'keputusan_peningkatan'];
 
     public function periode()
     {

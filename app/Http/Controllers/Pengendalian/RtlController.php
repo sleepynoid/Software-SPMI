@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pengendalian;
 
 use App\Http\Controllers\Controller;
 use App\Models\KertasKerjaAudit;
-use App\Models\TindakLanjutPTK;
+use App\Models\TindakLanjutPtk;
 use App\Models\PeriodeAMI;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -38,7 +38,7 @@ class RtlController extends Controller
             'penanggung_jawab' => 'required|string|max:255',
         ]);
 
-        TindakLanjutPTK::updateOrCreate(
+        TindakLanjutPtk::updateOrCreate(
             ['kka_id' => $kka->id],
             array_merge($validated, [
                 'status_tl' => 'Open',

@@ -89,8 +89,8 @@ const toggleSidebar = () => {
             :class="sidebarVisible ? 'w-64' : 'w-20'"
         >
             <div class="h-16 flex items-center px-6 border-b border-slate-200 shrink-0">
-                <span class="text-primary-600 font-bold text-xl" v-if="sidebarVisible">SPMI System</span>
-                <span class="text-primary-600 font-bold text-xl" v-else>S</span>
+                <img v-if="sidebarVisible" :src="'/images/itats-logo.png'" alt="ITATS Logo" class="h-8 object-contain" />
+                <img v-else :src="'/images/itats-icon.png'" alt="ITATS Icon" class="h-8 mx-auto object-contain" />
             </div>
 
             <div class="flex-1 overflow-y-auto pt-4 flex flex-col gap-1 px-3">
