@@ -13,7 +13,6 @@ class KategoriStandarSeeder extends Seeder
             ['nama_kategori' => 'Standar Pendidikan', 'is_default' => true],
             ['nama_kategori' => 'Standar Penelitian', 'is_default' => true],
             ['nama_kategori' => 'Standar Pengabdian Masyarakat', 'is_default' => true],
-            ['nama_kategori' => 'Standar Al-Islam Kemuhammadiyahan', 'is_default' => false],
         ];
 
         foreach ($categories as $cat) {
