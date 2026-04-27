@@ -1,195 +1,115 @@
-# Software-SPMI
+# Software-SPMI ITATS
 
-> Sistem Penjaminan Mutu Internal (SPMI) — Monolith Web App berbasis Laravel 11 + Inertia.js + Vue 3
-
----
-
-## Deskripsi Proyek
-
-Software-SPMI adalah aplikasi web untuk mengelola siklus PPEPP (**P**enetapan, **P**elaksanaan, **E**valuasi, **P**engendalian, **P**eningkatan) dalam proses Penjaminan Mutu Internal perguruan tinggi.
-
-Arsitektur menggunakan **Laravel Monolith + Inertia.js** — tidak ada REST API terpisah. Data dirender langsung dari server ke komponen Vue melalui Inertia props, sehingga navigasi terasa seperti SPA tanpa overhead manajemen token.
+> Sistem Penjaminan Mutu Internal (SPMI) berbasis siklus **PPEPP** (Penetapan, Pelaksanaan, Evaluasi, Pengendalian, Peningkatan) — Monolith Web App berbasis Laravel 11 + Inertia.js + Vue 3.
 
 ---
 
-## Tech Stack
+## 🏛️ Deskripsi Proyek
+
+Software-SPMI adalah platform Audit Mutu Internal (AMI) terintegrasi yang dirancang khusus untuk **Institut Teknologi Adhi Tama Surabaya (ITATS)**. Aplikasi ini mendigitalisasi seluruh siklus penjaminan mutu perguruan tinggi secara relasional dan sistematis.
+
+### Fitur Utama:
+- **Penetapan**: Manajemen Standar Dikti, Indikator Mutu, dan distribusi Target Unit.
+- **Pelaksanaan**: Pengisian Evaluasi Diri (EDOM) oleh Auditee dengan bukti dokumen.
+- **Evaluasi**: Kertas Kerja Audit (KKA) untuk Auditor (Kategori temuan: Sesuai, OB, KTS).
+- **Pengendalian**: Penyusunan Rencana Tindak Lanjut (RTL/PTK) oleh Auditee.
+- **Peningkatan**: Dokumentasi Risalah Rapat Tinjauan Manajemen (RTM) oleh Pimpinan.
+
+---
+
+## 💻 Tech Stack
 
 | Layer | Teknologi |
 |---|---|
-| Backend | Laravel 11, PHP 8.4 |
-| Frontend | Vue 3 (Composition API), Inertia.js v3 |
-| UI Library | PrimeVue, Tailwind CSS |
-| Package Manager | **Bun** (pengganti npm/pnpm) |
-| Build Tool | Vite 5 |
-| Database | MySQL (production) / SQLite (testing) |
-| Testing | PHPUnit 11 |
+| **Backend** | Laravel 11, PHP 8.4 |
+| **Frontend** | Vue 3 (Composition API), Inertia.js v2 |
+| **Library UI** | PrimeVue 4, Tailwind CSS 4 |
+| **Package Manager** | **pnpm** |
+| **Build Tool** | Vite 5 |
+| **Database** | MySQL / SQLite |
 
 ---
 
-## Roles & Akses
+## 👥 Roles & Akses Control (RBAC)
 
-| Role | Halaman Sheet | Keterangan |
+| Role | Deskripsi |
+|---|---|
+| `Admin / LPM` | Manajemen master data (Periode, Unit, User), Standar, Indikator, dan Target. |
+| `Auditee` | Mengisi Evaluasi Diri (Pelaksanaan) dan Rencana Tindak Lanjut (Pengendalian). |
+| `Auditor` | Melakukan audit lapangan dan mengisi Kertas Kerja Audit (Evaluasi). |
+| `Pimpinan` | Melakukan review capaian mutu dan memimpin Rapat Tinjauan Manajemen (Peningkatan). |
+
+---
+
+## 🔑 Akun Demo (Seeded)
+
+Gunakan akun berikut untuk menguji fungsionalitas sistem (Password: `password`):
+
+| Role | Email | Deskripsi |
 |---|---|---|
-| `Pelaksanaan` | ✅ Input bukti pelaksanaan | Tahap pertama PPEPP |
-| `Evaluasi` | ✅ Input evaluasi & adjusment | Berdasarkan bukti pelaksanaan |
-| `Pengendalian` | ✅ Input temuan, akar masalah, RTL | Berdasarkan hasil evaluasi |
-| `Peningkatan` | ✅ Input komentar peningkatan | Tahap akhir PPEPP |
-| `Admin` | ✅ Manajemen user & role | Dashboard admin |
-| `SuperUser` | ✅ Akses semua sheet | Read-only lintas jurusan |
+| **Admin/LPM** | `admin@spmi.ac.id` | Akses penuh manajemen standar & unit. |
+| **Pimpinan** | `rektor@spmi.ac.id` | Akses Dashboard & Risalah RTM. |
+| **Auditor** | `auditor@spmi.ac.id` | Akses Kertas Kerja Audit (KKA). |
+| **Auditee** | `auditee@spmi.ac.id` | Akses Evaluasi Diri & RTL. |
 
 ---
 
-## Persyaratan
+## 🛠️ Persyaratan
 
-- **PHP 8.4+** — [Download](https://www.php.net/downloads)
-- **Composer** — [Download](https://getcomposer.org/download/)
-- **Bun** — [Download](https://bun.sh) *(pengganti npm/pnpm)*
-- **MySQL 8+** atau MariaDB
+- **PHP 8.4+**
+- **Composer**
+- **pnpm** (dianjurkan) atau npm/yarn
+- **MySQL 8+**
 
 ---
 
-## Langkah Setup
+## 🚀 Langkah Setup
 
-### 1. Clone Repository
-
+### 1. Clone & Install
 ```bash
 git clone https://github.com/Burzess/Software-SPMI.git
 cd Software-SPMI
+composer install
+pnpm install
 ```
 
-### 2. Salin File `.env`
-
+### 2. Lingkungan & Database
 ```bash
 cp .env.example .env
-```
-
-### 3. Install Dependensi PHP
-
-```bash
-composer install
-```
-
-### 4. Install Dependensi JavaScript
-
-```bash
-bun install
-```
-
-### 5. Generate Kunci Aplikasi
-
-```bash
 php artisan key:generate
+# Sesuaikan DB_DATABASE di .env
+php artisan migrate --seed
 ```
 
-### 6. Konfigurasi Database
-
-Edit `.env` sesuai database Anda:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=spmi_db
-DB_USERNAME=root
-DB_PASSWORD=your_password
-```
-
-### 7. Jalankan Migrasi Database
-
+### 3. Menjalankan Aplikasi
 ```bash
-php artisan migrate
-```
-
-### 8. Jalankan Seeder (Opsional — Data Awal)
-
-```bash
-php artisan db:seed --class=UserSeeder
-```
-
----
-
-## Menjalankan Aplikasi
-
-### Server Laravel (Backend)
-
-```bash
+# Terminal 1: Backend
 php artisan serve
-```
 
-Server berjalan di `http://127.0.0.1:8000`.  
-Jika port `8000` sudah dipakai, Laravel otomatis beralih ke `8001`.
-
-### Server Pengembangan Vite (Frontend)
-
-```bash
-bun dev
+# Terminal 2: Frontend
+pnpm dev
 ```
 
 ---
 
-## Menjalankan Tests
-
-### Jalankan Semua Test
-
-```bash
-php artisan test
-```
-
-### Jalankan Test Spesifik
-
-```bash
-# Hanya test autentikasi
-php artisan test --filter=AuthTest
-
-# Hanya test submit pelaksanaan
-php artisan test --filter=PelaksanaanSubmitTest
-
-# Hanya test halaman sheet
-php artisan test --filter=SheetPageTest
-```
-
-### Struktur Test
+## 📂 Struktur Folder Phase-Based (PPEPP)
 
 ```
-tests/
-├── Feature/
-│   ├── Auth/
-│   │   └── AuthTest.php           # Login, logout, redirect
-│   ├── Sheet/
-│   │   └── SheetPageTest.php      # Akses halaman sheet, role-based data
-│   ├── Pelaksanaan/
-│   │   └── PelaksanaanSubmitTest.php
-│   ├── Evaluasi/
-│   │   └── EvaluasiSubmitTest.php
-│   ├── Pengendalian/
-│   │   └── PengendalianSubmitTest.php
-│   └── Peningkatan/
-│       └── PeningkatanSubmitTest.php
-└── Unit/                          # (reserved untuk unit test murni)
+app/Http/Controllers/
+├── Penetapan/       # Manajemen Standar & Target
+├── Pelaksanaan/    # Evaluasi Diri Auditee
+├── Evaluasi/       # Audit KKA oleh Auditor
+├── Pengendalian/   # RTL / PTK
+└── Peningkatan/    # Risalah RTM Pimpinan
 ```
-
-> Test menggunakan **SQLite in-memory** dengan trait `RefreshDatabase` — tidak mempengaruhi database development Anda.
 
 ---
 
-## Arsitektur
+## 🛡️ Catatan Keamanan
 
-```
-Browser → [GET /sheet/TI/2024/pendidikan]
-    → Laravel Router → Auth Middleware
-    → SheetController::show()
-        → (berdasarkan role) PelaksanaanController::getPelaksanaanData()
-    → Inertia::render('sheet', ['sheetData' => $data])
-    → Blade app.blade.php (mounting point)
-    → Vue app.js → Pages/sheet.vue menerima props
-```
-
-Semua submit data menggunakan `router.post()` dari `@inertiajs/vue3`, dan controller merespons dengan `back()->with('success', ...)`.
+- **Zero-Token Auth**: Menggunakan Cookie Session Laravel murni tanpa penyimpanan token di LocalStorage (lebih aman terhadap XSS).
+- **Supply Chain Security**: Proteksi terhadap versi dependensi yang terkompromasi (Axios patch).
+- **Validation**: Strict validation di setiap fase PPEPP untuk menjaga integritas data mutu.
 
 ---
-
-## Catatan Keamanan
-
-- **Axios `1.14.1` dan `0.30.4` diblokir permanen** via `overrides` di `package.json` (versi yang terkompromasi pada insiden supply chain Maret 2026).
-- Versi axios yang digunakan: `^1.15.0` (patch CVE-2025-27152, CVE-2025-58754, CVE-2025-62718).
-- Autentikasi menggunakan **Cookie Session Laravel** — tidak ada token API yang exposed ke localStorage.
+© 2026 ITATS Documentation.
