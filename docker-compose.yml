@@ -1,18 +1,68 @@
 services:
-  mysql:
-    image: mysql:9.1
-    container_name: mysql-container
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: sushi
-      MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_USER: '${DB_USERNAME}'
-      MYSQL_PASSWORD: '${DB_PASSWORD}'
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    mem_limit: 500M
+    app:
+        build:
+            context: .
+            dockerfile: docker/production/php/Dockerfile
+        image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sleepynoid}/software-spmi-app:latest
+        container_name: spmi-app
+        restart: unless-stopped
+        environment:
+            APP_ENV: production
+            APP_DEBUG: "false"
+        volumes:
+            - ./storage:/var/www/html/storage
+        networks:
+            - spmi-network
+
+    nginx:
+        build:
+            context: .
+            dockerfile: docker/production/nginx/Dockerfile
+        image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sleepynoid}/software-spmi-nginx:latest
+        container_name: spmi-nginx
+        restart: unless-stopped
+        ports:
+            - "${APP_PORT:-80}:80"
+        depends_on:
+            - app
+        networks:
+            - spmi-network
+
+    mysql:
+        image: 'mysql:8.4'
+        container_name: spmi-mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - spmi-mysql:/var/lib/mysql
+        networks:
+            - spmi-network
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+            retries: 3
+            timeout: 5s
+
+    # redis:
+    #     image: 'redis:alpine'
+    #     container_name: spmi-redis
+    #     restart: unless-stopped
+    #     volumes:
+    #         - spmi-redis:/data
+    #     networks:
+    #         - spmi-network
+    #     healthcheck:
+    #         test: ["CMD", "redis-cli", "ping"]
+    #         retries: 3
+    #         timeout: 5s
+
+networks:
+    spmi-network:
+        driver: bridge
 
 volumes:
-  mysql_data:
+    spmi-mysql:
+    spmi-redis:
