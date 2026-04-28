@@ -92,6 +92,19 @@ pnpm dev
 
 ---
 
+## 🧪 Data Simulasi & Testing
+
+Aplikasi dilengkapi dengan Factory untuk men-generate data demo dalam jumlah besar guna pengujian fungsionalitas penuh:
+
+```bash
+# Generate 10 siklus audit lengkap secara otomatis via Tinker
+php artisan tinker --execute="App\Models\RisalahRtm::factory()->count(10)->create()"
+```
+
+Instruksi di atas akan secara otomatis membuat data relasional mulai dari Periode, Standar, Indikator, Capaian, hingga Risalah RTM.
+
+---
+
 ## 📂 Struktur Folder Phase-Based (PPEPP)
 
 ```

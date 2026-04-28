@@ -1,33 +1,28 @@
 services:
     app:
-        build:
-            context: .
-            dockerfile: docker/production/php/Dockerfile
-        image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sleepynoid}/software-spmi-app:latest
+        image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sleepynoid}/software-spmi-apache:latest
         container_name: spmi-app
         restart: unless-stopped
         environment:
             APP_ENV: production
             APP_DEBUG: "false"
-        volumes:
-            - ./storage:/var/www/html/storage
-        networks:
-            - spmi-network
-
-    nginx:
-        build:
-            context: .
-            dockerfile: docker/production/nginx/Dockerfile
-        image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sleepynoid}/software-spmi-nginx:latest
-        container_name: spmi-nginx
-        restart: unless-stopped
+        user: root
         ports:
-            - "${APP_PORT:-80}:80"
-        depends_on:
-            - app
+            - "${APP_PORT:-8081}:80"
+        entrypoint: 
+            - sh
+            - -c
+            - |
+              rm -rf bootstrap/cache/*.php
+              chmod -R 777 storage bootstrap/cache
+              php artisan config:clear
+              php artisan migrate --force
+              apache2-foreground
+        volumes:
+            - spmi-storage:/var/www/html/storage
         networks:
             - spmi-network
-
+ 
     mysql:
         image: 'mysql:8.4'
         container_name: spmi-mysql
@@ -46,19 +41,6 @@ services:
             retries: 3
             timeout: 5s
 
-    # redis:
-    #     image: 'redis:alpine'
-    #     container_name: spmi-redis
-    #     restart: unless-stopped
-    #     volumes:
-    #         - spmi-redis:/data
-    #     networks:
-    #         - spmi-network
-    #     healthcheck:
-    #         test: ["CMD", "redis-cli", "ping"]
-    #         retries: 3
-    #         timeout: 5s
-
 networks:
     spmi-network:
         driver: bridge
@@ -66,3 +48,4 @@ networks:
 volumes:
     spmi-mysql:
     spmi-redis:
+    spmi-storage:
