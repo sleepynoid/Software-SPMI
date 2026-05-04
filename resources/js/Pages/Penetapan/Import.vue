@@ -4,9 +4,15 @@ import ImportExcel from '@/components/upload/importexcel.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import * as XLSX from 'xlsx';
 
+import { ref } from 'vue';
+import Select from 'primevue/select';
+
 const props = defineProps({
+    periodes: Array,
     active_periode: Object
 });
+
+const selectedPeriodeId = ref(props.active_periode?.id);
 
 const downloadTemplate = () => {
     const data = [
@@ -38,19 +44,29 @@ const downloadTemplate = () => {
                 </Link>
             </div>
 
-            <!-- Periode Info -->
-            <div v-if="active_periode" class="bg-primary-600 rounded-2xl p-6 text-white flex items-center justify-between shadow-lg shadow-primary-200">
+            <!-- Periode Selector -->
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <div class="w-12 h-12 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">
                         <i class="pi pi-calendar text-2xl"></i>
                     </div>
                     <div>
-                        <p class="text-primary-100 text-sm font-medium">Periode Aktif Target Import</p>
-                        <h3 class="text-xl font-bold uppercase tracking-tight">{{ active_periode.tahun_akademik }}</h3>
+                        <h3 class="text-lg font-bold text-slate-800">Target Periode Import</h3>
+                        <p class="text-sm text-slate-500">Pilih periode tujuan data yang akan di-import</p>
                     </div>
                 </div>
-                <div class="text-right">
-                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-bold uppercase tracking-widest">{{ active_periode.status }}</span>
+                <div class="flex items-center gap-3">
+                    <span v-if="selectedPeriodeId" class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded uppercase">
+                        {{ periodes.find(p => p.id === selectedPeriodeId)?.status }}
+                    </span>
+                    <Select 
+                        v-model="selectedPeriodeId" 
+                        :options="periodes" 
+                        optionLabel="tahun_akademik" 
+                        optionValue="id" 
+                        placeholder="Pilih Periode" 
+                        class="w-64" 
+                    />
                 </div>
             </div>
 
@@ -93,7 +109,7 @@ const downloadTemplate = () => {
                 <div class="md:col-span-2">
                     <ImportExcel 
                         :targetUrl="route('penetapan.standar.import.store')"
-                        :periodeId="active_periode?.id"
+                        :periodeId="selectedPeriodeId"
                     />
                 </div>
             </div>
