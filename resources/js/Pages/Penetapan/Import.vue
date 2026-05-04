@@ -10,9 +10,9 @@ const props = defineProps({
 
 const downloadTemplate = () => {
     const data = [
-        ["Kategori", "Nama Standar", "Kode Indikator", "Isi Indikator", "Jenis"],
-        ["Standar Pendidikan", "Standar Kompetensi Lulusan", "SN.01", "Rumusan kualifikasi kemampuan lulusan...", "IKU"],
-        ["Standar Pendidikan", "Standar Isi Pembelajaran", "SN.02", "Kedalaman dan keluasan materi...", "IKT"],
+        ["Kategori", "Nama Standar", "Kode Indikator", "Isi Indikator", "Jenis", "Target", "Satuan"],
+        ["Standar Pendidikan", "Standar Kompetensi Lulusan", "SN.01", "Rumusan kualifikasi kemampuan lulusan...", "IKU", "90", "%"],
+        ["Standar Pendidikan", "Standar Isi Pembelajaran", "SN.02", "Kedalaman dan keluasan materi...", "IKT", "100", "Dokumen"],
     ];
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();

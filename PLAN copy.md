@@ -123,15 +123,15 @@ Wadah untuk 1 siklus Audit Mutu Internal (AMI).
 | `id` | BIGINT (PK) | |
 | `periode_id` | BIGINT (FK)| Relasi ke `periode_ami.id` |
 | `unit_kerja_id` | INT (FK) | Relasi ke `unit_kerja.id` |
-| `tgl_rtm` | DATE | |
-| `isi_risalah` | TEXT | Keputusan rapat |
-| `keputusan_peningkatan`| TEXT | Perumusan target/standar mutu baru |
+| `tanggal_rapat` | DATE | |
+| `hasil_pembahasan`| TEXT | Keputusan rapat |
+| `rekomendasi_standar`| TEXT | Perumusan target/standar mutu baru |
 
 ---
 
 ## 🔄 Alur Kerja Sistem (Workflow AMI)
 
-1. **Persiapan (Penetapan):** Admin/LPM menginisiasi siklus AMI dan menetapkan Indikator beserta Target ke masing-masing Prodi. Mendukung **Import Massal** via Excel.
+1. **Persiapan (Penetapan):** Admin/LPM menginisiasi siklus AMI dan menetapkan Indikator beserta Target ke masing-masing Prodi.
 2. **Evaluasi Diri (Pelaksanaan):** Auditee (Prodi) menginput nilai capaian aktual, link bukti dokumen, dan Evaluasi Diri.
 3. **Audit Mutu Internal (Evaluasi):** Auditor memverifikasi capaian Prodi dan menerbitkan status temuan (Sesuai/OB/KTS) di Kertas Kerja Audit (KKA).
 4. **Pengendalian:** Jika ada KTS/OB, Auditee wajib mengisi Form Tindak Lanjut (Akar Masalah & RTL). Auditor memverifikasi perbaikan.
@@ -162,7 +162,6 @@ Aplikasi menggunakan *Role-Based Access Control* (RBAC) pada level *routing*. Me
 ### 📝 Modul Penetapan (Akses: Admin/LPM)
 * `/penetapan/periode` : Manajemen pembukaan dan penutupan siklus AMI.
 * `/penetapan/standar` : Pembuatan Standar Dikti.
-* `/penetapan/import-standar` : Fitur import massal standar & indikator dari Excel.
 * `/penetapan/indikator` : Pembuatan Indikator Mutu (IKU/IKT).
 * `/penetapan/distribusi-target` : Matriks penetapan angka target untuk masing-masing prodi/unit.
 
