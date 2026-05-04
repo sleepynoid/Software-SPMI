@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Admin/LPM')->prefix('penetapan')->name('penetapan.')->group(function () {
         Route::resource('periode', Penetapan\PeriodeController::class);
         Route::resource('standar', Penetapan\StandarController::class);
+        Route::get('/import-standar', [Penetapan\ImportStandarController::class, 'index'])->name('standar.import.index');
+        Route::post('/import-standar', [Penetapan\ImportStandarController::class, 'store'])->name('standar.import.store');
         Route::resource('indikator', Penetapan\IndikatorMutuController::class);
         
         Route::get('/distribusi-target', [Penetapan\DistribusiTargetController::class, 'index'])->name('distribusi-target.index');

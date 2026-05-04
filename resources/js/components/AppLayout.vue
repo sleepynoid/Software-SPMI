@@ -35,6 +35,7 @@ const menuItems = [
         items: [
             { label: 'Periode AMI', icon: 'pi pi-calendar-plus', route: 'penetapan.periode.index' },
             { label: 'Standar Dikti', icon: 'pi pi-book', route: 'penetapan.standar.index' },
+            { label: 'Import Standar', icon: 'pi pi-file-import', route: 'penetapan.standar.import.index' },
             { label: 'Indikator Mutu', icon: 'pi pi-list', route: 'penetapan.indikator.index' },
             { label: 'Distribusi Target', icon: 'pi pi-map', route: 'penetapan.distribusi-target.index' },
         ]
