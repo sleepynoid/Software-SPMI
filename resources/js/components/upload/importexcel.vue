@@ -34,7 +34,6 @@ export default {
         };
     },
     created() {
-        console.log("Excel component has been created");
     },
     methods: {
         handleFileUpload(event) {
@@ -47,10 +46,8 @@ export default {
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     const jsonSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    console.log("JSON Sheet:", jsonSheet); // Debug output
 
                     const merges = worksheet['!merges'] || [];
-                    console.log("Merges:", merges); // Debug output
 
                     this.updateData(jsonSheet, merges);
                 };

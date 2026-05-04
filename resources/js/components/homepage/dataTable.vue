@@ -81,12 +81,9 @@ const onRowSelect = (event) => {
     selectedMajor.value = event.data.jurusan; // Set the selected major
     selectedType.value = event.data.tipe; // Set the selected major
     periode.value = event.data.periode;
-    console.log(selectedMajor.value);
-    console.log(periode.value);
 
     // Directly navigate to the sheet route
     router.get(`/sheet/${encodeURIComponent(selectedMajor.value)}/${encodeURIComponent(periode.value)}/${encodeURIComponent(selectedType.value)}`);
-    console.log("Navigating to Sheet:", event.data);
 };
 
 // Navigate to Sheet
