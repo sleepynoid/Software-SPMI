@@ -6,14 +6,14 @@
 
 ## 🏛️ Deskripsi Proyek
 
-Software-SPMI adalah platform Audit Mutu Internal (AMI) terintegrasi yang dirancang khusus untuk **Institut Teknologi Adhi Tama Surabaya (ITATS)**. Aplikasi ini mendigitalisasi seluruh siklus penjaminan mutu perguruan tinggi secara relasional dan sistematis.
+Software-SPMI adalah platform Audit Mutu Internal (AMI) terintegrasi yang dirancang khusus untuk **Institut Teknologi Adhi Tama Surabaya (ITATS)**. Aplikasi ini mendigitalisasi seluruh siklus penjaminan mutu perguruan tinggi secara relasional dan sistematis, menggantikan proses manual berbasis kertas/spreadsheet yang tidak terpusat.
 
-### Fitur Utama:
-- **Penetapan**: Manajemen Standar Dikti, Indikator Mutu, dan distribusi Target Unit.
-- **Pelaksanaan**: Pengisian Evaluasi Diri (EDOM) oleh Auditee dengan bukti dokumen.
-- **Evaluasi**: Kertas Kerja Audit (KKA) untuk Auditor (Kategori temuan: Sesuai, OB, KTS).
-- **Pengendalian**: Penyusunan Rencana Tindak Lanjut (RTL/PTK) oleh Auditee.
-- **Peningkatan**: Dokumentasi Risalah Rapat Tinjauan Manajemen (RTM) oleh Pimpinan.
+### ✨ Fitur Utama:
+- **📊 Penetapan**: Manajemen Standar Dikti & Indikator Mutu. Dilengkapi fitur **Import Massal via Excel** dengan pemetaan otomatis ke seluruh Unit Kerja.
+- **🚀 Pelaksanaan**: Pengisian Evaluasi Diri (EDOM) oleh Auditee dengan pelampiran bukti dokumen (URL/Cloud Storage).
+- **🔍 Evaluasi**: Kertas Kerja Audit (KKA) untuk Auditor dengan sistem **Traffic Light** untuk kategori temuan (Sesuai, OB, KTS Minor/Mayor).
+- **🛠️ Pengendalian**: Penyusunan Akar Masalah dan Rencana Tindak Lanjut (RTL/PTK) oleh Auditee.
+- **📈 Peningkatan**: Dokumentasi Risalah Rapat Tinjauan Manajemen (RTM) oleh Pimpinan untuk perumusan standar siklus berikutnya.
 
 ---
 
@@ -24,9 +24,9 @@ Software-SPMI adalah platform Audit Mutu Internal (AMI) terintegrasi yang diranc
 | **Backend** | Laravel 11, PHP 8.4 |
 | **Frontend** | Vue 3 (Composition API), Inertia.js v2 |
 | **Library UI** | PrimeVue 4, Tailwind CSS 4 |
+| **Aesthetics** | Modern Glassmorphism, Dynamic Animations |
 | **Package Manager** | **pnpm** |
 | **Build Tool** | Vite 5 |
-| **Database** | MySQL / SQLite |
 
 ---
 
@@ -34,32 +34,24 @@ Software-SPMI adalah platform Audit Mutu Internal (AMI) terintegrasi yang diranc
 
 | Role | Deskripsi |
 |---|---|
-| `Admin / LPM` | Manajemen master data (Periode, Unit, User), Standar, Indikator, dan Target. |
-| `Auditee` | Mengisi Evaluasi Diri (Pelaksanaan) dan Rencana Tindak Lanjut (Pengendalian). |
-| `Auditor` | Melakukan audit lapangan dan mengisi Kertas Kerja Audit (Evaluasi). |
-| `Pimpinan` | Melakukan review capaian mutu dan memimpin Rapat Tinjauan Manajemen (Peningkatan). |
+| `Admin / LPM` | Manajemen master data, Standar, Indikator, dan Target Unit. |
+| `Auditee` | Melaporkan capaian kinerja unit dan menyusun rencana perbaikan (RTL). |
+| `Auditor` | Memverifikasi capaian dan memberikan temuan audit di KKA. |
+| `Pimpinan` | Memantau dashboard eksekutif dan memimpin RTM. |
 
 ---
 
 ## 🔑 Akun Demo (Seeded)
 
-Gunakan akun berikut untuk menguji fungsionalitas sistem (Password: `password`):
+Gunakan akun berikut untuk menguji fungsionalitas sistem (Password: **`password`**):
 
-| Role | Email | Deskripsi |
+| Role | Email | Nama |
 |---|---|---|
-| **Admin/LPM** | `admin@spmi.ac.id` | Akses penuh manajemen standar & unit. |
-| **Pimpinan** | `rektor@spmi.ac.id` | Akses Dashboard & Risalah RTM. |
-| **Auditor** | `auditor@spmi.ac.id` | Akses Kertas Kerja Audit (KKA). |
-| **Auditee** | `auditee@spmi.ac.id` | Akses Evaluasi Diri & RTL. |
-
----
-
-## 🛠️ Persyaratan
-
-- **PHP 8.4+**
-- **Composer**
-- **pnpm** (dianjurkan) atau npm/yarn
-- **MySQL 8+**
+| **Admin/LPM** | `admin@spmi.ac.id` | Administrator LPM |
+| **Pimpinan** | `pimpinan@spmi.ac.id` | Rektor ITATS |
+| **Auditor** | `ahmad@spmi.ac.id` | Prof. Ahmad Auditor, Ph.D. |
+| **Auditee** | `auditee@spmi.ac.id` | Kaprodi Informatika |
+| **Auditee** | `hendra@spmi.ac.id` | Kaprodi Manajemen |
 
 ---
 
@@ -77,52 +69,39 @@ pnpm install
 ```bash
 cp .env.example .env
 php artisan key:generate
-# Sesuaikan DB_DATABASE di .env
-php artisan migrate --seed
+# Sesuaikan konfigurasi database di .env
+php artisan migrate:fresh --seed
 ```
 
 ### 3. Menjalankan Aplikasi
 ```bash
-# Terminal 1: Backend
+# Jalankan Backend
 php artisan serve
 
-# Terminal 2: Frontend
+# Jalankan Frontend (Terminal terpisah)
 pnpm dev
 ```
 
 ---
 
-## 🧪 Data Simulasi & Testing
-
-Aplikasi dilengkapi dengan Factory untuk men-generate data demo dalam jumlah besar guna pengujian fungsionalitas penuh:
-
-```bash
-# Generate 10 siklus audit lengkap secara otomatis via Tinker
-php artisan tinker --execute="App\Models\RisalahRtm::factory()->count(10)->create()"
-```
-
-Instruksi di atas akan secara otomatis membuat data relasional mulai dari Periode, Standar, Indikator, Capaian, hingga Risalah RTM.
-
----
-
-## 📂 Struktur Folder Phase-Based (PPEPP)
+## 📂 Struktur Modul PPEPP
 
 ```
 app/Http/Controllers/
-├── Penetapan/       # Manajemen Standar & Target
-├── Pelaksanaan/    # Evaluasi Diri Auditee
-├── Evaluasi/       # Audit KKA oleh Auditor
-├── Pengendalian/   # RTL / PTK
-└── Peningkatan/    # Risalah RTM Pimpinan
+├── Penetapan/       # Import Excel, Standar & Target Unit
+├── Pelaksanaan/    # Evaluasi Diri (EDOM)
+├── Evaluasi/       # Kertas Kerja Audit (KKA)
+├── Pengendalian/   # Rencana Tindak Lanjut (RTL)
+└── Peningkatan/    # Risalah RTM
 ```
 
 ---
 
-## 🛡️ Catatan Keamanan
+## 🛡️ Keunggulan Arsitektur
 
-- **Zero-Token Auth**: Menggunakan Cookie Session Laravel murni tanpa penyimpanan token di LocalStorage (lebih aman terhadap XSS).
-- **Supply Chain Security**: Proteksi terhadap versi dependensi yang terkompromasi (Axios patch).
-- **Validation**: Strict validation di setiap fase PPEPP untuk menjaga integritas data mutu.
+- **Relational Integrity**: Data standar hingga temuan audit terhubung secara ketat untuk meminimalisir anomali data.
+- **Dynamic UX**: Penggunaan PrimeVue 4 dan Tailwind 4 memberikan pengalaman antarmuka yang sangat responsif dan premium.
+- **Scalable Seeders**: Dilengkapi dengan `RealisticDataSeeder` untuk simulasi siklus audit yang komprehensif dalam sekali perintah.
 
 ---
 © 2026 ITATS Documentation.

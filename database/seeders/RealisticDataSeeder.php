@@ -98,13 +98,16 @@ class RealisticDataSeeder extends Seeder
             'jenis' => 'IKU',
         ]);
 
-        $targetRpsIF = TargetUnit::create([
-            'indikator_id' => $indRps->id,
-            'unit_kerja_id' => $units['Prodi Informatika'],
-            'nilai_target' => 100,
-            'satuan' => '%',
-        ]);
+        foreach ($units as $unitName => $unitId) {
+            TargetUnit::create([
+                'indikator_id' => $indRps->id,
+                'unit_kerja_id' => $unitId,
+                'nilai_target' => 100,
+                'satuan' => '%',
+            ]);
+        }
 
+        $targetRpsIF = TargetUnit::where('indikator_id', $indRps->id)->where('unit_kerja_id', $units['Prodi Informatika'])->first();
         $capaianRps = CapaianPelaksanaan::create([
             'target_unit_id' => $targetRpsIF->id,
             'nilai_aktual' => 85,
@@ -143,13 +146,16 @@ class RealisticDataSeeder extends Seeder
             'jenis' => 'IKU',
         ]);
 
-        $targetPubIF = TargetUnit::create([
-            'indikator_id' => $indPub->id,
-            'unit_kerja_id' => $units['Prodi Informatika'],
-            'nilai_target' => 0.5,
-            'satuan' => 'Dokumen/Dosen',
-        ]);
+        foreach ($units as $unitName => $unitId) {
+            TargetUnit::create([
+                'indikator_id' => $indPub->id,
+                'unit_kerja_id' => $unitId,
+                'nilai_target' => 0.5,
+                'satuan' => 'Dokumen/Dosen',
+            ]);
+        }
 
+        $targetPubIF = TargetUnit::where('indikator_id', $indPub->id)->where('unit_kerja_id', $units['Prodi Informatika'])->first();
         $capaianPub = CapaianPelaksanaan::create([
             'target_unit_id' => $targetPubIF->id,
             'nilai_aktual' => 1.2,
@@ -180,13 +186,16 @@ class RealisticDataSeeder extends Seeder
             'jenis' => 'IKU',
         ]);
 
-        $targetLabFT = TargetUnit::create([
-            'indikator_id' => $indLab->id,
-            'unit_kerja_id' => $units['Fakultas Teknik'],
-            'nilai_target' => 100,
-            'satuan' => '%',
-        ]);
+        foreach ($units as $unitName => $unitId) {
+            TargetUnit::create([
+                'indikator_id' => $indLab->id,
+                'unit_kerja_id' => $unitId,
+                'nilai_target' => 100,
+                'satuan' => '%',
+            ]);
+        }
 
+        $targetLabFT = TargetUnit::where('indikator_id', $indLab->id)->where('unit_kerja_id', $units['Fakultas Teknik'])->first();
         $capaianLab = CapaianPelaksanaan::create([
             'target_unit_id' => $targetLabFT->id,
             'nilai_aktual' => 95,
