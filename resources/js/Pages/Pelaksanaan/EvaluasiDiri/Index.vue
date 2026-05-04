@@ -30,6 +30,18 @@ const openReport = (target) => {
 };
 
 const submitReport = () => {
+    // Validasi URL sederhana
+    const urlPattern = /^(http|https):\/\/[^ "]+$/;
+    if (!urlPattern.test(form.link_dokumen_bukti)) {
+        toast.add({ 
+            severity: 'error', 
+            summary: 'Link Tidak Valid', 
+            detail: 'Pastikan link dimulai dengan http:// atau https://', 
+            life: 5000 
+        });
+        return;
+    }
+
     form.post(route('pelaksanaan.evaluasi-diri.store', selectedTarget.value.id), {
         onSuccess: () => {
             reportDialog.value = false;
