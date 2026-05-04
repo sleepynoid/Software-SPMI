@@ -50,7 +50,7 @@ const getTemuanSeverity = (cat) => {
         case 'Sesuai': return 'success';
         case 'Melampaui': return 'info';
         case 'Observasi (OB)': return 'warn';
-        case 'KTS Minor': return 'danger';
+        case 'KTS Minor': return 'warn';
         case 'KTS Mayor': return 'danger';
         default: return 'secondary';
     }
@@ -137,12 +137,18 @@ const getTemuanSeverity = (cat) => {
                 <div class="field">
                     <label class="block font-medium mb-3">Kategori Temuan Audit</label>
                     <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                        <div v-for="cat in ['Sesuai', 'Melampaui', 'Observasi (OB)', 'KTS Minor', 'KTS Mayor']" :key="cat"
-                            @click="form.kategori_temuan = cat"
-                            class="p-3 border rounded-xl cursor-pointer text-center text-xs font-bold transition-all"
-                            :class="form.kategori_temuan === cat ? 'bg-primary-600 text-white border-primary-600 shadow-lg' : 'bg-white text-slate-600 border-slate-200 hover:border-primary-300'"
+                        <div v-for="cat in [
+                            { label: 'Sesuai', active: 'bg-green-600 text-white border-green-600 shadow-green-100', inactive: 'bg-green-50 text-green-700 border-green-100 hover:border-green-300' },
+                            { label: 'Melampaui', active: 'bg-blue-600 text-white border-blue-600 shadow-blue-100', inactive: 'bg-blue-50 text-blue-700 border-blue-100 hover:border-blue-300' },
+                            { label: 'Observasi (OB)', active: 'bg-amber-500 text-white border-amber-500 shadow-amber-100', inactive: 'bg-amber-50 text-amber-700 border-amber-100 hover:border-amber-300' },
+                            { label: 'KTS Minor', active: 'bg-orange-600 text-white border-orange-600 shadow-orange-100', inactive: 'bg-orange-50 text-orange-700 border-orange-100 hover:border-orange-300' },
+                            { label: 'KTS Mayor', active: 'bg-red-600 text-white border-red-600 shadow-red-100', inactive: 'bg-red-50 text-red-700 border-red-100 hover:border-red-300' }
+                        ]" :key="cat.label"
+                            @click="form.kategori_temuan = cat.label"
+                            class="p-3 border rounded-xl cursor-pointer text-center text-xs font-bold transition-all shadow-sm"
+                            :class="form.kategori_temuan === cat.label ? cat.active + ' shadow-lg scale-[1.02]' : cat.inactive"
                         >
-                            {{ cat }}
+                            {{ cat.label }}
                         </div>
                     </div>
                 </div>

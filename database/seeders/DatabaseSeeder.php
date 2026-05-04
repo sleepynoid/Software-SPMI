@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder {
             UnitKerjaSeeder::class,
             KategoriStandarSeeder::class,
             UserSeeder::class,
+            RealisticDataSeeder::class,
         ]);
     }
 }
