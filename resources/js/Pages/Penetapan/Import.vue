@@ -2,10 +2,23 @@
 import AppLayout from '@/components/AppLayout.vue';
 import ImportExcel from '@/components/upload/importexcel.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import * as XLSX from 'xlsx';
 
 const props = defineProps({
     active_periode: Object
 });
+
+const downloadTemplate = () => {
+    const data = [
+        ["Kategori", "Nama Standar", "Kode Indikator", "Isi Indikator", "Jenis"],
+        ["Standar Pendidikan", "Standar Kompetensi Lulusan", "SN.01", "Rumusan kualifikasi kemampuan lulusan...", "IKU"],
+        ["Standar Pendidikan", "Standar Isi Pembelajaran", "SN.02", "Kedalaman dan keluasan materi...", "IKT"],
+    ];
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+    XLSX.writeFile(workbook, "template_import_standar.xlsx");
+};
 </script>
 
 <template>
@@ -56,7 +69,7 @@ const props = defineProps({
                             </li>
                             <li class="flex gap-2">
                                 <i class="pi pi-check-circle text-green-500 shrink-0 mt-0.5"></i>
-                                <span>Gunakan kolom: <strong>Kategori, Nama Standar, Kode Indikator, Isi Indikator, Jenis</strong>.</span>
+                                <span>Kolom: <strong>Kategori, Nama Standar, Kode Indikator, Isi Indikator, Jenis</strong>.</span>
                             </li>
                             <li class="flex gap-2">
                                 <i class="pi pi-check-circle text-green-500 shrink-0 mt-0.5"></i>
@@ -65,10 +78,13 @@ const props = defineProps({
                         </ul>
                         
                         <div class="mt-6 pt-6 border-t border-slate-50">
-                            <a href="#" class="block w-full text-center py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg text-sm font-bold transition-colors">
+                            <button 
+                                @click="downloadTemplate"
+                                class="w-full text-center py-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg text-sm font-bold transition-colors"
+                            >
                                 <i class="pi pi-download mr-1"></i>
                                 Unduh Template Excel
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
