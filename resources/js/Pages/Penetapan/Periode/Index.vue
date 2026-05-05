@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/components/AppLayout.vue';
 import { ref, computed } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, router } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
 
 const props = defineProps({
@@ -35,6 +35,14 @@ const editPeriode = (p) => {
 };
 
 const savePeriode = () => {
+    // Format tanggal ke YYYY-MM-DD agar bersih di DB
+    if (form.tgl_mulai_audit instanceof Date) {
+        form.tgl_mulai_audit = form.tgl_mulai_audit.toISOString().split('T')[0];
+    }
+    if (form.tgl_selesai_audit instanceof Date) {
+        form.tgl_selesai_audit = form.tgl_selesai_audit.toISOString().split('T')[0];
+    }
+
     if (form.id) {
         form.put(route('penetapan.periode.update', form.id), {
             onSuccess: () => {
@@ -62,6 +70,22 @@ const getStatusSeverity = (status) => {
         default: return null;
     }
 };
+
+const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+};
+
+const confirmDelete = (p) => {
+    if (confirm(`Apakah Anda yakin ingin menghapus periode ${p.tahun_akademik}? Semua data standar dan audit di periode ini akan terhapus!`)) {
+        router.delete(route('penetapan.periode.destroy', p.id), {
+            onSuccess: () => {
+                toast.add({ severity: 'success', summary: 'Sukses', detail: 'Periode berhasil dihapus', life: 3000 });
+            }
+        });
+    }
+};
 </script>
 
 <template>
@@ -83,7 +107,7 @@ const getStatusSeverity = (status) => {
                     <template #body="slotProps">
                         <span class="text-sm">
                             <i class="pi pi-calendar mr-2 text-slate-400"></i>
-                            {{ slotProps.data.tgl_mulai_audit }} s/d {{ slotProps.data.tgl_selesai_audit }}
+                            {{ formatDate(slotProps.data.tgl_mulai_audit) }} s/d {{ formatDate(slotProps.data.tgl_selesai_audit) }}
                         </span>
                     </template>
                 </Column>
@@ -94,7 +118,10 @@ const getStatusSeverity = (status) => {
                 </Column>
                 <Column header="Aksi">
                     <template #body="slotProps">
-                        <Button icon="pi pi-cog" label="Kelola" class="p-button-text p-button-info" @click="editPeriode(slotProps.data)" />
+                        <div class="flex gap-2">
+                            <Button icon="pi pi-cog" label="Kelola" class="p-button-text p-button-info" @click="editPeriode(slotProps.data)" />
+                            <Button icon="pi pi-trash" severity="danger" text @click="confirmDelete(slotProps.data)" />
+                        </div>
                     </template>
                 </Column>
             </DataTable>

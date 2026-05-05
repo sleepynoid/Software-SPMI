@@ -16,7 +16,9 @@ class KKAController extends Controller
 {
     public function show(Request $request, UnitKerja $unit)
     {
-        $periode_id = $request->periode_id ?: PeriodeAMI::orderBy('id', 'desc')->first()?->id;
+        $periode_id = $request->periode_id ?: PeriodeAMI::whereNotIn('status', ['Draft', 'Selesai'])->latest()->first()?->id
+                    ?? PeriodeAMI::where('status', '!=', 'Draft')->latest()->first()?->id
+                    ?? PeriodeAMI::latest()->first()?->id;
 
         $data = TargetUnit::with(['indikatorMutu.standar.kategori', 'capaianPelaksanaan.kertasKerjaAudit'])
             ->where('unit_kerja_id', $unit->id)

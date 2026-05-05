@@ -18,12 +18,12 @@ class DashboardController extends Controller
         // 1. Ambil semua periode aktif/selesai
         $periodes = PeriodeAMI::orderBy('tahun_akademik', 'desc')->get();
         
-        // 2. Tentukan periode yang ditampilkan (default: latest non-Selesai)
-        $selectedPeriodeId = $request->input('periode_id') ?? PeriodeAMI::where('status', '!=', 'Selesai')->latest()->first()?->id;
+        // 2. Tentukan periode yang ditampilkan (default: latest non-Draft & non-Selesai)
+        $selectedPeriodeId = $request->input('periode_id') ?? PeriodeAMI::whereNotIn('status', ['Draft', 'Selesai'])->latest()->first()?->id;
         
-        // Jika tidak ada yang aktif, ambil yang paling baru apapun statusnya
+        // Jika tidak ada yang aktif, ambil yang paling baru apapun statusnya (kecuali Draft jika memungkinkan)
         if (!$selectedPeriodeId) {
-            $selectedPeriodeId = PeriodeAMI::latest()->first()?->id;
+            $selectedPeriodeId = PeriodeAMI::where('status', '!=', 'Draft')->latest()->first()?->id ?? PeriodeAMI::latest()->first()?->id;
         }
 
         $activePeriode = PeriodeAMI::find($selectedPeriodeId);

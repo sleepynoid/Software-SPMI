@@ -19,7 +19,9 @@ class ImportStandarController extends Controller
     {
         return Inertia::render('Penetapan/Import', [
             'periodes' => PeriodeAMI::where('status', '!=', 'Selesai')->orderBy('tahun_akademik', 'desc')->get(),
-            'active_periode' => PeriodeAMI::where('status', '!=', 'Selesai')->latest()->first()
+            'active_periode' => PeriodeAMI::whereNotIn('status', ['Draft', 'Selesai'])->latest()->first()
+                ?? PeriodeAMI::where('status', '!=', 'Draft')->latest()->first()
+                ?? PeriodeAMI::latest()->first()
         ]);
     }
 
