@@ -12,15 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->validateCsrfTokens(except: [
-            '*',
-        ]);
-
         $middleware->trustProxies(at: '*', headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR | 
             \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST | 
             \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT | 
-            \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO | 
-            \Illuminate\Http\Request::HEADER_X_FORWARDED_AWS_ELB);
+            \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO);
         
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,

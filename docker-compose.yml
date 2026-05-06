@@ -8,7 +8,7 @@ services:
         restart: unless-stopped
         environment:
             APP_ENV: production
-            APP_DEBUG: "false"
+            APP_DEBUG: "${APP_DEBUG}"
             APP_KEY: "${APP_KEY}"
             DB_CONNECTION: "${DB_CONNECTION}"
             DB_HOST: "${DB_HOST}"
@@ -37,7 +37,7 @@ services:
               rm -rf bootstrap/cache/*.php
               chmod -R 777 storage bootstrap/cache
               php artisan config:clear
-              php artisan migrate --force
+              php artisan migrate --force || exit 1
               apache2-foreground
         volumes:
             - spmi-storage:/var/www/html/storage
