@@ -2,7 +2,7 @@ import './bootstrap';
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy'; // Path to ziggy v2
+import { ZiggyVue } from 'ziggy'; // Use alias
 
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';

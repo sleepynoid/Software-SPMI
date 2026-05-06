@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+import path from 'path';
 
 export default defineConfig({
     plugins: [
@@ -21,8 +22,9 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': '/resources/js',
-            'images': '/resources/images',
+            '@': path.resolve(__dirname, 'resources/js'),
+            'images': path.resolve(__dirname, 'resources/images'),
+            'ziggy': path.resolve(__dirname, 'vendor/tightenco/ziggy'),
         },
     },
 });

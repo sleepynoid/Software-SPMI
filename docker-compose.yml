@@ -1,14 +1,35 @@
 services:
     app:
-        image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-sleepynoid}/software-spmi-apache:latest
+        build:
+            context: .
+            dockerfile: docker/production/php/Dockerfile
+        image: software-spmi-apache:latest
         container_name: spmi-app
         restart: unless-stopped
         environment:
             APP_ENV: production
             APP_DEBUG: "false"
+            APP_KEY: "${APP_KEY}"
+            DB_CONNECTION: "${DB_CONNECTION}"
+            DB_HOST: "${DB_HOST}"
+            DB_PORT: "${DB_PORT}"
+            DB_DATABASE: "${DB_DATABASE}"
+            DB_USERNAME: "${DB_USERNAME}"
+            DB_PASSWORD: "${DB_PASSWORD}"
+            TRUSTED_PROXIES: "${TRUSTED_PROXIES}"
+            SESSION_DRIVER: "${SESSION_DRIVER}"
+            SESSION_SECURE_COOKIE: "${SESSION_SECURE_COOKIE}"
+            SESSION_DOMAIN: "${SESSION_DOMAIN}"
+            SESSION_SAME_SITE: "${SESSION_SAME_SITE}"
+            SESSION_LIFETIME: "${SESSION_LIFETIME}"
+            ASSET_URL: "${ASSET_URL}"
+            APP_URL: "${APP_URL}"
         user: root
         ports:
             - "${APP_PORT:-8081}:80"
+        depends_on:
+            mysql:
+                condition: service_healthy
         entrypoint: 
             - sh
             - -c

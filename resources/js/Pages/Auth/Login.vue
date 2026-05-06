@@ -1,5 +1,6 @@
 <script setup>
 import { useForm, Head } from '@inertiajs/vue3';
+import { route } from 'ziggy';
 
 const form = useForm({
     email: '',

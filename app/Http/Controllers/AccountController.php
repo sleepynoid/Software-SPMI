@@ -57,15 +57,19 @@ class AccountController extends Controller
             'password' => 'required',
         ]);
 
+        Log::info('Login attempt for: ' . $credentials['email']);
+
         if (!Auth::attempt($credentials)) {
+            Log::warning('Login failed for: ' . $credentials['email']);
             return back()->withErrors([
                 'email' => 'Email atau Password Salah.',
             ])->onlyInput('email');
         }
 
+        Log::info('Login success for: ' . $credentials['email'] . '. Redirecting to dashboard.');
         $request->session()->regenerate();
 
-        return redirect()->intended('/dashboard');
+        return redirect('/dashboard');
     }
 
     public function logout(Request $request)
