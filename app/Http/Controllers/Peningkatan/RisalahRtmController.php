@@ -17,11 +17,14 @@ class RisalahRtmController extends Controller
         $periode_id = $request->periode_id ?: PeriodeAMI::where('status', 'RTM')->first()?->id 
                     ?? PeriodeAMI::orderBy('id', 'desc')->first()?->id;
 
-        // Statistics for Pimpinan
-        $findingsCount = KertasKerjaAudit::whereHas('capaianPelaksanaan.targetUnit.indikatorMutu.standar', fn($q) => $q->where('periode_id', $periode_id))
-            ->get()
+        $findingsCount = KertasKerjaAudit::selectRaw('kategori_temuan, COUNT(*) as count')
+            ->join('capaian_pelaksanaan', 'capaian_pelaksanaan.id', '=', 'kertas_kerja_audit.capaian_id')
+            ->join('target_unit', 'target_unit.id', '=', 'capaian_pelaksanaan.target_unit_id')
+            ->join('indikator_mutu', 'indikator_mutu.id', '=', 'target_unit.indikator_id')
+            ->join('standar_dikti', 'standar_dikti.id', '=', 'indikator_mutu.standar_id')
+            ->where('standar_dikti.periode_id', $periode_id)
             ->groupBy('kategori_temuan')
-            ->map(fn($item) => $item->count());
+            ->pluck('count', 'kategori_temuan');
 
         return Inertia::render('Peningkatan/Risalah/Index', [
             'periodes' => PeriodeAMI::all(),

@@ -16,11 +16,21 @@ class RtlController extends Controller
         $user = $request->user();
         $periode_id = $request->periode_id ?: PeriodeAMI::orderBy('id', 'desc')->first()?->id;
 
-        // Findings for this unit that are NOT "Sesuai" or "Melampaui"
-        $findings = KertasKerjaAudit::with(['capaianPelaksanaan.targetUnit.indikatorMutu.standar', 'tindakLanjut'])
-            ->whereHas('capaianPelaksanaan.targetUnit', fn($q) => $q->where('unit_kerja_id', $user->unit_kerja_id))
-            ->whereHas('capaianPelaksanaan.targetUnit.indikatorMutu.standar', fn($q) => $q->where('periode_id', $periode_id))
+        // Findings for this unit that are NOT "Sesuai" or "Melampaui" with optimized query
+        $findings = KertasKerjaAudit::with([
+                'tindakLanjut',
+                'capaianPelaksanaan:id,target_unit_id,nilai_capaian',
+                'capaianPelaksanaan.targetUnit:id,unit_kerja_id,indikator_mutu_id',
+                'capaianPelaksanaan.targetUnit.indikatorMutu:id,kode_indikator,nama_indikator',
+            ])
+            ->join('capaian_pelaksanaan', 'capaian_pelaksanaan.id', '=', 'kertas_kerja_audit.capaian_id')
+            ->join('target_unit', 'target_unit.id', '=', 'capaian_pelaksanaan.target_unit_id')
+            ->join('indikator_mutu', 'indikator_mutu.id', '=', 'target_unit.indikator_id')
+            ->join('standar_dikti', 'standar_dikti.id', '=', 'indikator_mutu.standar_id')
+            ->where('target_unit.unit_kerja_id', $user->unit_kerja_id)
+            ->where('standar_dikti.periode_id', $periode_id)
             ->whereNotIn('kategori_temuan', ['Sesuai', 'Melampaui'])
+            ->select('kertas_kerja_audit.*')
             ->get();
 
         return Inertia::render('Pengendalian/IsiRtl/Index', [

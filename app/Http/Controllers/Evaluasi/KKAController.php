@@ -20,10 +20,20 @@ class KKAController extends Controller
                     ?? PeriodeAMI::where('status', '!=', 'Draft')->latest()->first()?->id
                     ?? PeriodeAMI::latest()->first()?->id;
 
-        $data = TargetUnit::with(['indikatorMutu.standar.kategori', 'capaianPelaksanaan.kertasKerjaAudit'])
-            ->where('unit_kerja_id', $unit->id)
-            ->whereHas('indikatorMutu.standar', fn($q) => $q->where('periode_id', $periode_id))
-            ->get();
+        $data = TargetUnit::with([
+                'indikatorMutu:id,kode_indikator,nama_indikator,standar_id',
+                'indikatorMutu.standar:id,kode_standar,nama_standar,kategori_id,periode_id',
+                'indikatorMutu.standar.kategori:id,nama_kategori',
+                'capaianPelaksanaan:id,target_unit_id,nilai_capaian',
+                'capaianPelaksanaan.kertasKerjaAudit:id,capaian_id,kategori_temuan,keterangan',
+            ])
+            ->join('indikator_mutu', 'indikator_mutu.id', '=', 'target_unit.indikator_id')
+            ->join('standar_dikti', 'standar_dikti.id', '=', 'indikator_mutu.standar_id')
+            ->where('target_unit.unit_kerja_id', $unit->id)
+            ->where('standar_dikti.periode_id', $periode_id)
+            ->select('target_unit.*')
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Evaluasi/KKA/Show', [
             'unit' => $unit,
