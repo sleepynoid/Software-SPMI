@@ -37,48 +37,82 @@ class ImportStandarController extends Controller
         $units = UnitKerja::all();
 
         DB::transaction(function () use ($data, $periodeId, $units) {
+            $indikatorUpserts = [];
+            $targetUpserts = [];
+
+            // Cache Kategori & Standar (Memory Lookup)
+            $kategoriMap = KategoriStandar::pluck('id', 'nama_kategori')->toArray();
+            $standarMap = StandarDikti::where('periode_id', $periodeId)->get()->groupBy('nama_standar')->map->first()->pluck('id', 'nama_standar')->toArray();
+
             foreach ($data as $row) {
-                // 1. Cari/Buat Kategori
+                // 1. Cari/Buat Kategori (Memory Cache)
                 $namaKategori = $row['Kategori'] ?? 'Lainnya';
-                $kategori = KategoriStandar::firstOrCreate(['nama_kategori' => $namaKategori]);
+                if (!isset($kategoriMap[$namaKategori])) {
+                    $kategori = KategoriStandar::create(['nama_kategori' => $namaKategori]);
+                    $kategoriMap[$namaKategori] = $kategori->id;
+                }
+                $kategoriId = $kategoriMap[$namaKategori];
 
-                // 2. Cari/Buat Standar
+                // 2. Cari/Buat Standar (Memory Cache)
                 $namaStandar = $row['Nama Standar'] ?? 'Standar Tanpa Nama';
-                $standar = StandarDikti::firstOrCreate([
-                    'periode_id' => $periodeId,
-                    'kategori_id' => $kategori->id,
-                    'nama_standar' => $namaStandar
-                ]);
+                if (!isset($standarMap[$namaStandar])) {
+                    $standar = StandarDikti::create([
+                        'periode_id' => $periodeId,
+                        'kategori_id' => $kategoriId,
+                        'nama_standar' => $namaStandar
+                    ]);
+                    $standarMap[$namaStandar] = $standar->id;
+                }
+                $standarId = $standarMap[$namaStandar];
 
-                // 3. Simpan Indikator
-                $indikator = IndikatorMutu::updateOrCreate(
-                    [
-                        'standar_id' => $standar->id,
-                        'kode_indikator' => $row['Kode Indikator'] ?? '-'
-                    ],
-                    [
-                        'isi_standar' => $row['Isi Indikator'] ?? '',
-                        'jenis' => $row['Jenis'] ?? 'IKU'
-                    ]
-                );
+                // 3. Collect Indikator untuk Bulk Upsert
+                $kodeIndikator = $row['Kode Indikator'] ?? '-';
+                $indikatorUpserts[] = [
+                    'standar_id' => $standarId,
+                    'kode_indikator' => $kodeIndikator,
+                    'isi_standar' => $row['Isi Indikator'] ?? '',
+                    'jenis' => $row['Jenis'] ?? 'IKU',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
 
-                // 4. Simpan Target per Unit Kerja (Default semua unit dapat target yang sama dari Excel)
-                $nilaiTarget = $row['Target'] ?? 0;
-                $satuan = $row['Satuan'] ?? '-';
+            // Execute Bulk Upsert Indikator (1 Query)
+            if (!empty($indikatorUpserts)) {
+                IndikatorMutu::upsert($indikatorUpserts, ['standar_id', 'kode_indikator'], ['isi_standar', 'jenis', 'updated_at']);
+                
+                // Ambil ID indikator yang baru saja di-upsert untuk Target
+                $allIndikators = IndikatorMutu::whereIn('standar_id', array_values($standarMap))->get()->groupBy(fn($i) => $i->standar_id . '_' . $i->kode_indikator);
 
-                if ($nilaiTarget > 0) {
-                    foreach ($units as $unit) {
-                        TargetUnit::updateOrCreate(
-                            [
+                foreach ($data as $row) {
+                    $standarId = $standarMap[$row['Nama Standar'] ?? 'Standar Tanpa Nama'];
+                    $kodeIndikator = $row['Kode Indikator'] ?? '-';
+                    $indikator = $allIndikators->get($standarId . '_' . $kodeIndikator)?->first();
+
+                    if (!$indikator) continue;
+
+                    $nilaiTarget = $row['Target'] ?? 0;
+                    $satuan = $row['Satuan'] ?? '-';
+
+                    if ($nilaiTarget > 0) {
+                        foreach ($units as $unit) {
+                            $targetUpserts[] = [
                                 'indikator_id' => $indikator->id,
-                                'unit_kerja_id' => $unit->id
-                            ],
-                            [
+                                'unit_kerja_id' => $unit->id,
                                 'nilai_target' => $nilaiTarget,
-                                'satuan' => $satuan
-                            ]
-                        );
+                                'satuan' => $satuan,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
                     }
+                }
+            }
+
+            // Execute Bulk Upsert Target Unit (1 Query untuk ribuan baris)
+            if (!empty($targetUpserts)) {
+                foreach (array_chunk($targetUpserts, 1000) as $chunk) {
+                    TargetUnit::upsert($chunk, ['indikator_id', 'unit_kerja_id'], ['nilai_target', 'satuan', 'updated_at']);
                 }
             }
         });
