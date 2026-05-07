@@ -16,9 +16,9 @@ const selectedPeriodeId = ref(props.active_periode?.id);
 
 const downloadTemplate = () => {
     const data = [
-        ["Kategori", "Nama Standar", "Kode Indikator", "Isi Indikator", "Jenis", "Target", "Satuan"],
-        ["Standar Pendidikan", "Standar Kompetensi Lulusan", "SN.01", "Rumusan kualifikasi kemampuan lulusan...", "IKU", "90", "%"],
-        ["Standar Pendidikan", "Standar Isi Pembelajaran", "SN.02", "Kedalaman dan keluasan materi...", "IKT", "100", "Dokumen"],
+        ["Kategori", "Nama Standar", "Kode Indikator", "Isi Indikator", "Jenis", "Target", "Satuan", "Unit Kerja"],
+        ["Standar Pendidikan", "Standar Kompetensi Lulusan", "SN.01", "Rumusan kualifikasi kemampuan lulusan...", "IKU", "90", "%", ""],
+        ["Standar Pendidikan", "Standar Isi Pembelajaran", "SN.02", "Kedalaman dan keluasan materi...", "IKT", "100", "Dokumen", "Program Studi"],
     ];
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -81,15 +81,15 @@ const downloadTemplate = () => {
                         <ul class="space-y-3 text-sm text-slate-600">
                             <li class="flex gap-2">
                                 <i class="pi pi-check-circle text-green-500 shrink-0 mt-0.5"></i>
-                                <span>Baris pertama adalah <strong>Header</strong>.</span>
+                                <span>Baris pertama adalah <strong>Header</strong> sesuai template.</span>
                             </li>
                             <li class="flex gap-2">
                                 <i class="pi pi-check-circle text-green-500 shrink-0 mt-0.5"></i>
-                                <span>Kolom: <strong>Kategori, Nama Standar, Kode Indikator, Isi Indikator, Jenis</strong>.</span>
+                                <span>Kolom: <strong>Kategori, Nama Standar, Kode Indikator, Isi Indikator, Jenis, Target, Satuan</strong>.</span>
                             </li>
                             <li class="flex gap-2">
                                 <i class="pi pi-check-circle text-green-500 shrink-0 mt-0.5"></i>
-                                <span>Kolom <strong>Jenis</strong> diisi: <code class="bg-slate-100 px-1 rounded">IKU</code> atau <code class="bg-slate-100 px-1 rounded">IKT</code>.</span>
+                                <span>Kolom <strong>Unit Kerja</strong> (Opsional): Jika kosong, target masuk ke SEMUA unit.</span>
                             </li>
                         </ul>
                         
