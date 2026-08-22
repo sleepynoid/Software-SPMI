@@ -14,7 +14,7 @@ class UnitKerjaController extends Controller
     {
         return Inertia::render('Master/UnitKerja/Index', [
             'units' => UnitKerja::with('kepalaUnit')->get(),
-            'users' => User::all(), // For picking kepala unit
+            'users' => User::all(),
         ]);
     }
 
@@ -47,6 +47,7 @@ class UnitKerjaController extends Controller
     public function destroy(UnitKerja $unitKerja)
     {
         $unitKerja->delete();
+
         return redirect()->back()->with('success', 'Unit Kerja berhasil dihapus.');
     }
 }

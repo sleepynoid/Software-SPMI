@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PeriodeAMI;
-use App\Models\StandarDikti;
 use App\Models\IndikatorMutu;
 use App\Models\KertasKerjaAudit;
+use App\Models\PeriodeAMI;
+use App\Models\StandarDikti;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,18 +14,15 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
         $user = $request->user()->load('role', 'unitKerja');
-        
-        // 1. Ambil semua periode aktif/selesai (Urutkan satu kali)
+
         $periodes = PeriodeAMI::orderBy('tahun_akademik', 'desc')->get();
-        
-        // 2. Tentukan periode yang ditampilkan (Cari dari collection, bukan query lagi)
-        $selectedPeriodeId = $request->input('periode_id') 
+
+        $selectedPeriodeId = $request->input('periode_id')
             ?? $periodes->whereNotIn('status', ['Draft', 'Selesai'])->first()?->id
             ?? $periodes->first()?->id;
 
         $activePeriode = $periodes->firstWhere('id', $selectedPeriodeId);
 
-        // 3. Hitung statistik dengan JOIN (Bukan whereHas nested)
         $stats = [
             'total_standar' => StandarDikti::where('periode_id', $selectedPeriodeId)->count(),
             'total_indikator' => IndikatorMutu::join('standar_dikti', 'standar_dikti.id', '=', 'indikator_mutu.standar_id')
@@ -39,7 +36,7 @@ class DashboardController extends Controller
                 ->whereIn('kategori_temuan', ['KTS Minor', 'KTS Mayor', 'Observasi (OB)'])
                 ->count(),
         ];
-        
+
         return Inertia::render('Dashboard/Index', [
             'user' => $user,
             'periodes' => $periodes,

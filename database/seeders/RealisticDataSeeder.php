@@ -21,11 +21,9 @@ class RealisticDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Setup Role & Unit Dasar
         $roles = Role::all()->pluck('id', 'nama_role');
         $units = UnitKerja::all()->pluck('id', 'nama_unit');
 
-        // 2. Tambah Banyak User (Auditor & Auditee)
         $usersData = [
             [
                 'nama_lengkap' => 'Prof. Ahmad Auditor, Ph.D.',
@@ -65,7 +63,6 @@ class RealisticDataSeeder extends Seeder
             ]);
         }
 
-        // 3. Setup Periode (Aktif & Selesai)
         $periodeSelesai = PeriodeAMI::create([
             'tahun_akademik' => '2023/2024 Genap',
             'tgl_mulai_audit' => '2025-10-01',
@@ -80,11 +77,9 @@ class RealisticDataSeeder extends Seeder
             'status' => 'Audit Lapangan',
         ]);
 
-        // 4. Kategori & Standar
         $katPendidikan = KategoriStandar::where('nama_kategori', 'Standar Pendidikan')->first();
         $katPenelitian = KategoriStandar::where('nama_kategori', 'Standar Penelitian')->first();
 
-        // --- SKENARIO 1: PENDIDIKAN (KTS MINOR) ---
         $stdPnd = StandarDikti::create([
             'periode_id' => $periodeAktif->id,
             'kategori_id' => $katPendidikan->id,
@@ -132,7 +127,6 @@ class RealisticDataSeeder extends Seeder
             'status_verifikasi' => 'Open',
         ]);
 
-        // --- SKENARIO 2: PENELITIAN (MELAMPAUI) ---
         $stdLit = StandarDikti::create([
             'periode_id' => $periodeAktif->id,
             'kategori_id' => $katPenelitian->id,
@@ -172,10 +166,9 @@ class RealisticDataSeeder extends Seeder
             'deskripsi_temuan' => 'Pencapaian sangat baik. Prodi Informatika berhasil melampaui target nasional dan institusi.',
         ]);
 
-        // --- SKENARIO 4: SARPRAS (OBSERVASI) ---
         $stdSarpras = StandarDikti::create([
             'periode_id' => $periodeAktif->id,
-            'kategori_id' => $katPendidikan->id, // Bisa buat kategori Sarpras jika perlu
+            'kategori_id' => $katPendidikan->id,
             'nama_standar' => 'Standar Sarana Prasarana',
         ]);
 
@@ -212,7 +205,6 @@ class RealisticDataSeeder extends Seeder
             'deskripsi_temuan' => 'Hanya tersisa 5 unit yang belum terlisensi. Sebaiknya dipercepat agar tidak menghambat praktikum.',
         ]);
 
-        // 8. Risalah RTM (Peningkatan)
         RisalahRtm::create([
             'periode_id' => $periodeAktif->id,
             'unit_kerja_id' => $units['Fakultas Teknik'],

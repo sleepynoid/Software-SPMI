@@ -43,6 +43,7 @@ class KategoriStandarController extends Controller
     public function destroy(KategoriStandar $kategoriStandar)
     {
         $kategoriStandar->delete();
+
         return redirect()->back()->with('success', 'Kategori Standar berhasil dihapus.');
     }
 }

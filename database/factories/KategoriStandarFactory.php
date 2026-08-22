@@ -5,21 +5,15 @@ namespace Database\Factories;
 use App\Models\KategoriStandar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\KategoriStandar>
- */
 class KategoriStandarFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = KategoriStandar::class;
+
     public function definition(): array
     {
         return [
-            'nama_kategori' => fake()->words(2, true),
-            'is_default'    => false,
+            'nama_kategori' => fake()->unique()->words(3, true),
+            'is_default' => fake()->boolean(30),
         ];
     }
 }

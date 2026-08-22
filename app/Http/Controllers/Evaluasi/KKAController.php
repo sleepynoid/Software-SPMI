@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Evaluasi;
 
 use App\Http\Controllers\Controller;
-use App\Models\UnitKerja;
-use App\Models\IndikatorMutu;
-use App\Models\TargetUnit;
 use App\Models\CapaianPelaksanaan;
 use App\Models\KertasKerjaAudit;
 use App\Models\PeriodeAMI;
+use App\Models\TargetUnit;
+use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,16 +16,16 @@ class KKAController extends Controller
     public function show(Request $request, UnitKerja $unit)
     {
         $periode_id = $request->periode_id ?: PeriodeAMI::whereNotIn('status', ['Draft', 'Selesai'])->latest()->first()?->id
-                    ?? PeriodeAMI::where('status', '!=', 'Draft')->latest()->first()?->id
-                    ?? PeriodeAMI::latest()->first()?->id;
+            ?? PeriodeAMI::where('status', '!=', 'Draft')->latest()->first()?->id
+            ?? PeriodeAMI::latest()->first()?->id;
 
         $data = TargetUnit::with([
-                'indikatorMutu:id,kode_indikator,nama_indikator,standar_id',
-                'indikatorMutu.standar:id,kode_standar,nama_standar,kategori_id,periode_id',
-                'indikatorMutu.standar.kategori:id,nama_kategori',
-                'capaianPelaksanaan:id,target_unit_id,nilai_capaian',
-                'capaianPelaksanaan.kertasKerjaAudit:id,capaian_id,kategori_temuan,keterangan',
-            ])
+            'indikatorMutu:id,kode_indikator,isi_standar,standar_id',
+            'indikatorMutu.standar:id,nama_standar,kategori_id,periode_id',
+            'indikatorMutu.standar.kategori:id,nama_kategori',
+            'capaianPelaksanaan:id,target_unit_id,nilai_aktual',
+            'capaianPelaksanaan.kertasKerjaAudit:id,capaian_id,kategori_temuan,deskripsi_temuan',
+        ])
             ->join('indikator_mutu', 'indikator_mutu.id', '=', 'target_unit.indikator_id')
             ->join('standar_dikti', 'standar_dikti.id', '=', 'indikator_mutu.standar_id')
             ->where('target_unit.unit_kerja_id', $unit->id)

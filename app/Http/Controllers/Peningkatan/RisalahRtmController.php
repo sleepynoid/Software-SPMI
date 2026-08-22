@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Peningkatan;
 
 use App\Http\Controllers\Controller;
-use App\Models\RisalahRtm;
-use App\Models\PeriodeAMI;
-use App\Models\UnitKerja;
 use App\Models\KertasKerjaAudit;
+use App\Models\PeriodeAMI;
+use App\Models\RisalahRtm;
+use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,8 +14,8 @@ class RisalahRtmController extends Controller
 {
     public function index(Request $request)
     {
-        $periode_id = $request->periode_id ?: PeriodeAMI::where('status', 'RTM')->first()?->id 
-                    ?? PeriodeAMI::orderBy('id', 'desc')->first()?->id;
+        $periode_id = $request->periode_id ?: PeriodeAMI::where('status', 'RTM')->first()?->id
+            ?? PeriodeAMI::orderBy('id', 'desc')->first()?->id;
 
         $findingsCount = KertasKerjaAudit::selectRaw('kategori_temuan, COUNT(*) as count')
             ->join('capaian_pelaksanaan', 'capaian_pelaksanaan.id', '=', 'kertas_kerja_audit.capaian_id')
@@ -70,6 +70,7 @@ class RisalahRtmController extends Controller
     public function destroy(RisalahRtm $risalah)
     {
         $risalah->delete();
+
         return redirect()->back()->with('success', 'Risalah RTM berhasil dihapus.');
     }
 }

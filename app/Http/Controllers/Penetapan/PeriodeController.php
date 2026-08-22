@@ -47,6 +47,7 @@ class PeriodeController extends Controller
     public function destroy(PeriodeAMI $periode)
     {
         $periode->delete();
+
         return redirect()->back()->with('success', 'Periode AMI berhasil dihapus.');
     }
 }

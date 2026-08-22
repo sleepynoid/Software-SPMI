@@ -1,7 +1,17 @@
-@import "tailwindcss";
-@import "tailwindcss-primeui";
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
+    --font-sans:
+        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
     --color-primary-50: #eef6ff;
     --color-primary-100: #d9eaff;
     --color-primary-200: #bbdbff;
@@ -17,25 +27,24 @@
     --color-accent-500: #f36f21; /* ITATS Orange */
 }
 
-
-.th{
+.th {
     width: 15rem;
 }
 
-.link{
+.link {
     width: 5rem;
 }
 
-textarea{
+textarea {
     padding: 2%;
 }
 
-.edited{
+.edited {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 
-    & p{
+    & p {
         margin-bottom: -0.1rem;
         font-size: 0.9rem;
     }

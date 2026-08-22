@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Role;
 use App\Models\UnitKerja;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -56,6 +56,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return redirect()->back()->with('success', 'User berhasil dihapus.');
     }
 }

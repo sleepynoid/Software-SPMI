@@ -5,21 +5,15 @@ namespace Database\Factories;
 use App\Models\UnitKerja;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UnitKerja>
- */
 class UnitKerjaFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = UnitKerja::class;
+
     public function definition(): array
     {
         return [
-            'nama_unit'      => fake()->company(),
-            'jenis_unit'     => fake()->randomElement(['Fakultas', 'Program Studi', 'Biro', 'Lembaga']),
+            'nama_unit' => fake()->unique()->words(3, true),
+            'jenis_unit' => fake()->randomElement(['Fakultas', 'Program Studi', 'Biro', 'Lembaga']),
             'kepala_unit_id' => null,
         ];
     }

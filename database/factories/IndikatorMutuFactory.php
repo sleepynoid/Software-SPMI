@@ -6,23 +6,17 @@ use App\Models\IndikatorMutu;
 use App\Models\StandarDikti;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\IndikatorMutu>
- */
 class IndikatorMutuFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = IndikatorMutu::class;
+
     public function definition(): array
     {
         return [
-            'standar_id'      => StandarDikti::factory(),
-            'kode_indikator'  => 'IND-' . fake()->unique()->numerify('####'),
-            'isi_standar'     => fake()->paragraph(),
-            'jenis'           => fake()->randomElement(['IKU', 'IKT']),
+            'standar_id' => StandarDikti::factory(),
+            'kode_indikator' => fake()->unique()->bothify('???-##'),
+            'isi_standar' => fake()->sentence(10),
+            'jenis' => fake()->randomElement(['IKU', 'IKT']),
         ];
     }
 }

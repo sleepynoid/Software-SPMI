@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Penetapan;
 
 use App\Http\Controllers\Controller;
 use App\Models\IndikatorMutu;
-use App\Models\UnitKerja;
-use App\Models\TargetUnit;
 use App\Models\PeriodeAMI;
+use App\Models\TargetUnit;
+use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,7 +17,7 @@ class DistribusiTargetController extends Controller
         $periode_id = $request->periode_id ?: PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id;
 
         $indikators = IndikatorMutu::with('standar')
-            ->whereHas('standar', fn($q) => $q->where('periode_id', $periode_id))
+            ->whereHas('standar', fn ($q) => $q->where('periode_id', $periode_id))
             ->get();
 
         $units = UnitKerja::where('jenis_unit', 'Program Studi')->get();
@@ -25,7 +25,7 @@ class DistribusiTargetController extends Controller
         $targets = TargetUnit::whereIn('indikator_id', $indikators->pluck('id'))
             ->get()
             ->groupBy('indikator_id')
-            ->map(fn($item) => $item->keyBy('unit_kerja_id'));
+            ->map(fn ($item) => $item->keyBy('unit_kerja_id'));
 
         return Inertia::render('Penetapan/DistribusiTarget/Index', [
             'periodes' => PeriodeAMI::all(),

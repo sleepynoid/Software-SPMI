@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Pengendalian;
 
 use App\Http\Controllers\Controller;
 use App\Models\KertasKerjaAudit;
-use App\Models\TindakLanjutPtk;
 use App\Models\PeriodeAMI;
+use App\Models\TindakLanjutPtk;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,13 +16,12 @@ class RtlController extends Controller
         $user = $request->user();
         $periode_id = $request->periode_id ?: PeriodeAMI::orderBy('id', 'desc')->first()?->id;
 
-        // Findings for this unit that are NOT "Sesuai" or "Melampaui" with optimized query
         $findings = KertasKerjaAudit::with([
-                'tindakLanjut',
-                'capaianPelaksanaan:id,target_unit_id,nilai_capaian',
-                'capaianPelaksanaan.targetUnit:id,unit_kerja_id,indikator_mutu_id',
-                'capaianPelaksanaan.targetUnit.indikatorMutu:id,kode_indikator,nama_indikator',
-            ])
+            'tindakLanjut',
+            'capaianPelaksanaan:id,target_unit_id,nilai_aktual',
+            'capaianPelaksanaan.targetUnit:id,unit_kerja_id,indikator_id',
+            'capaianPelaksanaan.targetUnit.indikatorMutu:id,kode_indikator,isi_standar',
+        ])
             ->join('capaian_pelaksanaan', 'capaian_pelaksanaan.id', '=', 'kertas_kerja_audit.capaian_id')
             ->join('target_unit', 'target_unit.id', '=', 'capaian_pelaksanaan.target_unit_id')
             ->join('indikator_mutu', 'indikator_mutu.id', '=', 'target_unit.indikator_id')
@@ -45,13 +44,13 @@ class RtlController extends Controller
         $validated = $request->validate([
             'rencana_tindak_lanjut' => 'required|string',
             'jadwal_penyelesaian' => 'required|date',
-            'penanggung_jawab' => 'required|string|max:255',
+            'akar_masalah' => 'nullable|string',
         ]);
 
         TindakLanjutPtk::updateOrCreate(
             ['kka_id' => $kka->id],
             array_merge($validated, [
-                'status_tl' => 'Open',
+                'status_verifikasi' => 'Open',
             ])
         );
 

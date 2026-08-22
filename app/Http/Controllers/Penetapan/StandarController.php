@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Penetapan;
 
 use App\Http\Controllers\Controller;
-use App\Models\StandarDikti;
-use App\Models\PeriodeAMI;
 use App\Models\KategoriStandar;
+use App\Models\PeriodeAMI;
+use App\Models\StandarDikti;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,7 +17,7 @@ class StandarController extends Controller
 
         return Inertia::render('Penetapan/Standar/Index', [
             'standars' => StandarDikti::with('kategori', 'periode')
-                ->when($periode_id, fn($q) => $q->where('periode_id', $periode_id))
+                ->when($periode_id, fn ($q) => $q->where('periode_id', $periode_id))
                 ->get(),
             'periodes' => PeriodeAMI::all(),
             'categories' => KategoriStandar::all(),
@@ -53,6 +53,7 @@ class StandarController extends Controller
     public function destroy(StandarDikti $standar)
     {
         $standar->delete();
+
         return redirect()->back()->with('success', 'Standar Dikti berhasil dihapus.');
     }
 }
