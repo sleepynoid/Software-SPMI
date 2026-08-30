@@ -105,6 +105,9 @@ function destroy(id: number) {
                         placeholder="Semua Periode"
                         class="w-64"
                     />
+                    <a v-if="selectedPeriode" :href="route('penetapan.standar.export', { periode_id: selectedPeriode })">
+                        <Button label="Export Excel" icon="pi pi-file-export" severity="success" outlined />
+                    </a>
                     <Button label="Tambah Standar" icon="pi pi-plus" @click="openDialog()" class="bg-[#00479b] border-[#00479b]" />
                 </div>
             </div>

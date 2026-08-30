@@ -31,7 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Penetapan (Admin/LPM only)
     Route::middleware('role:Admin/LPM')->prefix('penetapan')->name('penetapan.')->group(function () {
         Route::resource('periode', PeriodeController::class)->except(['show', 'edit', 'create']);
+        Route::get('/standar/export', [StandarController::class, 'export'])->name('standar.export');
         Route::resource('standar', StandarController::class)->except(['show', 'edit', 'create']);
+        Route::get('/import-standar/template', [ImportStandarController::class, 'template'])->name('standar.import.template');
         Route::get('/import-standar', [ImportStandarController::class, 'index'])->name('standar.import.index');
         Route::post('/import-standar', [ImportStandarController::class, 'store'])->name('standar.import.store');
         Route::resource('indikator', IndikatorMutuController::class)->except(['show', 'edit', 'create']);

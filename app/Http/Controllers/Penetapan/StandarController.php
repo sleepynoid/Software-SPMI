@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Penetapan;
 
+use App\Exports\StandarExport;
 use App\Http\Controllers\Controller;
 use App\Models\KategoriStandar;
 use App\Models\PeriodeAMI;
 use App\Models\StandarDikti;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StandarController extends Controller
 {
@@ -23,6 +25,13 @@ class StandarController extends Controller
             'categories' => KategoriStandar::all(),
             'selectedPeriodeId' => (int) $periode_id,
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $request->validate(['periode_id' => 'required|exists:periode_ami,id']);
+
+        return Excel::download(new StandarExport($request->periode_id), 'export_standar_dikti.xlsx');
     }
 
     public function store(Request $request)

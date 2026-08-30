@@ -47,7 +47,6 @@
         "tailwindcss": "^4.1.1",
         "tailwindcss-primeui": "^0.5.1",
         "vue": "^3.5.13",
-        "xlsx": "^0.18.5",
         "zod": "^3.24.2"
     },
     "optionalDependencies": {
