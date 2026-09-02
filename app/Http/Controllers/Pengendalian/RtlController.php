@@ -41,6 +41,15 @@ class RtlController extends Controller
 
     public function store(Request $request, KertasKerjaAudit $kka)
     {
+        $belongsToUserUnit = KertasKerjaAudit::query()
+            ->whereKey($kka->id)
+            ->whereHas('capaianPelaksanaan', fn ($q) => $q->whereHas('targetUnit', fn ($sq) => $sq->where('unit_kerja_id', $request->user()->unit_kerja_id)))
+            ->exists();
+
+        if (! $belongsToUserUnit) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'rencana_tindak_lanjut' => 'required|string',
             'jadwal_penyelesaian' => 'required|date',

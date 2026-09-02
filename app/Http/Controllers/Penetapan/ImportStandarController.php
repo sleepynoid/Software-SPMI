@@ -8,6 +8,7 @@ use App\Imports\StandarImport;
 use App\Models\PeriodeAMI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException as LaravelValidationException;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -48,6 +49,12 @@ class ImportStandarController extends Controller
             foreach ($failures as $failure) {
                 $errors[] = 'Baris '.$failure->row().': '.implode(', ', $failure->errors());
             }
+
+            Log::warning('Import standar failed validation', ['errors' => $errors, 'ip' => $request->ip()]);
+
+            return redirect()->back()->withErrors(['file' => $errors])->withInput();
+        } catch (LaravelValidationException $e) {
+            $errors = collect($e->errors())->flatten()->all();
 
             Log::warning('Import standar failed validation', ['errors' => $errors, 'ip' => $request->ip()]);
 

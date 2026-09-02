@@ -4,10 +4,10 @@
         "laravel-boost": {
             "type": "local",
             "enabled": true,
-            "command": [
+"command": [
                 "wsl.exe",
                 "/usr/bin/php8.4",
-                "/home/sweet/downloads/Software-SPMI/artisan",
+                "/mnt/c/Users/sweethome/code/Software-SPMI/artisan",
                 "boost:mcp"
             ]
         }

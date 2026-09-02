@@ -19,22 +19,17 @@ class StandarImport implements SkipsEmptyRows, ToCollection, WithHeadingRow, Wit
 {
     public function __construct(public int $periodeId) {}
 
-    public function headingRowFormatter(): string
-    {
-        return 'none';
-    }
-
     public function rules(): array
     {
         return [
-            'Nama Standar' => 'required|string',
-            'Kode Indikator' => 'required|string',
-            'Isi Indikator' => 'required|string',
-            'Jenis' => 'nullable|string|in:IKU,IKT',
-            'Target' => 'nullable|numeric|min:0',
-            'Satuan' => 'nullable|string',
-            'Kategori' => 'nullable|string',
-            'Unit Kerja' => 'nullable|string',
+            'nama_standar' => 'required|string',
+            'kode_indikator' => 'required|string',
+            'isi_indikator' => 'required|string',
+            'jenis' => 'nullable|string|in:IKU,IKT',
+            'target' => 'nullable|numeric|min:0',
+            'satuan' => 'nullable|string',
+            'kategori' => 'nullable|string',
+            'unit_kerja' => 'nullable|string',
         ];
     }
 
@@ -44,7 +39,7 @@ class StandarImport implements SkipsEmptyRows, ToCollection, WithHeadingRow, Wit
             throw ValidationException::withMessages(['file' => 'File Excel kosong atau tidak terbaca.']);
         }
 
-        $requiredColumns = ['Nama Standar', 'Kode Indikator', 'Isi Indikator', 'Target', 'Satuan'];
+        $requiredColumns = ['nama_standar', 'kode_indikator', 'isi_indikator', 'target', 'satuan'];
         $firstRowKeys = array_keys($rows->first()->toArray());
         $missingColumns = array_diff($requiredColumns, $firstRowKeys);
 
@@ -66,7 +61,7 @@ class StandarImport implements SkipsEmptyRows, ToCollection, WithHeadingRow, Wit
             $standarMap = StandarDikti::where('periode_id', $this->periodeId)->get()->mapWithKeys(fn ($s) => [strtolower(trim($s->nama_standar)) => $s->id])->toArray();
 
             foreach ($rows as $row) {
-                $namaKategori = trim($row['Kategori'] ?? 'Lainnya');
+                $namaKategori = trim($row['kategori'] ?? 'Lainnya');
                 $kategoriKey = strtolower($namaKategori);
                 if (! isset($kategoriMap[$kategoriKey])) {
                     $kategori = KategoriStandar::create(['nama_kategori' => $namaKategori]);
@@ -74,7 +69,7 @@ class StandarImport implements SkipsEmptyRows, ToCollection, WithHeadingRow, Wit
                 }
                 $kategoriId = $kategoriMap[$kategoriKey];
 
-                $namaStandar = trim($row['Nama Standar'] ?? '');
+                $namaStandar = trim($row['nama_standar'] ?? '');
                 if (empty($namaStandar)) {
                     continue;
                 }
@@ -90,12 +85,12 @@ class StandarImport implements SkipsEmptyRows, ToCollection, WithHeadingRow, Wit
                 }
                 $standarId = $standarMap[$standarKey];
 
-                $kodeIndikator = trim($row['Kode Indikator'] ?? $row['Kode'] ?? '-');
+                $kodeIndikator = trim($row['kode_indikator'] ?? $row['kode'] ?? '-');
                 $indikatorUpserts[] = [
                     'standar_id' => $standarId,
                     'kode_indikator' => $kodeIndikator,
-                    'isi_standar' => trim($row['Isi Indikator'] ?? $row['Isi Indikator (Ambil Paling Kanan)'] ?? ''),
-                    'jenis' => trim($row['Jenis'] ?? 'IKU'),
+                    'isi_standar' => trim($row['isi_indikator'] ?? $row['isi_indikator_ambil_paling_kanan'] ?? ''),
+                    'jenis' => trim($row['jenis'] ?? 'IKU'),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -108,22 +103,22 @@ class StandarImport implements SkipsEmptyRows, ToCollection, WithHeadingRow, Wit
                 $allIndikators = IndikatorMutu::whereIn('standar_id', array_values($standarMap))->get()->groupBy(fn ($i) => $i->standar_id.'_'.$i->kode_indikator);
 
                 foreach ($rows as $row) {
-                    $namaStandar = trim($row['Nama Standar'] ?? '');
+                    $namaStandar = trim($row['nama_standar'] ?? '');
                     if (empty($namaStandar)) {
                         continue;
                     }
 
                     $standarId = $standarMap[strtolower($namaStandar)];
-                    $kodeIndikator = trim($row['Kode Indikator'] ?? $row['Kode'] ?? '-');
+                    $kodeIndikator = trim($row['kode_indikator'] ?? $row['kode'] ?? '-');
                     $indikator = $allIndikators->get($standarId.'_'.$kodeIndikator)?->first();
 
                     if (! $indikator) {
                         continue;
                     }
 
-                    $nilaiTarget = (float) ($row['Target'] ?? 0);
-                    $satuan = trim($row['Satuan'] ?? '-');
-                    $unitString = strtolower(trim($row['Unit Kerja'] ?? $row['PIC / Unit Kerja'] ?? ''));
+                    $nilaiTarget = (float) ($row['target'] ?? 0);
+                    $satuan = trim($row['satuan'] ?? '-');
+                    $unitString = strtolower(trim($row['unit_kerja'] ?? $row['pic_unit_kerja'] ?? ''));
 
                     if ($nilaiTarget > 0) {
                         $targetUnitIds = [];

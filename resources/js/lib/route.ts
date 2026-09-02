@@ -51,6 +51,11 @@ const routes: Record<string, (params?: Params) => string> = {
     'penetapan.standar.destroy': (p) => penetapan.standar.destroy(extractFirstParam(p)!).url,
     'penetapan.standar.import.index': () => penetapan.standar.import.index().url,
     'penetapan.standar.import.store': () => penetapan.standar.import.store().url,
+    'penetapan.standar.import.template': () => penetapan.standar.import.template().url,
+    'penetapan.standar.export': (p) => {
+        const query = (typeof p === 'object' && p !== null ? p : {}) as Record<string, string | number>;
+        return penetapan.standar.export({ query }).url;
+    },
     'penetapan.indikator.index': () => penetapan.indikator.index().url,
     'penetapan.indikator.store': () => penetapan.indikator.store().url,
     'penetapan.indikator.update': (p) => penetapan.indikator.update(extractFirstParam(p)!).url,

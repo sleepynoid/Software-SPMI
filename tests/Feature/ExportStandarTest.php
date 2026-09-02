@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\StandarExport;
 use App\Models\IndikatorMutu;
 use App\Models\KategoriStandar;
 use App\Models\PeriodeAMI;
@@ -124,4 +125,61 @@ test('export filters by periode', function () {
     $response->assertOk();
 
     Excel::assertDownloaded('export_standar_dikti.xlsx');
+});
+
+test('standar export flattens hierarchy into rows', function () {
+    $periode = PeriodeAMI::create([
+        'tahun_akademik' => '2025/2026',
+        'tgl_mulai_audit' => '2025-09-01',
+        'tgl_selesai_audit' => '2026-01-31',
+        'status' => 'Pelaksanaan EDOM',
+    ]);
+
+    $kategori = KategoriStandar::create(['nama_kategori' => 'Akademik']);
+    $unit = UnitKerja::create(['nama_unit' => 'Fakultas Teknik', 'jenis_unit' => 'Fakultas']);
+
+    $standar = StandarDikti::create([
+        'periode_id' => $periode->id,
+        'kategori_id' => $kategori->id,
+        'nama_standar' => 'Standar Pendidikan',
+    ]);
+
+    $indikatorWithTarget = IndikatorMutu::create([
+        'standar_id' => $standar->id,
+        'kode_indikator' => 'IKU-01',
+        'isi_standar' => 'Persentase lulusan tepat waktu',
+        'jenis' => 'IKU',
+    ]);
+
+    TargetUnit::create([
+        'indikator_id' => $indikatorWithTarget->id,
+        'unit_kerja_id' => $unit->id,
+        'nilai_target' => 90,
+        'satuan' => '%',
+    ]);
+
+    IndikatorMutu::create([
+        'standar_id' => $standar->id,
+        'kode_indikator' => 'IKU-02',
+        'isi_standar' => 'Jumlah publikasi',
+        'jenis' => 'IKU',
+    ]);
+
+    $export = new StandarExport($periode->id);
+
+    expect($export->collection())->toHaveCount(1);
+
+    $rows = $export->map($export->collection()->first());
+
+    expect($rows)->toHaveCount(2);
+
+    expect($rows[0][0])->toBe('Akademik');
+    expect($rows[0][1])->toBe('Standar Pendidikan');
+    expect($rows[0][2])->toBe('IKU-01');
+    expect($rows[0][7])->toBe('Fakultas Teknik');
+    expect((float) $rows[0][5])->toBe(90.0);
+
+    expect($rows[1][2])->toBe('IKU-02');
+    expect($rows[1][5])->toBe('');
+    expect($rows[1][7])->toBe('');
 });

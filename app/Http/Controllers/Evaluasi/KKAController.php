@@ -45,9 +45,21 @@ class KKAController extends Controller
     public function store(Request $request, CapaianPelaksanaan $capaian)
     {
         $validated = $request->validate([
+            'unit_kerja_id' => 'required|exists:unit_kerja,id',
             'kategori_temuan' => 'required|in:Sesuai,Melampaui,Observasi (OB),KTS Minor,KTS Mayor',
             'deskripsi_temuan' => 'nullable|string',
         ]);
+
+        $belongsToUnit = CapaianPelaksanaan::query()
+            ->whereKey($capaian->id)
+            ->whereHas('targetUnit', fn ($q) => $q->where('unit_kerja_id', $validated['unit_kerja_id']))
+            ->exists();
+
+        if (! $belongsToUnit) {
+            abort(403);
+        }
+
+        unset($validated['unit_kerja_id']);
 
         KertasKerjaAudit::updateOrCreate(
             ['capaian_id' => $capaian->id],

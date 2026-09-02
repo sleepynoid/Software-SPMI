@@ -13,7 +13,8 @@ class JadwalAuditController extends Controller
 {
     public function index(Request $request)
     {
-        $periode_id = $request->periode_id ?: PeriodeAMI::where('status', 'Audit Lapangan')->first()?->id
+        $periode_id = $request->input('periode_id')
+            ?? PeriodeAMI::where('status', 'Audit Lapangan')->first()?->id
             ?? PeriodeAMI::orderBy('id', 'desc')->first()?->id;
 
         $units = UnitKerja::where('jenis_unit', 'Program Studi')->paginate(15)->withQueryString();

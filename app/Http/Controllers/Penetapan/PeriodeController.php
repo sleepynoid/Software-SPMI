@@ -46,6 +46,10 @@ class PeriodeController extends Controller
 
     public function destroy(PeriodeAMI $periode)
     {
+        if ($periode->standarDiktis()->exists() || $periode->risalahRtms()->exists()) {
+            return redirect()->back()->with('error', 'Periode tidak dapat dihapus karena masih memiliki data standar atau risalah.');
+        }
+
         $periode->delete();
 
         return redirect()->back()->with('success', 'Periode AMI berhasil dihapus.');

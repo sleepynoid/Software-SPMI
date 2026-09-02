@@ -48,7 +48,11 @@ function submitForm() {
         toast.add({ severity: 'warn', summary: 'Peringatan', detail: 'Kategori temuan wajib dipilih', life: 3000 });
         return;
     }
-    router.post(route('evaluasi.kka.store', { capaian: selectedCapaian.value.id }), form.value, {
+    router.post(route('evaluasi.kka.store', { capaian: selectedCapaian.value.id }), {
+        unit_kerja_id: props.unit.id,
+        kategori_temuan: form.value.kategori_temuan,
+        deskripsi_temuan: form.value.deskripsi_temuan,
+    }, {
         onSuccess: () => {
             showDialog.value = false;
             toast.add({ severity: 'success', summary: 'Berhasil', detail: 'Data audit berhasil disimpan', life: 3000 });

@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\IndikatorMutu;
+use App\Models\KategoriStandar;
 use App\Models\PeriodeAMI;
 use App\Models\Role;
+use App\Models\StandarDikti;
+use App\Models\TargetUnit;
 use App\Models\UnitKerja;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -35,19 +39,24 @@ test('import valid xlsx creates data', function () {
         'status' => 'Pelaksanaan EDOM',
     ]);
 
-    $unit = UnitKerja::create([
-        'nama_unit' => 'Fakultas Teknik',
-        'jenis_unit' => 'Fakultas',
-    ]);
+    UnitKerja::create(['nama_unit' => 'Fakultas Teknik', 'jenis_unit' => 'Fakultas']);
+    UnitKerja::create(['nama_unit' => 'Fakultas Ekonomi', 'jenis_unit' => 'Fakultas']);
 
-    Excel::fake();
-
-    $response = $this->postJson(route('penetapan.standar.import.store'), [
+    $response = $this->post(route('penetapan.standar.import.store'), [
         'file' => UploadedFile::fake()->createWithContent('test.xlsx', generateValidXlsxContent()),
         'periode_id' => $periode->id,
     ]);
 
-    $response->assertRedirect();
+    $response->assertRedirect(route('penetapan.standar.index'));
+
+    expect(StandarDikti::where('periode_id', $periode->id)->count())->toBe(1);
+    expect(IndikatorMutu::count())->toBe(1);
+    expect(KategoriStandar::where('nama_kategori', 'Akademik')->count())->toBe(1);
+    expect(TargetUnit::count())->toBe(2);
+
+    $standar = StandarDikti::where('periode_id', $periode->id)->first();
+    expect($standar->nama_standar)->toBe('Standar Pendidikan');
+    expect($standar->indikatorMutus()->first()->kode_indikator)->toBe('IKU-01');
 });
 
 test('import invalid file format returns error', function () {
@@ -85,13 +94,13 @@ test('import missing required column returns error', function () {
 
     $content = generateInvalidXlsxContent();
 
-    $response = $this->postJson(route('penetapan.standar.import.store'), [
+    $response = $this->from(route('penetapan.standar.import.index'))->post(route('penetapan.standar.import.store'), [
         'file' => UploadedFile::fake()->createWithContent('test.xlsx', $content),
         'periode_id' => $periode->id,
     ]);
 
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['file']);
+    $response->assertRedirect();
+    $response->assertSessionHasErrors('file');
 });
 
 test('template download returns xlsx', function () {

@@ -7,14 +7,17 @@ use App\Models\IndikatorMutu;
 use App\Models\PeriodeAMI;
 use App\Models\StandarDikti;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class IndikatorMutuController extends Controller
 {
     public function index(Request $request)
     {
-        $periode_id = $request->periode_id ?: PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id;
-        $standar_id = $request->standar_id;
+        $periode_id = $request->input('periode_id')
+            ?? PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id
+            ?? PeriodeAMI::latest()->first()?->id;
+        $standar_id = $request->input('standar_id');
 
         $standars = StandarDikti::when($periode_id, fn ($q) => $q->where('periode_id', $periode_id))->get();
 
@@ -36,7 +39,10 @@ class IndikatorMutuController extends Controller
     {
         $validated = $request->validate([
             'standar_id' => 'required|exists:standar_dikti,id',
-            'kode_indikator' => 'required|string|max:50',
+            'kode_indikator' => [
+                'required', 'string', 'max:50',
+                Rule::unique('indikator_mutu', 'kode_indikator')->where('standar_id', $request->input('standar_id')),
+            ],
             'isi_standar' => 'required|string',
             'jenis' => 'required|in:IKU,IKT',
         ]);
@@ -50,7 +56,12 @@ class IndikatorMutuController extends Controller
     {
         $validated = $request->validate([
             'standar_id' => 'required|exists:standar_dikti,id',
-            'kode_indikator' => 'required|string|max:50',
+            'kode_indikator' => [
+                'required', 'string', 'max:50',
+                Rule::unique('indikator_mutu', 'kode_indikator')
+                    ->where('standar_id', $request->input('standar_id'))
+                    ->ignore($indikator->id),
+            ],
             'isi_standar' => 'required|string',
             'jenis' => 'required|in:IKU,IKT',
         ]);

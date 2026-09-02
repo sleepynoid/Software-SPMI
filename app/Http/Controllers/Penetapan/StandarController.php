@@ -15,7 +15,9 @@ class StandarController extends Controller
 {
     public function index(Request $request)
     {
-        $periode_id = $request->periode_id ?: PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id;
+        $periode_id = $request->input('periode_id')
+            ?? PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id
+            ?? PeriodeAMI::latest()->first()?->id;
 
         return Inertia::render('Penetapan/Standar/Index', [
             'standars' => StandarDikti::with('kategori', 'periode')

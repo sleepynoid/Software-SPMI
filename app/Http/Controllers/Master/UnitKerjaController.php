@@ -46,6 +46,10 @@ class UnitKerjaController extends Controller
 
     public function destroy(UnitKerja $unitKerja)
     {
+        if ($unitKerja->targetUnits()->exists() || $unitKerja->risalahRtms()->exists()) {
+            return redirect()->back()->with('error', 'Unit Kerja tidak dapat dihapus karena masih memiliki data target atau risalah.');
+        }
+
         $unitKerja->delete();
 
         return redirect()->back()->with('success', 'Unit Kerja berhasil dihapus.');

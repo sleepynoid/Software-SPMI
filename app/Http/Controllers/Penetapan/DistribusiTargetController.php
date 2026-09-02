@@ -14,7 +14,9 @@ class DistribusiTargetController extends Controller
 {
     public function index(Request $request)
     {
-        $periode_id = $request->periode_id ?: PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id;
+        $periode_id = $request->input('periode_id')
+            ?? PeriodeAMI::where('status', '!=', 'Selesai')->first()?->id
+            ?? PeriodeAMI::latest()->first()?->id;
 
         $indikators = IndikatorMutu::with('standar')
             ->whereHas('standar', fn ($q) => $q->where('periode_id', $periode_id))

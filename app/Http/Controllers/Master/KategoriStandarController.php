@@ -42,6 +42,10 @@ class KategoriStandarController extends Controller
 
     public function destroy(KategoriStandar $kategoriStandar)
     {
+        if ($kategoriStandar->standarDiktis()->exists()) {
+            return redirect()->back()->with('error', 'Kategori tidak dapat dihapus karena masih dipakai oleh standar.');
+        }
+
         $kategoriStandar->delete();
 
         return redirect()->back()->with('success', 'Kategori Standar berhasil dihapus.');
